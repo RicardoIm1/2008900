@@ -1,13 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOSPITAL REGIONAL PUERTO VALLARTA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hospital Regional Puerto Vallarta</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #0a0a1a;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      height: 100%;
+      width: 100%;
+    }
+
+    #nebulaCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #f0f0f0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.5em;
+      letter-spacing: 2px;
+      color: #7ecfff;
+      text-shadow: 0 2px 16px #0a0a1a;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      margin-bottom: 2em;
+      color: #b3e6ff;
+      opacity: 0.85;
+    }
+
+    .main-actions {
+      display: flex;
+      gap: 1.5em;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .main-actions a {
+      background: #1a2a4a;
+      color: #fff;
+      padding: 1em 2em;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 12px #0004;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .main-actions a:hover {
+      background: #2e8fff;
+      color: #fff;
+      transform: translateY(-2px) scale(1.04);
+    }
+
+    footer {
+      margin-top: 3em;
+      font-size: 0.95rem;
+      color: #b3e6ff99;
+      letter-spacing: 1px;
+    }
+  </style>
 </head>
 <body>
-    <h1>Esta es la página del HOSPITAL REGIONAL PUERTO VALLARTA</h1>
-    <h2>Ricki</h2>
-    <h4>mira nada mas</h4>
+  <canvas id="nebulaCanvas"></canvas>
+  <div class="container">
+      <img src="img/hospital-logo.png" alt="Logo Hospital Regional Puerto Vallarta" style="width: 120px; margin-bottom: 1em; filter: drop-shadow(0 0 6px #7ecfff);">
+      <h1>Estadísticas y Archivo Clínico</h1>
+      <h2>Hospital Regional Puerto Vallarta</h2>
+      <div class="subtitle">
+          Sistema integral para la gestión eficiente de indicadores estadísticos hospitalarios.
+        </div>
+    <div class="main-actions">
+      <a href="#">Egresos</a>
+      <a href="#">Urgencias</a>
+      <a href="#">Caja</a>
+      <a href="#">Correcciones</a>
+      <a href="#">Depuración</a>
+      <a href="#">Nacimientos</a>
+      <a href="#">Defunciones</a>
+      <a href="#">Lista de Tareas</a>
+    </div>
+    <footer>
+        &copy; <span id="currentYear"></span> Hecho con ❤️ por 
+        <a href="https://ricardoim1.github.io/jeronimoricardo/" target="_blank" style="text-decoration: none; color: inherit; font-weight: bold;">
+        Ricardo
+        </a>.
+    </footer>
+  </div>
+  <script>
+    //Año para el footer
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    const canvas = document.getElementById('nebulaCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    let systemState = 'idle'; // Puedes cambiar esto dinámicamente
+
+    const stateColors = {
+      idle: 'hsla(240, 60%, 70%, 0.5)',      // Azul suave
+      success: 'hsla(140, 70%, 60%, 0.5)',   // Verde
+      error: 'hsla(0, 80%, 60%, 0.5)',       // Rojo
+      loading: 'hsla(45, 100%, 60%, 0.5)',   // Amarillo
+      alert: 'hsla(300, 70%, 70%, 0.5)'      // Violeta
+    };
+
+    const particles = [];
+
+    for (let i = 0; i < 250; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.6 + 0.2
+      });
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(10, 10, 30, 0.2)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const color = stateColors[systemState] || stateColors.idle;
+
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    // Simulación de cambio de estado
+    function setSystemState(newState) {
+      systemState = newState;
+    }
+
+    // Ejemplo: cambia el estado después de 3 segundos
+    setTimeout(() => setSystemState('loading'), 3000);
+    setTimeout(() => setSystemState('success'), 6000);
+    setTimeout(() => setSystemState('error'), 9000);
+  </script>
 </body>
 </html>

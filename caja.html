@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<script>
+  function consultarGAS() {
+    fetch('https://script.google.com/macros/s/AKfycbyVrsvGZJsaAALN_7izjjgVYxAtXrQ1QmNTvGpNaUFU93Nfyddjx1kcbiQHY81Tfpsoww/exec')
+      .then(response => response.text())
+      .then(data => {
+        console.log('Respuesta del GAS:', data);
+        document.getElementById('output').innerText = data;
+      })
+      .catch(error => console.error('Error al conectar con GAS:', error));
+  }
+
+  // Ejecutar al cargar
+  window.onload = consultarGAS;
+</script>
+
+<div id="output">Esperando respuesta...</div>
+</body>
+</html>

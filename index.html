@@ -154,7 +154,33 @@
         }, 3100);
       }
       
-      google.script.run.withSuccessHandler(cargarTabla).obtenerRegistrosDesdeHoja();
+      //google.script.run.withSuccessHandler(cargarTabla).obtenerRegistrosDesdeHoja();
+      function cargarTabla() {
+  fetch("https://script.google.com/macros/s/AKfycbyTuMLOU5LJiz95WzaaqD6xG5L5H32YxmRBwRt33A4jvAoCWTvObtsW58xKECuAQZDn4A/exec")
+    .then(res => res.json())
+    .then(registros => {
+      const cuerpo = document.querySelector("#tabla-registros tbody");
+      cuerpo.innerHTML = "";
+
+      registros.forEach(reg => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${reg.folio}</td>
+          <td>${reg.curp}</td>
+          <td>${reg.motivo}</td>
+          <td>${reg.cajera}</td>
+          <td>${reg.referencia}</td>
+          <td>${reg.observaciones}</td>
+          <td>${reg.fecha}</td>
+        `;
+        cuerpo.appendChild(fila);
+      });
+    })
+    .catch(err => {
+      console.error("Error al cargar registros:", err);
+      mostrarMensaje("❌ No se pudo cargar la tabla");
+    });
+}
     });
 
     const btnStart = document.getElementById('btnStart');

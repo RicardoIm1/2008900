@@ -16,56 +16,6 @@ function iniciarEscanerQR() {
   );
 }
 
-// 📤 Envía datos al Web App de GAS
-function doPost(e) {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  };
-
-  try {
-    Logger.log("📥 Datos recibidos desde frontend:");
-    Logger.log(e.postData.contents);
-
-    const datos = JSON.parse(e.postData.contents);
-    Logger.log("🔍 Datos parseados:");
-    Logger.log(datos);
-
-    const hoja = SpreadsheetApp.openById("1oIqBicpEmUjWTwaYn4_x7cM60pAgkZr8PvAu8kg3K44").getSheetByName("Registros");
-
-    const folio = "F" + new Date().getTime();
-    const fecha = new Date().toLocaleDateString("es-MX");
-    const hora = new Date().toLocaleTimeString("es-MX");
-
-    hoja.appendRow([
-      folio, fecha, hora,
-      datos.curp,
-      "", "", "", "", "", "", "", // campos vacíos si no se usan
-      datos.motivo,
-      "", // edad
-      datos.cajera,
-      datos.referencia,
-      datos.observaciones
-    ]);
-
-    return ContentService.createTextOutput(JSON.stringify({ success: true }))
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders(headers);
-
-  } catch (error) {
-    Logger.log("❌ Error al guardar:");
-    Logger.log(error.message);
-
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      message: error.message
-    }))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeaders(headers);
-  }
-}
-
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
   fetch("https://script.google.com/macros/s/AKfycbx9IUHMV3lp1uNhUFwgFcMqY6PwRrdpimCnx9e8mpPE51aHQ4467VE4DpuIGfspKKSIag/exec")
@@ -108,11 +58,3 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
-
-
-
-
-
-
-
-

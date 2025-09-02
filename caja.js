@@ -32,7 +32,7 @@ function doPost(e) {
     Logger.log("🔍 Datos parseados:");
     Logger.log(datos);
 
-    const hoja = SpreadsheetApp.openById("TU_ID_DE_HOJA").getSheetByName("Registros");
+    const hoja = SpreadsheetApp.openById("1oIqBicpEmUjWTwaYn4_x7cM60pAgkZr8PvAu8kg3K44").getSheetByName("Registros");
 
     const folio = "F" + new Date().getTime();
     const fecha = new Date().toLocaleDateString("es-MX");
@@ -68,7 +68,7 @@ function doPost(e) {
 
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbTU_WEBAPP_URL/exec")
+  fetch("https://script.google.com/macros/s/AKfycbzxt0wpX4ubKZ8PfD6H_fpIVddpxQndLF-7-EBnXJ16vePnGfw6cBQug5MEcGSWiy1YAg/exec")
     .then(res => res.json())
     .then(registros => {
       const cuerpoTabla = document.getElementById("tabla-pacientes");
@@ -108,6 +108,7 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
+
 
 
 

@@ -52,6 +52,7 @@
       <div class="button-group">
         <button id="btnStart">INICIAR ESCANEO</button>
         <button id="btnStop" disabled>DETENER</button>
+        <div id="mensaje"></div>
       </div>
     </div>
 
@@ -343,6 +344,16 @@
     }
 
     document.getElementById('currentYear').textContent = new Date().getFullYear();
+    function mostrarMensaje(texto) {
+  const msg = document.getElementById("mensaje");
+  if (msg) {
+    msg.textContent = texto;
+    msg.style.display = "block";
+    setTimeout(() => msg.style.display = "none", 3000);
+  } else {
+    console.warn("Elemento #mensaje no encontrado");
+  }
+}
   </script>
 </body>
 </html>

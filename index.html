@@ -380,8 +380,8 @@
     console.warn("Elemento #mensaje no encontrado");
   }
 }
-    function enviarDatos() {
-  const nuevoRegistro = {
+   function enviarDatos() {
+  const datos = {
     curp: document.getElementById("curp").value,
     motivo: document.getElementById("motivo").value,
     cajera: document.getElementById("cajera").value,
@@ -392,20 +392,75 @@
   fetch("https://script.google.com/macros/s/AKfycbx9IUHMV3lp1uNhUFwgFcMqY6PwRrdpimCnx9e8mpPE51aHQ4467VE4DpuIGfspKKSIag/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(nuevoRegistro)
+    body: JSON.stringify(datos)
   })
   .then(res => res.json())
-  .then(respuesta => {
-    if (respuesta.success) {
-      mostrarMensaje("✅ Registro guardado");
-      agregarRegistroNuevo(respuesta.registro); // ← Aquí se muestra en pantalla
+  .then(response => {
+    if (response.success) {
+      if (window.innerWidth >= 768) {
+        const token = document.createElement('div');
+        token.classList.add('throw-token');
+        document.body.appendChild(token);
+
+        const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+        audio.play().catch(e => console.log("Audio no permitido:", e));
+
+        setTimeout(() => {
+          token.remove();
+          agregarRegistroNuevo(response.nuevoRegistro);
+
+          status.innerHTML = `
+            <span class="success-message" style="
+              display: inline-block;
+              animation: bigBounce 0.8s, colors 2s infinite;
+              font-size: 0.9rem;
+            ">
+            ✓ REGISTRO EXITOSO: ${response.folio}
+            </span>
+          `;
+
+          document.getElementById('motivo').value = '';
+          document.getElementById('referencia').value = '';
+          document.getElementById('observaciones').value = '';
+          document.getElementById('motivo').focus();
+        }, 1200);
+      } else {
+        agregarRegistroNuevo(response.nuevoRegistro);
+        status.innerHTML = `
+          <span class="success-message" style="
+            display: inline-block;
+            animation: flash 0.5s 3;
+            font-size: 0.9rem;
+          ">
+            ✓ REGISTRO EXITOSO: ${response.folio}
+          </span>
+        `;
+        document.getElementById('motivo').value = '';
+        document.getElementById('referencia').value = '';
+        document.getElementById('observaciones').value = '';
+        document.getElementById('motivo').focus();
+      }
     } else {
-      mostrarMensaje("⚠️ Error: " + respuesta.message);
+      status.innerHTML = `
+        <span class="error-message" style="
+          display: inline-block;
+          animation: shake 0.5s 3, flashRed 0.3s 5;
+        ">
+          » ✗ ERROR: ${response.message} ✗ «
+        </span>
+      `;
     }
   })
   .catch(err => {
-    console.error("Error de red:", err);
-    mostrarMensaje("❌ Error de conexión");
+    console.error("❌ Error de red:", err);
+    status.innerHTML = `
+      <span class="error-message" style="
+        display: inline-block;
+        animation: shake 0.5s 3, flashRed 0.3s 5;
+      ">
+        » ✗ ERROR DE CONEXIÓN ✗ «
+      </span>
+    `;
   });
 }
   </script>

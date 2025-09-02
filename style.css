@@ -1,4 +1,4 @@
-  <style>
+  
     :root {
       --neon-green: #00ff9d;
       --neon-pink: #ff00aa;
@@ -555,4 +555,3 @@
       0%, 100% { background-color: transparent; }
       50% { background-color: rgba(255,0,0,0.5); }
     }
-  </style>

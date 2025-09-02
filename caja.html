@@ -20,7 +20,7 @@
   // Ejecutar al cargar
   window.onload = consultarGAS;
 function doGet(e) {
-  return ContentService.createTextOutput("Hola")
+  return ContentService.createTextOutput("index")
     .setMimeType(ContentService.MimeType.TEXT)
     .setHeader("Access-Control-Allow-Origin", "*");
 }
@@ -28,4 +28,5 @@ function doGet(e) {
 <div id="output">Esperando respuesta...</div>
 </body>
 </html>
+
 

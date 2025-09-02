@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+  <style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #0a0a1a;
+  }
+
+  #nebulaCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+</style>
 </head>
+<canvas id="nebulaCanvas"></canvas>
 <body>
 <script>
   function consultarGAS() {
@@ -19,15 +35,59 @@
 
   // Ejecutar al cargar
   window.onload = consultarGAS;
-function doGet(e) {
-  return ContentService.createTextOutput("hola")
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeader("Access-Control-Allow-Origin", "*");
-}
 </script>
+<script>
+  const canvas = document.getElementById('nebulaCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const particles = [];
+
+  for (let i = 0; i < 250; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 2 + 1,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.6 + 0.2,
+      color: `hsla(${Math.random() * 360}, 70%, 80%, 0.5)`
+    });
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(10, 10, 30, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.fill();
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+
+
+
 <div id="output">Esperando respuesta...</div>
 </body>
 </html>
-
-
-

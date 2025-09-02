@@ -26,7 +26,7 @@ function enviarDatos() {
     observaciones: document.getElementById("observaciones").value
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbzxLenCtJDGV_-VVMq3TF16FT6HouK3KPFB1AZ9C4G6aznWDfYp4zHzDus_qUe8y1QI2A/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzxt0wpX4ubKZ8PfD6H_fpIVddpxQndLF-7-EBnXJ16vePnGfw6cBQug5MEcGSWiy1YAg/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos)
@@ -48,7 +48,7 @@ function enviarDatos() {
 
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbzxLenCtJDGV_-VVMq3TF16FT6HouK3KPFB1AZ9C4G6aznWDfYp4zHzDus_qUe8y1QI2A/exec")
+  fetch("https://script.google.com/macros/s/AKfycbzxt0wpX4ubKZ8PfD6H_fpIVddpxQndLF-7-EBnXJ16vePnGfw6cBQug5MEcGSWiy1YAg/exec")
     .then(res => res.json())
     .then(registros => {
       const cuerpoTabla = document.querySelector("#tabla-registros tbody");
@@ -84,5 +84,6 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
+
 
 

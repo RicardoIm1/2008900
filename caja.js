@@ -48,25 +48,29 @@ function enviarDatos() {
 
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbzxt0wpX4ubKZ8PfD6H_fpIVddpxQndLF-7-EBnXJ16vePnGfw6cBQug5MEcGSWiy1YAg/exec")
+  fetch("https://script.google.com/macros/s/AKfycbTU_WEBAPP_URL/exec")
     .then(res => res.json())
     .then(registros => {
-      const cuerpoTabla = document.querySelector("#tabla-registros tbody");
-      cuerpoTabla.innerHTML = ""; // Limpia tabla
+      const cuerpoTabla = document.getElementById("tabla-pacientes");
+      cuerpoTabla.innerHTML = "";
 
-      registros.forEach(reg => {
+      registros.reverse().forEach(registro => {
         const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${reg.folio}</td>
-          <td>${reg.curp}</td>
-          <td>${reg.motivo}</td>
-          <td>${reg.cajera}</td>
-          <td>${reg.referencia}</td>
-          <td>${reg.observaciones}</td>
-          <td>${reg.fecha}</td>
-        `;
+        [
+          "FOLIO", "FECHA", "HORA", "CURP", "PATERNO", "MATERNO", "NOMBRE(S)",
+          "FECHA DE NACIMIENTO", "SEXO", "ENTIDAD", "HOMOCLAVE", "MOTIVO", "EDAD", "CAJERA",
+          "NUMERO DE REFERENCIA", "OBSERVACIONES"
+        ].forEach(campo => {
+          const celda = document.createElement("td");
+          celda.textContent = registro[campo] || "";
+          fila.appendChild(celda);
+        });
         cuerpoTabla.appendChild(fila);
       });
+    })
+    .catch(err => {
+      mostrarMensaje("❌ Error al cargar registros");
+      console.error(err);
     });
 }
 
@@ -84,6 +88,7 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
+
 
 
 

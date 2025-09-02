@@ -380,6 +380,34 @@
     console.warn("Elemento #mensaje no encontrado");
   }
 }
+    function enviarDatos() {
+  const nuevoRegistro = {
+    curp: document.getElementById("curp").value,
+    motivo: document.getElementById("motivo").value,
+    cajera: document.getElementById("cajera").value,
+    referencia: document.getElementById("referencia").value,
+    observaciones: document.getElementById("observaciones").value
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbTU_WEBAPP_URL/exec", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(nuevoRegistro)
+  })
+  .then(res => res.json())
+  .then(respuesta => {
+    if (respuesta.success) {
+      mostrarMensaje("✅ Registro guardado");
+      agregarRegistroNuevo(respuesta.registro); // ← Aquí se muestra en pantalla
+    } else {
+      mostrarMensaje("⚠️ Error: " + respuesta.message);
+    }
+  })
+  .catch(err => {
+    console.error("Error de red:", err);
+    mostrarMensaje("❌ Error de conexión");
+  });
+}
   </script>
 </body>
 </html>

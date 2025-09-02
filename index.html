@@ -156,7 +156,7 @@
       
       //google.script.run.withSuccessHandler(cargarTabla).obtenerRegistrosDesdeHoja();
       function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbyTuMLOU5LJiz95WzaaqD6xG5L5H32YxmRBwRt33A4jvAoCWTvObtsW58xKECuAQZDn4A/exec")
+  fetch("https://script.google.com/macros/s/AKfycbx9IUHMV3lp1uNhUFwgFcMqY6PwRrdpimCnx9e8mpPE51aHQ4467VE4DpuIGfspKKSIag/exec")
     .then(res => res.json())
     .then(registros => {
       const cuerpo = document.querySelector("#tabla-registros tbody");

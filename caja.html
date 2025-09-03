@@ -93,21 +93,6 @@
   </div>
 
 <script>
-  fetch("https://script.google.com/macros/s/AKfycbzFtL8Vjnr9Zm1soHNypvilIMKz6Rcrz9cz7hqK97Y7u9elV5EF_V6jktNUwcoE2AqH0A/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    curp: "XEXX010101HNEXXXA4",
-    motivo: "prueba",
-    cajera: "Mimi",
-    referencia: "test123",
-    observaciones: "desde GitHub Pages"
-  })
-})
-.then(r => r.json())
-.then(data => console.log("✅ Respuesta:", data))
-.catch(err => console.error("❌ Error:", err));
-
 const URL_API = "https://script.google.com/macros/s/AKfycbzFtL8Vjnr9Zm1soHNypvilIMKz6Rcrz9cz7hqK97Y7u9elV5EF_V6jktNUwcoE2AqH0A/exec";
 
 async function guardarRegistro() {

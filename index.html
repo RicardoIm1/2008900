@@ -52,9 +52,9 @@
       <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
     </footer>
   </div>
+
   <div id="modal" class="modal">
   <div class="modal-contenido">
-    <span class="cerrar" onclick="cerrarModal()">&times;</span>
     <iframe id="modalIframe" src="" frameborder="0"></iframe>
   </div>
 </div>
@@ -149,8 +149,7 @@
         cerrarModal();
   }
 }
-</script>
-<script>
+
 function abrirModal(url) {
   document.getElementById('modalIframe').src = url;
   document.getElementById('modal').style.display = 'flex';

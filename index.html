@@ -162,6 +162,13 @@ function cerrarModal() {
   document.getElementById('modalIframe').src = '';
   document.body.classList.remove('modal-abierto');
 }
+  window.onclick = function(event) {
+  const modal = document.getElementById('modal');
+  if (event.target === modal) {
+    cerrarModal();
+  }
+}
+
 </script>
 
 

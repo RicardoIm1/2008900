@@ -142,16 +142,6 @@
 
     initParticles();
     animateParticles();
-
-    function abrirModal(url) {
-      document.getElementById('modalIframe').src = url;
-      document.getElementById('modal').style.display = 'block';
-    }
-    
-    function cerrarModal() {
-      document.getElementById('modal').style.display = 'none';
-      document.getElementById('modalIframe').src = '';
-    }
     
     window.onclick = function(event) {
       const modal = document.getElementById('modal');
@@ -159,8 +149,21 @@
         cerrarModal();
   }
 }
-
 </script>
+<script>
+function abrirModal(url) {
+  document.getElementById('modalIframe').src = url;
+  document.getElementById('modal').style.display = 'flex';
+  document.body.classList.add('modal-abierto');
+}
+
+function cerrarModal() {
+  document.getElementById('modal').style.display = 'none';
+  document.getElementById('modalIframe').src = '';
+  document.body.classList.remove('modal-abierto');
+}
+</script>
+
 
 </body>
 </html>

@@ -143,5 +143,25 @@
     initParticles();
     animateParticles();
   </script>
+  <script>
+    function abrirModal(url) {
+      document.getElementById('modalIframe').src = url;
+      document.getElementById('modal').style.display = 'block';
+    }
+    
+    function cerrarModal() {
+      document.getElementById('modal').style.display = 'none';
+      document.getElementById('modalIframe').src = '';
+    }
+    
+    window.onclick = function(event) {
+      const modal = document.getElementById('modal');
+      if (event.target === modal) {
+        cerrarModal();
+  }
+}
+
+</script>
+
 </body>
 </html>

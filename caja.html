@@ -8,8 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
-  <link href="caja.css" rel="stylesheet">
-  <!-- <style>
+  <style>
     body {
       background-color: #0a0a0a;
       color: #0f0;
@@ -152,10 +151,6 @@
       color: #f00;
       font-weight: bold;
     }
-    .warning-message {
-      color: #ff0;
-      font-weight: bold;
-    }
     .nueva-fila {
       animation: highlight 2s;
     }
@@ -188,7 +183,7 @@
         min-width: 100%;
       }
     }
-  </style> -->
+  </style>
 </head>
 
 <body>
@@ -233,7 +228,6 @@
       <div class="button-group">
         <button id="btnStart">INICIAR ESCANEO</button>
         <button id="btnStop" disabled>DETENER</button>
-        <button id="btnExportar" title="Exportar datos guardados localmente">EXPORTAR</button>
       </div>
     </div>
 
@@ -241,9 +235,6 @@
     <div class="terminal-tabla">
       <input type="text" id="busqueda" placeholder="Buscar..." 
              style="margin-bottom: 10px; width: 100%; padding: 6px; font-family: 'Courier New'; background: #222; color: #0f0; border: 1px solid #0f0;">
-      <div id="modo-alerta" style="display: none; background: #331100; color: #ff9900; padding: 8px; margin-bottom: 10px; text-align: center;">
-        ⚠ MODO LOCAL: Los datos se guardan en este navegador
-      </div>
       <table class="pacientes" id="pacientes">
         <thead>
           <tr>
@@ -258,10 +249,9 @@
   </div>
 
   <script>
-    // URL de tu Google Apps Script
-    const URL_API = "https://script.google.com/macros/s/AKfycbwEgr4ICW8Rx8aPf5JPCUEoGKF3fOs8Cz9aUv69q5Jpiwd0vhoE950niuuWegpgqq7i0g/exec";
+    // URL de tu Google Apps Script (asegúrate de que esté publicada correctamente)
+    const URL_API = "https://script.google.com/macros/s/AKfycbxm4PBvgviMwjdlXmVU9zsb3fnhO-qt9NPhZRy9h-VrSal_RfsSNeYrj4_P-Uj0INz74w/exec";
     let html5QrCode, filaDestacada = null;
-    let usandoModoLocal = false;
 
     // Función para filtrar la tabla
     function filtrarTabla() {
@@ -283,208 +273,67 @@
       }
     }
 
-    // Función para guardar datos en localStorage
-    function guardarEnLocal(datos) {
-      return new Promise((resolve) => {
-        try {
-          // Obtener datos existentes
-          const registrosGuardados = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
+    // Función para hacer peticiones con manejo de CORS
+    function hacerPeticion(url, datos = null) {
+      return new Promise((resolve, reject) => {
+        // Para peticiones GET
+        if (!datos) {
+          fetch(url)
+            .then(response => {
+              if (!response.ok) throw new Error('Error en la respuesta del servidor');
+              return response.json();
+            })
+            .then(data => resolve(data))
+            .catch(error => reject(error));
+        } 
+        // Para peticiones POST - usando Google Forms como alternativa
+        else {
+          // Crear un formulario temporal
+          const form = document.createElement('form');
+          form.style.display = 'none';
+          form.action = url;
+          form.method = 'POST';
           
-          // Generar folio y fecha
-          const folio = "LOCAL-" + new Date().getTime().toString().slice(-6);
-          const fecha = new Date().toLocaleDateString("es-MX");
-          const hora = new Date().toLocaleTimeString("es-MX");
+          // Agregar los datos al formulario
+          for (const key in datos) {
+            if (datos.hasOwnProperty(key)) {
+              const input = document.createElement('input');
+              input.type = 'hidden';
+              input.name = key;
+              input.value = datos[key];
+              form.appendChild(input);
+            }
+          }
           
-          // Procesar CURP para extraer información
-          const infoCURP = procesarCURP(datos.curp);
+          document.body.appendChild(form);
           
-          // Crear registro completo
-          const registro = {
-            folio: folio,
-            fecha: fecha,
-            hora: hora,
-            curp: datos.curp,
-            paterno: infoCURP.paterno || "",
-            materno: infoCURP.materno || "",
-            nombres: infoCURP.nombres || "",
-            fecha_nacimiento: infoCURP.fechaNacimiento || "",
-            sexo: infoCURP.sexo || "",
-            entidad: infoCURP.entidad || "",
-            homoclave: infoCURP.homoclave || "",
-            motivo: datos.motivo,
-            edad: infoCURP.edad || "",
-            cajera: datos.cajera,
-            referencia: datos.referencia,
-            observaciones: datos.observaciones
+          // Crear iframe para recibir la respuesta
+          const iframe = document.createElement('iframe');
+          iframe.name = 'responseTarget';
+          iframe.style.display = 'none';
+          iframe.onload = function() {
+            try {
+              const responseText = iframe.contentDocument.body.innerText;
+              const response = JSON.parse(responseText);
+              resolve(response);
+            } catch (e) {
+              reject(new Error('Error al procesar la respuesta'));
+            }
+            // Limpiar
+            document.body.removeChild(form);
+            document.body.removeChild(iframe);
           };
           
-          // Agregar a la lista
-          registrosGuardados.push(registro);
-          
-          // Guardar en localStorage
-          localStorage.setItem('registrosUrgencias', JSON.stringify(registrosGuardados));
-          
-          // Resolver con éxito
-          resolve({
-            success: true,
-            folio: folio,
-            nuevoRegistro: registro,
-            message: "Registro guardado localmente (modo offline)"
-          });
-        } catch (error) {
-          resolve({
-            success: false,
-            message: "Error al guardar localmente: " + error.message
-          });
+          document.body.appendChild(iframe);
+          form.target = 'responseTarget';
+          form.submit();
         }
       });
     }
 
-    // Función para procesar datos del CURP
-    function procesarCURP(curp) {
-      try {
-        // Ejemplo de CURP: RATJ800318HJCMRR07||RAMIREZ|TORRES|JERONIMO RICARDO|HOMBRE|18/03/1980|JALISCO|14|
-        const partes = curp.split('||');
-        if (partes.length < 2) return {};
-        
-        const datos = partes[1].split('|');
-        return {
-          paterno: datos[0] || "",
-          materno: datos[1] || "",
-          nombres: datos[2] || "",
-          sexo: datos[3] || "",
-          fechaNacimiento: datos[4] || "",
-          entidad: datos[5] || "",
-          homoclave: datos[7] || "",
-          edad: datos[4] ? calcularEdad(datos[4]) : ""
-        };
-      } catch (error) {
-        return {};
-      }
-    }
-
-    // Función para calcular edad desde fecha de nacimiento
-    function calcularEdad(fechaNacimiento) {
-      try {
-        const [dia, mes, anio] = fechaNacimiento.split('/').map(Number);
-        const nacimiento = new Date(anio, mes - 1, dia);
-        const hoy = new Date();
-        
-        let edad = hoy.getFullYear() - nacimiento.getFullYear();
-        if (hoy.getMonth() < nacimiento.getMonth() || 
-            (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate())) {
-          edad--;
-        }
-        return edad.toString();
-      } catch (error) {
-        return "";
-      }
-    }
-
-    // Función para cargar la tabla desde localStorage
-    function cargarDesdeLocal() {
-      try {
-        const registros = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
-        const cuerpo = document.getElementById("tabla-pacientes");
-        cuerpo.innerHTML = "";
-        
-        if (registros.length === 0) {
-          cuerpo.innerHTML = "<tr><td colspan='16' style='text-align:center'>No hay registros locales disponibles.</td></tr>";
-          return;
-        }
-        
-        // Ordenar registros por fecha y hora (más recientes primero)
-        registros.sort((a, b) => {
-          const fechaA = new Date(a.fecha + ' ' + a.hora);
-          const fechaB = new Date(b.fecha + ' ' + b.hora);
-          return fechaB - fechaA;
-        });
-        
-        registros.forEach(reg => {
-          const fila = document.createElement("tr");
-          [
-            "folio", "fecha", "hora", "curp", "paterno", "materno", "nombres",
-            "fecha_nacimiento", "sexo", "entidad", "homoclave", "motivo", "edad",
-            "cajera", "referencia", "observaciones"
-          ].forEach(campo => {
-            const celda = document.createElement("td");
-            celda.textContent = reg[campo] || "";
-            fila.appendChild(celda);
-          });
-          cuerpo.appendChild(fila);
-        });
-      } catch (error) {
-        console.error("Error al cargar registros locales:", error);
-      }
-    }
-
-    // Función para exportar datos locales
-    function exportarDatosLocales() {
-      try {
-        const registros = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
-        if (registros.length === 0) {
-          alert("No hay datos locales para exportar.");
-          return;
-        }
-        
-        // Convertir a CSV
-        let csv = "FOLIO,FECHA,HORA,CURP,PATERNO,MATERNO,NOMBRES,FECHA_NACIMIENTO,SEXO,ENTIDAD,HOMOCLAVE,MOTIVO,EDAD,CAJERA,REFERENCIA,OBSERVACIONES\n";
-        
-        registros.forEach(reg => {
-          csv += `"${reg.folio}","${reg.fecha}","${reg.hora}","${reg.curp}","${reg.paterno}","${reg.materno}","${reg.nombres}","${reg.fecha_nacimiento}","${reg.sexo}","${reg.entidad}","${reg.homoclave}","${reg.motivo}","${reg.edad}","${reg.cajera}","${reg.referencia}","${reg.observaciones}"\n`;
-        });
-        
-        // Crear enlace de descarga
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const enlace = document.createElement('a');
-        enlace.href = url;
-        enlace.setAttribute('download', 'registros_urgencias.csv');
-        document.body.appendChild(enlace);
-        enlace.click();
-        document.body.removeChild(enlace);
-        
-      } catch (error) {
-        console.error("Error al exportar datos:", error);
-        alert("Error al exportar datos: " + error.message);
-      }
-    }
-
-    // Función para intentar enviar datos al servidor
-    function enviarDatos(datos) {
-      return new Promise((resolve) => {
-        // Primero intentar con el servidor
-        fetch(URL_API, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(datos)
-        })
-        .then(() => {
-          // Si no hay error de CORS, asumimos que se envió correctamente
-          resolve({ success: true, message: "Datos enviados al servidor" });
-        })
-        .catch(error => {
-          // Si falla, guardar localmente
-          console.warn("Error al conectar con el servidor, guardando localmente:", error);
-          guardarEnLocal(datos)
-            .then(respuestaLocal => {
-              resolve(respuestaLocal);
-            });
-        });
-      });
-    }
-
-    // Función para cargar la tabla
+    // Función para cargar la tabla desde la API
     function cargarTabla() {
-      // Primero intentar cargar desde el servidor
-      fetch(URL_API + '?action=get', { mode: 'no-cors' })
-        .then(response => {
-          if (response.ok) return response.json();
-          throw new Error('Error en respuesta del servidor');
-        })
+      hacerPeticion(URL_API + '?action=get')
         .then(registros => {
           const cuerpo = document.getElementById("tabla-pacientes");
           cuerpo.innerHTML = "";
@@ -494,14 +343,13 @@
             return;
           }
           
-          // Ordenar registros
+          // Ordenar registros por fecha y hora (más recientes primero)
           registros.sort((a, b) => {
             const fechaA = new Date(a.fecha + ' ' + a.hora);
             const fechaB = new Date(b.fecha + ' ' + b.hora);
             return fechaB - fechaA;
           });
           
-          // Mostrar registros
           registros.forEach(reg => {
             const fila = document.createElement("tr");
             [
@@ -515,18 +363,11 @@
             });
             cuerpo.appendChild(fila);
           });
-          
-          // Ocultar alerta de modo local
-          document.getElementById("modo-alerta").style.display = "none";
-          usandoModoLocal = false;
         })
         .catch(err => {
-          console.warn("Error al cargar desde servidor, cargando datos locales:", err);
-          // Mostrar alerta de modo local
-          document.getElementById("modo-alerta").style.display = "block";
-          usandoModoLocal = true;
-          // Cargar desde localStorage
-          cargarDesdeLocal();
+          console.error("Error al cargar registros:", err);
+          document.getElementById("tabla-pacientes").innerHTML = 
+            "<tr><td colspan='16' style='text-align:center; color: #f00;'>Error al cargar registros. Verifica la conexión.</td></tr>";
         });
     }
 
@@ -542,15 +383,13 @@
       
       // Configurar evento de búsqueda
       document.getElementById("busqueda").addEventListener("keyup", filtrarTabla);
-      
-      // Configurar botón de exportación
-      document.getElementById("btnExportar").addEventListener("click", exportarDatosLocales);
     });
 
     // Manejo de botones de escaneo
     const btnStart = document.getElementById('btnStart');
     const btnStop = document.getElementById('btnStop');
     const status = document.getElementById('status');
+    const reader = document.getElementById('reader');
 
     btnStart.addEventListener('click', () => {
       // Validar formulario
@@ -583,15 +422,11 @@
               action: "insert"
             };
 
-            // Intentar enviar datos
-            enviarDatos(datosEnvio)
+            // Usar nuestra función personalizada para enviar datos
+            hacerPeticion(URL_API, datosEnvio)
             .then(response => {
               if (response && response.success) {
-                if (usandoModoLocal) {
-                  status.innerHTML = `<span class="warning-message">⚠ REGISTRO LOCAL: ${response.folio} (MODO OFFLINE)</span>`;
-                } else {
-                  status.innerHTML = `<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`;
-                }
+                status.innerHTML = `<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`;
                 
                 // Limpiar formulario
                 document.getElementById('motivo').value = '';
@@ -664,22 +499,22 @@
       
       // Mapear los datos a las columnas correctas
       const datosMapeados = {
-        folio: datos.folio || "",
-        fecha: datos.fecha || new Date().toLocaleDateString("es-MX"),
-        hora: datos.hora || new Date().toLocaleTimeString("es-MX"),
-        curp: datos.curp || "",
-        paterno: datos.paterno || "",
-        materno: datos.materno || "",
-        nombres: datos.nombres || "",
-        fecha_nacimiento: datos.fecha_nacimiento || datos.fechaNacimiento || "",
-        sexo: datos.sexo || "",
-        entidad: datos.entidad || "",
-        homoclave: datos.homoclave || "",
-        motivo: datos.motivo || "",
-        edad: datos.edad || "",
-        cajera: datos.cajera || "",
-        referencia: datos.referencia || "",
-        observaciones: datos.observaciones || ""
+        folio: datos.FOLIO || datos.folio || "",
+        fecha: datos.FECHA || datos.fecha || new Date().toLocaleDateString("es-MX"),
+        hora: datos.HORA || datos.hora || new Date().toLocaleTimeString("es-MX"),
+        curp: datos.CURP || datos.curp || datos.curpCompleto || "",
+        paterno: datos.PATERNO || datos.paterno || datos.apellidoPaterno || "",
+        materno: datos.MATERNO || datos.materno || datos.apellidoMaterno || "",
+        nombres: datos["NOMBRE(S)"] || datos.nombres || "",
+        fecha_nacimiento: datos["FECHA DE NACIMIENTO"] || datos.fechaNacimiento || "",
+        sexo: datos.SEXO || datos.sexo || "",
+        entidad: datos.ENTIDAD || datos.entidad || "",
+        homoclave: datos.HOMOCLAVE || datos.homoclave || "",
+        motivo: datos.MOTIVO || datos.motivo || "",
+        edad: datos.EDAD || datos.edad || "",
+        cajera: datos.CAJERA || datos.cajera || "",
+        referencia: datos["NUMERO DE REFERENCIA"] || datos.referencia || "",
+        observaciones: datos.OBSERVACIONES || datos.observaciones || ""
       };
       
       [

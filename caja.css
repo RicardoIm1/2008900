@@ -43,7 +43,8 @@
       justify-content: center;
       align-items: stretch;
       max-height: 90vh;
-      margin-bottom: auto;
+      /* margin-bottom: auto; */
+      margin-bottom: 2rem;
     }
 
     .terminal-container {
@@ -66,7 +67,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 1.2px;
       background: linear-gradient(90deg, var(--neon-green), var(--neon-pink), var(--neon-blue), var(--neon-green));
       animation: rainbow-border 3s linear infinite;
       background-size: 400% 100%;

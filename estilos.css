@@ -24,14 +24,9 @@ body {
      overflow: hidden;
       position: relative;
       height: 100vh;
-      padding: 3rem 0;           /* espacio arriba y abajo */
-      box-sizing: border-box;    /* asegura que el padding no rompa el 100vh 
+      padding: 3rem 0;           
+      box-sizing: border-box;    
    }
-
-    /* body {
-      /* 
-     /*  
-    } */
  
    #dashboard{
       padding:2rem;

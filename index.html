@@ -216,8 +216,8 @@
         </footer>
     </div>
 
-    <script>
-        function setEstado(estado) {
+      <script>
+    function setEstado(estado) {
       const dashboard = document.getElementById('dashboard');
       const estadoTexto = document.getElementById('estadoTexto');
       dashboard.classList.remove('loading', 'success', 'error');
@@ -235,6 +235,12 @@
           break;
       }
     }
+
+    // Footer dinámico
+    const año = new Date().getFullYear();
+    document.getElementById('footerText').textContent = `Hecho con ❤️ por Ricardo · ${año}`;
+  </script>
+    <script>
         // Script para el canvas de fondo con partículas
         const canvas = document.getElementById('fondo');
         const ctx = canvas.getContext('2d');

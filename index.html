@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Clínico | HRPV</title>
+  <title>Consola HRPV</title>
   <link rel="stylesheet" href="estilos.css" />
 </head>
 <body>
+  <canvas id="fondo"></canvas>
+
   <div id="dashboard" class="glass loading">
     <header class="header">
       <div class="logo">
+        <!-- SVG moderno -->
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
           <path d="M12 2L15 8H9L12 2Z" fill="currentColor"/>
           <path d="M12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22Z" fill="currentColor"/>
@@ -27,22 +30,10 @@
     </header>
 
     <main class="grid">
-      <div class="celda">
-        <h2>📁 Archivo Clínico</h2>
-        <p>Gestión de expedientes</p>
-      </div>
-      <div class="celda">
-        <h2>📊 Estadísticas</h2>
-        <p>Indicadores hospitalarios</p>
-      </div>
-      <div class="celda">
-        <h2>🔒 Seguridad</h2>
-        <p>Control de accesos</p>
-      </div>
-      <div class="celda">
-        <h2>🧾 Reportes</h2>
-        <p>Generación mensual</p>
-      </div>
+      <div class="celda"><h2>📁 Archivo Clínico</h2></div>
+      <div class="celda"><h2>📊 Estadísticas</h2></div>
+      <div class="celda"><h2>🔒 Seguridad</h2></div>
+      <div class="celda"><h2>🧾 Reportes</h2></div>
     </main>
 
     <div class="status">
@@ -59,27 +50,22 @@
     </footer>
   </div>
 
+  <script src="fondo.js"></script>
   <script>
     function setEstado(estado) {
       const dashboard = document.getElementById('dashboard');
       const estadoTexto = document.getElementById('estadoTexto');
       dashboard.classList.remove('loading', 'success', 'error');
       dashboard.classList.add(estado);
+      velocidadFlujo = estado === 'loading' ? 0.8 : estado === 'success' ? 0.3 : 1.2;
 
-      switch (estado) {
-        case 'loading':
-          estadoTexto.textContent = 'Cargando sistema...';
-          break;
-        case 'success':
-          estadoTexto.textContent = 'Sistema operativo con éxito ✅';
-          break;
-        case 'error':
-          estadoTexto.textContent = 'Error detectado ❌';
-          break;
-      }
+      estadoTexto.textContent = {
+        loading: 'Cargando sistema...',
+        success: 'Sistema operativo con éxito ✅',
+        error: 'Error detectado ❌'
+      }[estado];
     }
 
-    // Footer dinámico
     const año = new Date().getFullYear();
     document.getElementById('footerText').textContent = `Hecho con ❤️ por Ricardo · ${año}`;
   </script>

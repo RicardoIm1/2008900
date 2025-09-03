@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Clínico | HRPV</title>
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+<body>
+  <div id="dashboard" class="glass loading">
+    <h1>📊 Consola de Gestión</h1>
+    <p>Hospital Regional Puerto Vallarta</p>
+    <div class="status">
+      <span id="estadoTexto">Cargando sistema...</span>
+    </div>
+    <div class="botones">
+      <button onclick="setEstado('loading')">🔄 Cargando</button>
+      <button onclick="setEstado('success')">✅ Éxito</button>
+      <button onclick="setEstado('error')">❌ Error</button>
+    </div>
+  </div>
+
+  <script>
+    function setEstado(estado) {
+      const dashboard = document.getElementById('dashboard');
+      const estadoTexto = document.getElementById('estadoTexto');
+      dashboard.classList.remove('loading', 'success', 'error');
+      dashboard.classList.add(estado);
+
+      switch (estado) {
+        case 'loading':
+          estadoTexto.textContent = 'Cargando sistema...';
+          break;
+        case 'success':
+          estadoTexto.textContent = 'Sistema operativo con éxito ✅';
+          break;
+        case 'error':
+          estadoTexto.textContent = 'Error detectado ❌';
+          break;
+      }
+    }
+  </script>
+</body>
+</html>

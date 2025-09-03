@@ -17,6 +17,9 @@
       align-items: center;
       position: relative;
     }
+   #dashboard{
+      padding:3rem;
+   }
     .glass.loading {
       background: rgba(0, 123, 255, 0.2);
       box-shadow: 0 8px 32px rgba(0, 123, 255, 0.4);

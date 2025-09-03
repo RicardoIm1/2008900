@@ -11,6 +11,8 @@
      font-family: 'Segoe UI', sans-serif;
      overflow: hidden;
      background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
+      justify-content: center;
+      align-items: center;
    }
 
     /* body {
@@ -18,8 +20,6 @@
       /* background: linear-gradient(135deg, #0f1a3d, #2c0c2c, #1f2c4d); */
        /* background: linear-gradient(135deg, #36454F, #536878, #6E2C4D); */
       /* display: flex;
-      justify-content: center;
-      align-items: center;
       position: relative;
       height: 100vh;
       padding: 3rem 0;           /* espacio arriba y abajo */

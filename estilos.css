@@ -20,6 +20,7 @@
    #dashboard{
       padding:2rem;
       margin:3rem;
+      width:100%;
    }
     .glass.loading {
       background: rgba(0, 230, 255, 0.35);

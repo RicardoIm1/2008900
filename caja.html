@@ -110,6 +110,38 @@
 
 const URL_API = "https://script.google.com/macros/s/AKfycbzFtL8Vjnr9Zm1soHNypvilIMKz6Rcrz9cz7hqK97Y7u9elV5EF_V6jktNUwcoE2AqH0A/exec";
 
+async function guardarRegistro() {
+  const nuevo = {
+    curp: document.querySelector("#curp").value,
+    paterno: document.querySelector("#paterno").value,
+    materno: document.querySelector("#materno").value,
+    nombres: document.querySelector("#nombres").value,
+    fecha_nacimiento: document.querySelector("#fecha_nac").value,
+    sexo: document.querySelector("#sexo").value,
+    entidad: document.querySelector("#entidad").value,
+    homoclave: document.querySelector("#homoclave").value,
+    motivo: document.querySelector("#motivo").value,
+    edad: document.querySelector("#edad").value,
+    cajera: document.querySelector("#cajera").value,
+    referencia: document.querySelector("#referencia").value,
+    observaciones: document.querySelector("#observaciones").value
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(nuevo),
+    headers: { "Content-Type": "application/json" }
+  });
+
+  const respuesta = await res.json();
+  console.log(respuesta);
+
+  if (respuesta.status === "ok") {
+    alert("✅ Registro guardado con folio " + respuesta.folio);
+    // aquí puedes recargar la tabla
+  }
+}
+  
 function filtrarTabla() {
   const input = document.getElementById("busqueda").value.toLowerCase();
   const filas = document.querySelector("#tabla-pacientes").getElementsByTagName("tr");

@@ -24,7 +24,7 @@
     }
     
     .glass.success {
-      background: rgba(40, 167, 69, 0.2);
+      background: rgba(70, 227, 99, 0.35);
       box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
       border: 1px solid rgba(40, 167, 69, 0.4);
     }

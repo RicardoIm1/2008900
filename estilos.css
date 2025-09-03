@@ -23,8 +23,7 @@ body {
      font-family: 'Segoe UI', sans-serif;
      overflow: hidden;
       position: relative;
-      height: 100vh;
-      padding: 1rem;           
+      padding: 2rem;           
       box-sizing: border-box;    
    }
  

@@ -1,73 +1,292 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Consola HRPV</title>
-  <link rel="stylesheet" href="estilos.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz Glassmorfismo Elegante</title>
+    <style>
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas#fondo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Contenedor principal con glassmorfismo */
+        .glass {
+            position: relative;
+            width: 95%;
+            max-width: 1000px;
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        /* Animación de respiración */
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                transform: scale(1.01);
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        /* Estados del contenedor */
+        .glass.loading {
+            background: rgba(0, 123, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0, 123, 255, 0.4);
+        }
+
+        .glass.success {
+            background: rgba(40, 167, 69, 0.2);
+            box-shadow: 0 0 30px rgba(40, 167, 69, 0.4);
+        }
+
+        .glass.error {
+            background: rgba(220, 53, 69, 0.2);
+            box-shadow: 0 0 30px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo, .usuario {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #333;
+        }
+
+        /* Grid de componentes */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .celda {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: pulse 6s infinite;
+        }
+
+        .celda:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        /* Estado y botones */
+        .status {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .botones {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="fondo"></canvas>
+    <canvas id="fondo"></canvas>
+    
+    <div class="glass">
+        <div class="header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <h1>GlassApp</h1>
+            </div>
+            <div class="usuario">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Usuario</span>
+            </div>
+        </div>
 
-  <div id="dashboard" class="glass loading">
-    <header class="header">
-      <div class="logo">
-        <!-- SVG moderno -->
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2L15 8H9L12 2Z" fill="currentColor"/>
-          <path d="M12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22Z" fill="currentColor"/>
-          <path d="M4 10H20V12H4V10Z" fill="currentColor"/>
-        </svg>
-        <h1>Consola de Gestión</h1>
-      </div>
-      <div class="usuario">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="8" r="4" fill="currentColor"/>
-          <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor"/>
-        </svg>
-        <span>Bienvenido, Ricardo</span>
-      </div>
-    </header>
+        <div class="grid">
+            <div class="celda">
+                <h3>Dashboard</h3>
+                <p>Resumen del sistema</p>
+            </div>
+            <div class="celda">
+                <h3>Estadísticas</h3>
+                <p>Datos en tiempo real</p>
+            </div>
+            <div class="celda">
+                <h3>Configuración</h3>
+                <p>Ajustes del sistema</p>
+            </div>
+            <div class="celda">
+                <h3>Perfil</h3>
+                <p>Información de usuario</p>
+            </div>
+        </div>
 
-    <main class="grid">
-      <div class="celda"><h2>📁 Archivo Clínico</h2></div>
-      <div class="celda"><h2>📊 Estadísticas</h2></div>
-      <div class="celda"><h2>🔒 Seguridad</h2></div>
-      <div class="celda"><h2>🧾 Reportes</h2></div>
-    </main>
+        <div class="status">
+            <h3>Estado del sistema</h3>
+            <p>Todos los sistemas funcionando correctamente</p>
+        </div>
 
-    <div class="status">
-      <span id="estadoTexto">Cargando sistema...</span>
-      <div class="botones">
-        <button onclick="setEstado('loading')">🔄 Cargando</button>
-        <button onclick="setEstado('success')">✅ Éxito</button>
-        <button onclick="setEstado('error')">❌ Error</button>
-      </div>
+        <div class="botones">
+            <button>Actualizar</button>
+            <button>Configurar</button>
+            <button>Ayuda</button>
+        </div>
+
+        <footer>
+            <p>© 2023 GlassApp - Interfaz elegante con efecto glassmorfismo</p>
+        </footer>
     </div>
 
-    <footer>
-      <span id="footerText"></span>
-    </footer>
-  </div>
-
-  <script src="fondo.js"></script>
-  <script>
-    function setEstado(estado) {
-      const dashboard = document.getElementById('dashboard');
-      const estadoTexto = document.getElementById('estadoTexto');
-      dashboard.classList.remove('loading', 'success', 'error');
-      dashboard.classList.add(estado);
-      velocidadFlujo = estado === 'loading' ? 0.8 : estado === 'success' ? 0.3 : 1.2;
-
-      estadoTexto.textContent = {
-        loading: 'Cargando sistema...',
-        success: 'Sistema operativo con éxito ✅',
-        error: 'Error detectado ❌'
-      }[estado];
-    }
-
-    const año = new Date().getFullYear();
-    document.getElementById('footerText').textContent = `Hecho con ❤️ por Ricardo · ${año}`;
-  </script>
+    <script>
+        // Script para el canvas de fondo con partículas
+        const canvas = document.getElementById('fondo');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const particulas = [];
+        const colores = ['#e0f7fa', '#b2ebf2', '#80deea', '#4dd0e1'];
+        
+        class Particula {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = colores[Math.floor(Math.random() * colores.length)];
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if (this.x > canvas.width || this.x < 0) this.speedX = -this.speedX;
+                if (this.y > canvas.height || this.y < 0) this.speedY = -this.speedY;
+            }
+            
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function init() {
+            for (let i = 0; i < 50; i++) {
+                particulas.push(new Particula());
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particulas.length; i++) {
+                particulas[i].update();
+                particulas[i].draw();
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        init();
+        animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Efectos interactivos para los botones
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+    </script>
 </body>
 </html>

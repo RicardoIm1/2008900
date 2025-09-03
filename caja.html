@@ -93,6 +93,21 @@
   </div>
 
 <script>
+  fetch("https://script.google.com/macros/s/AKfycbx9IUHMV3lp1uNhUFwgFcMqY6PwRrdpimCnx9e8mpPE51aHQ4467VE4DpuIGfspKKSIag/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    curp: "XEXX010101HNEXXXA4",
+    motivo: "prueba",
+    cajera: "Mimi",
+    referencia: "test123",
+    observaciones: "desde GitHub Pages"
+  })
+})
+.then(r => r.json())
+.then(data => console.log("✅ Respuesta:", data))
+.catch(err => console.error("❌ Error:", err));
+
 const URL_API = "https://script.google.com/macros/s/AKfycbxgmIHUzppg99uFsbLO4sO3ZcL9MG9XW7a68UC14ZK3CAmN22e1ImAZQb1UktiTmKIRmg/exec";
 
 function filtrarTabla() {

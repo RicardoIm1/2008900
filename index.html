@@ -8,16 +8,55 @@
 </head>
 <body>
   <div id="dashboard" class="glass loading">
-    <h1>📊 Consola de Gestión</h1>
-    <p>Hospital Regional Puerto Vallarta</p>
+    <header class="header">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L15 8H9L12 2Z" fill="currentColor"/>
+          <path d="M12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22Z" fill="currentColor"/>
+          <path d="M4 10H20V12H4V10Z" fill="currentColor"/>
+        </svg>
+        <h1>Consola de Gestión</h1>
+      </div>
+      <div class="usuario">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" fill="currentColor"/>
+          <path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="currentColor"/>
+        </svg>
+        <span>Bienvenido, Ricardo</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <div class="celda">
+        <h2>📁 Archivo Clínico</h2>
+        <p>Gestión de expedientes</p>
+      </div>
+      <div class="celda">
+        <h2>📊 Estadísticas</h2>
+        <p>Indicadores hospitalarios</p>
+      </div>
+      <div class="celda">
+        <h2>🔒 Seguridad</h2>
+        <p>Control de accesos</p>
+      </div>
+      <div class="celda">
+        <h2>🧾 Reportes</h2>
+        <p>Generación mensual</p>
+      </div>
+    </main>
+
     <div class="status">
       <span id="estadoTexto">Cargando sistema...</span>
+      <div class="botones">
+        <button onclick="setEstado('loading')">🔄 Cargando</button>
+        <button onclick="setEstado('success')">✅ Éxito</button>
+        <button onclick="setEstado('error')">❌ Error</button>
+      </div>
     </div>
-    <div class="botones">
-      <button onclick="setEstado('loading')">🔄 Cargando</button>
-      <button onclick="setEstado('success')">✅ Éxito</button>
-      <button onclick="setEstado('error')">❌ Error</button>
-    </div>
+
+    <footer>
+      <span id="footerText"></span>
+    </footer>
   </div>
 
   <script>
@@ -39,6 +78,10 @@
           break;
       }
     }
+
+    // Footer dinámico
+    const año = new Date().getFullYear();
+    document.getElementById('footerText').textContent = `Hecho con ❤️ por Ricardo · ${año}`;
   </script>
 </body>
 </html>

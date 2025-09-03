@@ -18,7 +18,7 @@ function iniciarEscanerQR() {
 
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbx9IUHMV3lp1uNhUFwgFcMqY6PwRrdpimCnx9e8mpPE51aHQ4467VE4DpuIGfspKKSIag/exec")
+  fetch("https://script.google.com/macros/s/AKfycbxgmIHUzppg99uFsbLO4sO3ZcL9MG9XW7a68UC14ZK3CAmN22e1ImAZQb1UktiTmKIRmg/exec")
     .then(res => res.json())
     .then(registros => {
       const cuerpoTabla = document.getElementById("tabla-pacientes");
@@ -58,3 +58,4 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
+

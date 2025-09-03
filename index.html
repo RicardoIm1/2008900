@@ -13,7 +13,7 @@
   <div class="glass" id="dashboard">
     <div class="header">
       <div class="logo">
-        <i class="fas fa-diamond logo-icon"></i>
+        <img src="img/logo-hrpv.png" alt="Logo" width="200">
         <h1>Estadísticas y Archivo Clínico</h1>
         <h3>Sistema integral para la gestión eficiente de indicadores estadísticos hospitalarios.</h3>
       </div>
@@ -31,15 +31,7 @@
       <div class="celda"><h3><i class="fas fa-chart-line"></i> Dashboard</h3><p>Resumen del sistema y métricas</p></div>
       <div class="celda"><h3><i class="fas fa-chart-pie"></i> Estadísticas</h3><p>Datos en tiempo real y análisis</p></div>
       <div class="celda"><h3><i class="fas fa-cog"></i> Configuración</h3><p>Ajustes y personalización</p></div>
-      <div class="celda" onclick="window.location.href='caja.html'">
-        <h3>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8H2v-8h20zm-6 4h-4v-2h4v2z"/>
-          </svg>
-          Caja
-        </h3>
-        <p>Ingreso por Urgencias</p>
-      </div>
+      <div class="celda"><h3><i class="fas fa-user"></i> Perfil</h3><p>Información de usuario y preferencias</p></div>
     </div>
 
     <div class="status">
@@ -83,7 +75,7 @@
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
 
     // Partículas con rebote
-    /* const canvas = document.getElementById("particlesCanvas");
+    const canvas = document.getElementById("particlesCanvas");
     const ctx = canvas.getContext("2d");
     let particles = [];
 
@@ -139,7 +131,7 @@
     }
 
     initParticles();
-    animateParticles(); */
+    animateParticles();
   </script>
 </body>
 </html>

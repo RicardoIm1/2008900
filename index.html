@@ -57,11 +57,6 @@
     </footer>
   </div>
 </div>
-  <div id="modal" class="modal">
-  <div class="modal-contenido">
-    <iframe id="modalIframe" src="" frameborder="0"></iframe>
-  </div>
-
 
   <script>
     function setEstado(estado) {
@@ -152,25 +147,6 @@
         cerrarModal();
   }
 }
-
-function abrirModal(url) {
-  document.getElementById('modalIframe').src = url;
-  document.getElementById('modal').style.display = 'flex';
-  document.body.classList.add('modal-abierto');
-}
-
-function cerrarModal() {
-  document.getElementById('modal').style.display = 'none';
-  document.getElementById('modalIframe').src = '';
-  document.body.classList.remove('modal-abierto');
-}
-  window.onclick = function(event) {
-  const modal = document.getElementById('modal');
-  if (event.target === modal) {
-    cerrarModal();
-  }
-}
-
 </script>
 
 

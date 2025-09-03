@@ -249,7 +249,7 @@
   </div>
 
   <script>
-    // URL de tu Google Apps Script
+    // URL de tu Google Apps Script (asegúrate de que esté publicada correctamente)
     const URL_API = "https://script.google.com/macros/s/AKfycbxm4PBvgviMwjdlXmVU9zsb3fnhO-qt9NPhZRy9h-VrSal_RfsSNeYrj4_P-Uj0INz74w/exec";
     let html5QrCode, filaDestacada = null;
 
@@ -274,10 +274,10 @@
     }
 
     // Función para hacer peticiones con manejo de CORS
-    function hacerPeticion(url, datos = null, metodo = 'GET') {
+    function hacerPeticion(url, datos = null) {
       return new Promise((resolve, reject) => {
-        // Para peticiones GET, usar directamente fetch
-        if (metodo === 'GET') {
+        // Para peticiones GET
+        if (!datos) {
           fetch(url)
             .then(response => {
               if (!response.ok) throw new Error('Error en la respuesta del servidor');
@@ -286,17 +286,13 @@
             .then(data => resolve(data))
             .catch(error => reject(error));
         } 
-        // Para peticiones POST, usar un iframe oculto
-        else if (metodo === 'POST') {
-          const iframe = document.createElement('iframe');
-          iframe.style.display = 'none';
-          iframe.name = 'postTarget';
-          document.body.appendChild(iframe);
-          
+        // Para peticiones POST - usando Google Forms como alternativa
+        else {
+          // Crear un formulario temporal
           const form = document.createElement('form');
-          form.target = 'postTarget';
+          form.style.display = 'none';
           form.action = url;
-          form.method = 'post';
+          form.method = 'POST';
           
           // Agregar los datos al formulario
           for (const key in datos) {
@@ -311,7 +307,10 @@
           
           document.body.appendChild(form);
           
-          // Manejar la respuesta
+          // Crear iframe para recibir la respuesta
+          const iframe = document.createElement('iframe');
+          iframe.name = 'responseTarget';
+          iframe.style.display = 'none';
           iframe.onload = function() {
             try {
               const responseText = iframe.contentDocument.body.innerText;
@@ -320,18 +319,13 @@
             } catch (e) {
               reject(new Error('Error al procesar la respuesta'));
             }
-            
             // Limpiar
             document.body.removeChild(form);
             document.body.removeChild(iframe);
           };
           
-          iframe.onerror = function() {
-            reject(new Error('Error de conexión'));
-            document.body.removeChild(form);
-            document.body.removeChild(iframe);
-          };
-          
+          document.body.appendChild(iframe);
+          form.target = 'responseTarget';
           form.submit();
         }
       });
@@ -429,7 +423,7 @@
             };
 
             // Usar nuestra función personalizada para enviar datos
-            hacerPeticion(URL_API, datosEnvio, 'POST')
+            hacerPeticion(URL_API, datosEnvio)
             .then(response => {
               if (response && response.success) {
                 status.innerHTML = `<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`;

@@ -12,6 +12,7 @@
 </head>
 
 <body>
+  <!-- Loader -->
   <div id="loader-pagina" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-color: black; display: flex; flex-direction: column; justify-content: center;
     align-items: center; z-index: 9999; font-family: 'Courier New', monospace; color: #0f0;">
@@ -20,6 +21,7 @@
   </div>
 
   <div class="terminal-flex">
+    <!-- Escaneo + Formulario -->
     <div class="terminal-escaneo">
       <h2>Ingresos por Urgencias</h2>
       <div id="reader"></div>
@@ -30,6 +32,7 @@
       <div id="formularioAdicional">
         <label for="motivo">MOTIVO:</label>
         <input type="text" id="motivo" placeholder="EJ. CAÍDA DE MOTOCICLETA" required>
+
         <label for="cajera">CAJERA:</label>
         <select id="cajera" required>
           <option value="">-- SELECCIONA TU NOMBRE --</option>
@@ -52,91 +55,38 @@
       <div class="button-group">
         <button id="btnStart">INICIAR ESCANEO</button>
         <button id="btnStop" disabled>DETENER</button>
-        <div id="mensaje"></div>
       </div>
     </div>
 
+    <!-- Tabla dinámica -->
     <div class="terminal-tabla">
-      <div id="loader" style="display: none; text-align: center; margin: 10px 0;">
-        <span class="spinner"></span>
-        <div style="color: #0f0; font-family: 'Courier New'; margin-top: 5px;">Cargando datos...</div>
-      </div>
-
       <input type="text" id="busqueda" placeholder="Buscar..." onkeyup="filtrarTabla()" 
              style="margin-bottom: 10px; width: 100%; padding: 6px; font-family: 'Courier New';">
       <table class="pacientes" id="pacientes">
         <thead>
           <tr>
-            <th>FOLIO</th>
-            <th>FECHA</th>
-            <th>HORA</th>
-            <th>CURP</th>
-            <th>PATERNO</th>
-            <th>MATERNO</th>
-            <th>NOMBRE(S)</th>
-            <th>FECHA DE NACIMIENTO</th>
-            <th>SEXO</th>
-            <th>ENTIDAD</th>
-            <th>HOMOCLAVE</th>
-            <th>MOTIVO</th>
-            <th>EDAD</th>
-            <th>CAJERA</th>
-            <th>NUMERO DE REFERENCIA</th>
-            <th>OBSERVACIONES</th>
+            <th>FOLIO</th><th>FECHA</th><th>HORA</th><th>CURP</th><th>PATERNO</th><th>MATERN0</th>
+            <th>NOMBRE(S)</th><th>FECHA DE NACIMIENTO</th><th>SEXO</th><th>ENTIDAD</th><th>HOMOCLAVE</th>
+            <th>MOTIVO</th><th>EDAD</th><th>CAJERA</th><th>NUMERO DE REFERENCIA</th><th>OBSERVACIONES</th>
           </tr>
         </thead>
-        <tbody id="tabla-pacientes">
-          <!-- Registros dinámicos -->
-        </tbody>
+        <tbody id="tabla-pacientes"></tbody>
       </table>
     </div>
   </div>
 
 <script>
-const URL_API = "https://script.google.com/macros/s/AKfycbzFtL8Vjnr9Zm1soHNypvilIMKz6Rcrz9cz7hqK97Y7u9elV5EF_V6jktNUwcoE2AqH0A/exec";
+const URL_API = "https://script.google.com/macros/s/AKfycbzFtL8Vjnr9Zm1soHNypvilIMKz6Rcrz9cz7hqK97Y7u9elV5EF_V6jktNUwcoE2AqH0A/exec"; // reemplaza con tu URL real
+let html5QrCode, filaDestacada = null;
 
-async function guardarRegistro() {
-  const nuevo = {
-    curp: document.querySelector("#curp").value,
-    paterno: document.querySelector("#paterno").value,
-    materno: document.querySelector("#materno").value,
-    nombres: document.querySelector("#nombres").value,
-    fecha_nacimiento: document.querySelector("#fecha_nac").value,
-    sexo: document.querySelector("#sexo").value,
-    entidad: document.querySelector("#entidad").value,
-    homoclave: document.querySelector("#homoclave").value,
-    motivo: document.querySelector("#motivo").value,
-    edad: document.querySelector("#edad").value,
-    cajera: document.querySelector("#cajera").value,
-    referencia: document.querySelector("#referencia").value,
-    observaciones: document.querySelector("#observaciones").value
-  };
-
-  const res = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify(nuevo),
-    headers: { "Content-Type": "application/json" }
-  });
-
-  const respuesta = await res.json();
-  console.log(respuesta);
-
-  if (respuesta.status === "ok") {
-    alert("✅ Registro guardado con folio " + respuesta.folio);
-    // aquí puedes recargar la tabla
-  }
-}
-  
 function filtrarTabla() {
   const input = document.getElementById("busqueda").value.toLowerCase();
   const filas = document.querySelector("#tabla-pacientes").getElementsByTagName("tr");
-
   for (let i = 0; i < filas.length; i++) {
     const celdas = filas[i].getElementsByTagName("td");
     let coincide = false;
     for (let j = 0; j < celdas.length; j++) {
-      const texto = celdas[j].textContent.toLowerCase();
-      if (texto.includes(input)) { coincide = true; break; }
+      if (celdas[j].textContent.toLowerCase().includes(input)) { coincide = true; break; }
     }
     filas[i].style.display = coincide ? "" : "none";
   }
@@ -155,9 +105,9 @@ function cargarTabla() {
       registros.reverse().forEach(reg => {
         const fila = document.createElement("tr");
         [
-          "FOLIO","FECHA","HORA","CURP","PATERNO","MATERNO","NOMBRE(S)",
-          "FECHA DE NACIMIENTO","SEXO","ENTIDAD","HOMOCLAVE","MOTIVO","EDAD",
-          "CAJERA","NUMERO DE REFERENCIA","OBSERVACIONES"
+          "folio","fecha","hora","curp","paterno","materno","nombres",
+          "fecha_nacimiento","sexo","entidad","homoclave","motivo","edad",
+          "cajera","referencia","observaciones"
         ].forEach(campo => {
           const celda = document.createElement("td");
           celda.textContent = reg[campo] || "";
@@ -171,27 +121,24 @@ function cargarTabla() {
 
 window.addEventListener("load", () => {
   const loader = document.getElementById('loader-pagina');
-  if (loader) {
-    setTimeout(() => {
-      loader.style.transition = 'opacity 0.5s ease';
-      loader.style.opacity = 0;
-      setTimeout(() => loader.style.display = 'none', 500);
-    }, 2000);
-  }
+  setTimeout(() => {
+    loader.style.transition = 'opacity 0.5s ease';
+    loader.style.opacity = 0;
+    setTimeout(() => loader.style.display = 'none', 500);
+  }, 2000);
   cargarTabla();
 });
 
+// --- BOTONES ESCANEO ---
 const btnStart = document.getElementById('btnStart');
 const btnStop = document.getElementById('btnStop');
 const status = document.getElementById('status');
 const reader = document.getElementById('reader');
-let html5QrCode, filaDestacada = null;
 
 btnStart.addEventListener('click', () => {
   try {
     html5QrCode = new Html5Qrcode("reader");
-    btnStart.disabled = true;
-    btnStop.disabled = false;
+    btnStart.disabled = true; btnStop.disabled = false;
     status.textContent = "» INICIANDO CÁMARA... «";
     reader.classList.add('scanning');
 
@@ -206,7 +153,9 @@ btnStart.addEventListener('click', () => {
       (decodedText) => {
         const datosEnvio = {
           curp: decodedText.trim(),
-          motivo, cajera, referencia, observaciones
+          paterno: "", materno: "", nombres: "", fecha_nacimiento: "",
+          sexo: "", entidad: "", homoclave: "", motivo, edad: "",
+          cajera, referencia, observaciones
         };
 
         fetch(URL_API, {
@@ -216,31 +165,30 @@ btnStart.addEventListener('click', () => {
         })
         .then(res => res.json())
         .then(response => {
-          if (response.success) {
-            agregarRegistroNuevo(response.nuevoRegistro);
+          if (response.status === "ok") {
+            agregarRegistroNuevo(datosEnvio, response.folio);
             status.innerHTML = `<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`;
             document.getElementById('motivo').value = '';
             document.getElementById('referencia').value = '';
             document.getElementById('observaciones').value = '';
           } else {
-            status.innerHTML = `<span class="error-message">✗ ERROR: ${response.message}</span>`;
+            status.innerHTML = `<span class="error-message">✗ ERROR: ${response.error}</span>`;
           }
         })
         .catch(err => {
-          console.error("❌ Error al enviar:", err);
+          console.error(err);
           status.innerHTML = `<span class="error-message">✗ ERROR DE CONEXIÓN ✗</span>`;
         });
 
         html5QrCode.stop().then(() => {
-          btnStart.disabled = false;
-          btnStop.disabled = true;
+          btnStart.disabled = false; btnStop.disabled = true;
           reader.classList.remove('scanning');
         });
       }
     );
   } catch (err) {
-    status.innerHTML = `<span class="error-message">ERROR: NO SE CARGÓ HTML5QRCODE</span>`;
     console.error(err);
+    status.innerHTML = `<span class="error-message">ERROR: NO SE CARGÓ HTML5QRCODE</span>`;
   }
 });
 
@@ -248,24 +196,25 @@ btnStop.addEventListener('click', () => {
   if (html5QrCode) {
     html5QrCode.stop().then(() => {
       status.textContent = "» ESCANEO DETENIDO «";
-      btnStart.disabled = false;
-      btnStop.disabled = true;
+      btnStart.disabled = false; btnStop.disabled = true;
       reader.classList.remove('scanning');
     });
   }
 });
 
-function agregarRegistroNuevo(nuevoRegistro) {
-  if (!nuevoRegistro) return;
+function agregarRegistroNuevo(datos, folio) {
   const cuerpoTabla = document.getElementById("tabla-pacientes");
   const fila = document.createElement("tr");
   [
-    "FOLIO","FECHA","HORA","CURP","PATERNO","MATERNO","NOMBRE(S)",
-    "FECHA DE NACIMIENTO","SEXO","ENTIDAD","HOMOCLAVE","MOTIVO","EDAD",
-    "CAJERA","NUMERO DE REFERENCIA","OBSERVACIONES"
+    "folio","fecha","hora","curp","paterno","materno","nombres",
+    "fecha_nacimiento","sexo","entidad","homoclave","motivo","edad",
+    "cajera","referencia","observaciones"
   ].forEach(campo => {
     const celda = document.createElement("td");
-    celda.textContent = nuevoRegistro[campo] || "";
+    if (campo === "folio") celda.textContent = folio;
+    else if (campo === "fecha") celda.textContent = new Date().toLocaleDateString("es-MX");
+    else if (campo === "hora") celda.textContent = new Date().toLocaleTimeString("es-MX");
+    else celda.textContent = datos[campo] || "";
     fila.appendChild(celda);
   });
   if (filaDestacada) filaDestacada.classList.remove('nueva-fila');

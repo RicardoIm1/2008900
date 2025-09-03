@@ -9,12 +9,14 @@ body {
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
       /* background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); */
       /* background: linear-gradient(135deg, #0f1a3d, #2c0c2c, #1f2c4d); */
-       /* background: linear-gradient(135deg, #36454F, #536878, #6E2C4D); */
+      /* background: linear-gradient(135deg, #36454F, #536878, #6E2C4D); */
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
+  padding: 2rem;           
+  box-sizing: border-box;    
+   }
 
    body, html {
      margin: 0;
@@ -23,8 +25,6 @@ body {
      font-family: 'Segoe UI', sans-serif;
      overflow: hidden;
       position: relative;
-      padding: 2rem;           
-      box-sizing: border-box;    
    }
  
    #dashboard{

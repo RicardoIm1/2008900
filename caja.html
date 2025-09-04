@@ -102,24 +102,19 @@
     }
     table.pacientes th, table.pacientes td {
       border: 1px solid #0f0;
-      padding: .6rem;
+      padding: 6px;
       text-align: left;
-      color: #0f0; /* Asegura que el texto sea verde */
-      background-color: #111; /* Asegura fondo oscuro */
     }
     table.pacientes th {
       background-color: #1a1a1a;
       position: sticky;
       top: 0;
-      color: #0f0; /* Texto verde para las cabeceras */
     }
     table.pacientes tr:nth-child(even) {
       background-color: #151515;
-      color: #0f0; /* Asegura texto verde en filas pares */
     }
     table.pacientes tr:hover {
       background-color: #1f1f1f;
-      color: #0f0; /* Asegura texto verde al hacer hover */
     }
     #loader-pagina {
       position: fixed;
@@ -160,13 +155,18 @@
       color: #ff0;
       font-weight: bold;
     }
+    .debug-message {
+      color: #0ff;
+      font-weight: bold;
+      font-size: 12px;
+    }
     .nueva-fila {
       animation: highlight 3s;
     }
     @keyframes highlight {
       0% { background-color: #0f0; color: #000; }
       50% { background-color: #2a2a2a; color: #0f0; }
-      100% { background-color: #111; color: #0f0; }
+      100% { background-color: #111; }
     }
     #reader {
       width: 100%;
@@ -185,6 +185,17 @@
     .scanning {
       box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
     }
+    #debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #0f0;
+      padding: 10px;
+      font-size: 12px;
+      max-width: 300px;
+      display: none;
+    }
     @media (max-width: 768px) {
       .terminal-flex {
         flex-direction: column;
@@ -201,6 +212,13 @@
   <div id="loader-pagina">
     <div class="spinner"></div>
     <div style="margin-top: 10px;">Inicializando terminal...</div>
+  </div>
+
+  <!-- Panel de depuración -->
+  <div id="debug-info">
+    <h3 style="margin-top: 0;">INFO DEPURACIÓN</h3>
+    <div id="debug-content"></div>
+    <button onclick="document.getElementById('debug-info').style.display = 'none'" style="margin-top: 10px;">Cerrar</button>
   </div>
 
   <div class="terminal-flex">
@@ -240,6 +258,7 @@
         <button id="btnStop" disabled>DETENER</button>
         <button id="btnRefresh" title="Actualizar tabla">ACTUALIZAR</button>
         <button id="btnExport" title="Exportar datos locales">EXPORTAR</button>
+        <button id="btnDebug" title="Modo depuración">DEPURAR</button>
       </div>
     </div>
 
@@ -268,6 +287,18 @@
     let html5QrCode, filaDestacada = null;
     let usandoModoLocal = false;
     let ultimoFolio = "";
+    let modoDebug = false;
+
+    // Función para mostrar información de depuración
+    function mostrarDebug(info) {
+      if (!modoDebug) return;
+      
+      const debugInfo = document.getElementById('debug-info');
+      const debugContent = document.getElementById('debug-content');
+      
+      debugInfo.style.display = 'block';
+      debugContent.innerHTML = info + '<br><br>' + debugContent.innerHTML;
+    }
 
     // Función para filtrar la tabla
     function filtrarTabla() {
@@ -505,9 +536,6 @@
           }
         });
         
-        // Invertir el orden para mostrar los más recientes primero
-        registros.reverse();
-        
         registros.forEach(reg => {
           const fila = document.createElement("tr");
           const campos = [
@@ -576,6 +604,9 @@
           formData.append(key, datos[key]);
         }
         
+        mostrarDebug(`Enviando datos a: ${URL_API}`);
+        mostrarDebug(`Datos: ${formData.toString()}`);
+        
         fetch(URL_API, {
           method: 'POST',
           headers: {
@@ -584,11 +615,15 @@
           body: formData
         })
         .then(response => {
+          mostrarDebug(`Respuesta recibida. Status: ${response.status}`);
+          
           // Intentamos leer la respuesta como texto primero
           return response.text().then(text => {
+            mostrarDebug(`Contenido respuesta: ${text}`);
+            
             // Si la respuesta está vacía, asumimos éxito
             if (!text || text.trim() === '') {
-              console.log("Respuesta vacía del servidor, asumiendo éxito");
+              mostrarDebug("Respuesta vacía del servidor, asumiendo éxito");
               return {
                 success: true,
                 folio: "GAS-" + new Date().getTime().toString().slice(-6),
@@ -598,9 +633,12 @@
             
             // Intentamos parsear como JSON
             try {
-              return JSON.parse(text);
+              const jsonResponse = JSON.parse(text);
+              mostrarDebug("Respuesta parseada como JSON correctamente");
+              return jsonResponse;
             } catch (e) {
-              console.warn("Respuesta no es JSON válido:", text);
+              mostrarDebug(`Error parseando JSON: ${e.message}`);
+              
               // Si no es JSON pero contiene "éxito" o similar, asumimos éxito
               if (text.toLowerCase().includes('éxito') || text.toLowerCase().includes('exito') || 
                   text.toLowerCase().includes('success') || text.toLowerCase().includes('folio')) {
@@ -612,7 +650,7 @@
               }
               
               // Si no podemos determinar el éxito, guardamos localmente
-              throw new Error('Respuesta no reconocida');
+              throw new Error('Respuesta no reconocida: ' + text);
             }
           });
         })
@@ -620,6 +658,7 @@
           resolve(response);
         })
         .catch(error => {
+          mostrarDebug(`Error en la solicitud: ${error.message}`);
           console.warn("Error al enviar datos al servidor, guardando localmente:", error);
           // Si falla, guardar localmente
           guardarEnLocal(datos).then(resolve);
@@ -629,20 +668,28 @@
 
     // 📋 Carga registros desde Google Sheets
     function cargarTabla() {
+      mostrarDebug("Cargando tabla desde: " + URL_API + '?action=get');
+      
       fetch(URL_API + '?action=get')
-        .then(response => response.text())
+        .then(response => {
+          mostrarDebug(`Respuesta GET recibida. Status: ${response.status}`);
+          return response.text();
+        })
         .then(text => {
           let registros;
           
           // Si la respuesta está vacía, intentamos cargar desde localStorage
           if (!text || text.trim() === '') {
+            mostrarDebug("Respuesta vacía del servidor");
             throw new Error('Respuesta vacía del servidor');
           }
           
           // Intentar parsear como JSON
           try {
             registros = JSON.parse(text);
+            mostrarDebug(`Datos parseados correctamente. Registros: ${registros.length}`);
           } catch (e) {
+            mostrarDebug(`Error parseando JSON: ${e.message}`);
             console.warn("Respuesta GET no es JSON válido, usando datos locales");
             throw new Error('Respuesta no JSON');
           }
@@ -668,9 +715,6 @@
               return 0;
             }
           });
-          
-          // Invertir el orden para mostrar los más recientes primero
-          registros.reverse();
           
           // Asegurar que los campos de fecha estén formateados correctamente
           registros.forEach(reg => {
@@ -706,6 +750,7 @@
           usandoModoLocal = false;
         })
         .catch(err => {
+          mostrarDebug(`Error cargando tabla: ${err.message}`);
           console.warn("Error al cargar desde servidor, cargando datos locales:", err);
           // Mostrar alerta de modo local
           document.getElementById("modo-local").style.display = "block";
@@ -748,6 +793,13 @@
       
       // Configurar botón de exportación
       document.getElementById("btnExport").addEventListener("click", exportarDatosLocales);
+      
+      // Configurar botón de depuración
+      document.getElementById("btnDebug").addEventListener("click", () => {
+        modoDebug = !modoDebug;
+        mostrarDebug("Modo depuración " + (modoDebug ? "activado" : "desactivado"));
+        document.getElementById("btnDebug").textContent = modoDebug ? "OCULTAR DEBUG" : "DEPURAR";
+      });
     });
 
     // Manejo de botones de escaneo
@@ -787,6 +839,8 @@
               action: "insert"
             };
 
+            mostrarDebug(`CURP escaneado: ${decodedText}`);
+            
             // Enviar datos
             enviarDatos(datosEnvio)
             .then(response => {
@@ -812,11 +866,13 @@
               } else {
                 const errorMsg = response && response.message ? response.message : 'Error desconocido';
                 mostrarMensaje(`<span class="error-message">✗ ERROR: ${errorMsg}</span>`);
+                mostrarDebug(`Error completo: ${JSON.stringify(response)}`);
               }
             })
             .catch(err => {
               console.error(err);
               mostrarMensaje(`<span class="error-message">✗ ERROR DE CONEXIÓN ✗</span>`);
+              mostrarDebug(`Error de conexión: ${err.message}`);
             });
 
             html5QrCode.stop().then(() => {
@@ -888,8 +944,6 @@
       
       // Destacar la nueva fila
       fila.classList.add('nueva-fila');
-      
-      // Insertar al principio de la tabla (arriba)
       cuerpo.insertBefore(fila, cuerpo.firstChild);
       
       // Quitar el destacado después de 3 segundos

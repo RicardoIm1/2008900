@@ -216,6 +216,18 @@
         min-width: 100%;
       }
     }
+    /* 🔹 Hacer celdas seleccionables */
+      table.pacientes td {
+        cursor: pointer;
+        user-select: text;
+      }
+      
+      /* 🔹 Mejorar animación de nueva fila */
+      @keyframes highlight {
+        0%   { background-color: #0f0; color: #000; }
+        50%  { background-color: #222; color: #0f0; }
+        100% { background-color: #151515; color: #0f0; }
+      }
   </style>
 </head>
 
@@ -980,6 +992,17 @@
         });
       }
     });
+
+    // 🔹 Detectar click en celdas
+    document.addEventListener("click", (e) => {
+      if (e.target.tagName === "TD") {
+        const valor = e.target.textContent.trim();
+        if (valor) {
+          alert("Celda seleccionada: " + valor);
+        }
+      }
+    });
+
   </script>
 </body>
 </html>

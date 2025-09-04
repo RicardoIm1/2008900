@@ -155,6 +155,11 @@
       color: #ff0;
       font-weight: bold;
     }
+    .debug-message {
+      color: #0ff;
+      font-weight: bold;
+      font-size: 12px;
+    }
     .nueva-fila {
       animation: highlight 3s;
     }
@@ -180,6 +185,17 @@
     .scanning {
       box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
     }
+    #debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #0f0;
+      padding: 10px;
+      font-size: 12px;
+      max-width: 300px;
+      display: none;
+    }
     @media (max-width: 768px) {
       .terminal-flex {
         flex-direction: column;
@@ -196,6 +212,13 @@
   <div id="loader-pagina">
     <div class="spinner"></div>
     <div style="margin-top: 10px;">Inicializando terminal...</div>
+  </div>
+
+  <!-- Panel de depuración -->
+  <div id="debug-info">
+    <h3 style="margin-top: 0;">INFO DEPURACIÓN</h3>
+    <div id="debug-content"></div>
+    <button onclick="document.getElementById('debug-info').style.display = 'none'" style="margin-top: 10px;">Cerrar</button>
   </div>
 
   <div class="terminal-flex">
@@ -235,6 +258,7 @@
         <button id="btnStop" disabled>DETENER</button>
         <button id="btnRefresh" title="Actualizar tabla">ACTUALIZAR</button>
         <button id="btnExport" title="Exportar datos locales">EXPORTAR</button>
+        <button id="btnDebug" title="Modo depuración">DEPURAR</button>
       </div>
     </div>
 
@@ -259,10 +283,22 @@
   </div>
 
   <script>
-    const URL_API = "https://script.google.com/macros/s/AKfycbyZlmYgYaNJZQRFTo8JY1HfX9iWrWCHQuw3Zh-jnB3LZUy9Gnkf15R1iWID5rUzbirbQA/exec";
+    const URL_API = "https://script.google.com/macros/s/AKfycbwEgr4ICW8Rx8aPf5JPCUEoGKF3fOs8Cz9aUv69q5Jpiwd0vhoE950niuuWegpgqq7i0g/exec";
     let html5QrCode, filaDestacada = null;
     let usandoModoLocal = false;
     let ultimoFolio = "";
+    let modoDebug = false;
+
+    // Función para mostrar información de depuración
+    function mostrarDebug(info) {
+      if (!modoDebug) return;
+      
+      const debugInfo = document.getElementById('debug-info');
+      const debugContent = document.getElementById('debug-content');
+      
+      debugInfo.style.display = 'block';
+      debugContent.innerHTML = info + '<br><br>' + debugContent.innerHTML;
+    }
 
     // Función para filtrar la tabla
     function filtrarTabla() {
@@ -284,6 +320,105 @@
       });
     }
 
+    // Función para formatear fecha como dd/mm/yyyy
+    function formatearFecha(fecha) {
+      if (!fecha) return "";
+      
+      try {
+        // Si ya está en formato dd/mm/yyyy, devolver tal cual
+        if (typeof fecha === 'string' && fecha.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+          return fecha;
+        }
+        
+        // Si es una fecha de JavaScript
+        const date = new Date(fecha);
+        if (isNaN(date.getTime())) return fecha;
+        
+        const dia = date.getDate().toString().padStart(2, '0');
+        const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+        const anio = date.getFullYear();
+        
+        return `${dia}/${mes}/${anio}`;
+      } catch (e) {
+        return fecha;
+      }
+    }
+
+    // Función para formatear hora como HH:MM
+    function formatearHora(fecha) {
+      if (!fecha) return "";
+      
+      try {
+        const date = new Date(fecha);
+        if (isNaN(date.getTime())) {
+          // Si es un string con formato de hora, devolver tal cual
+          if (typeof fecha === 'string' && fecha.match(/^\d{2}:\d{2}$/)) {
+            return fecha;
+          }
+          return fecha;
+        }
+        
+        const horas = date.getHours().toString().padStart(2, '0');
+        const minutos = date.getMinutes().toString().padStart(2, '0');
+        
+        return `${horas}:${minutos}`;
+      } catch (e) {
+        return fecha;
+      }
+    }
+
+    // Función para extraer y formatear fecha de nacimiento desde CURP
+    function extraerFechaNacimientoDesdeCURP(curp) {
+      if (!curp || curp.length < 10) return "";
+      
+      try {
+        // Extraer fecha del CURP (posiciones 5-10: AAMMDD)
+        // Ejemplo: RATJ800318HJCMRR07 -> 800318 (18/03/1980)
+        const fechaStr = curp.substring(4, 10);
+        if (fechaStr.length !== 6) return "";
+        
+        const anio = "19" + fechaStr.substring(0, 2); // 80 -> 1980
+        const mes = fechaStr.substring(2, 4); // 03
+        const dia = fechaStr.substring(4, 6); // 18
+        
+        return `${dia}/${mes}/${anio}`;
+      } catch (e) {
+        return "";
+      }
+    }
+
+    // Función para calcular edad desde fecha de nacimiento
+    function calcularEdadDesdeFechaNacimiento(fechaNacimiento) {
+      if (!fechaNacimiento) return "";
+      
+      try {
+        // Convertir dd/mm/yyyy a fecha JavaScript
+        const partes = fechaNacimiento.split('/');
+        if (partes.length !== 3) return "";
+        
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1; // Los meses en JS son 0-11
+        const anio = parseInt(partes[2], 10);
+        
+        const nacimiento = new Date(anio, mes, dia);
+        if (isNaN(nacimiento.getTime())) return "";
+        
+        const hoy = new Date();
+        
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        
+        // Ajustar si aún no ha pasado el cumpleaños este año
+        if (hoy.getMonth() < nacimiento.getMonth() || 
+            (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate())) {
+          edad--;
+        }
+        
+        return edad.toString();
+      } catch (error) {
+        return "";
+      }
+    }
+
     // Función para guardar datos en localStorage
     function guardarEnLocal(datos) {
       return new Promise((resolve) => {
@@ -291,13 +426,31 @@
           // Obtener datos existentes
           const registrosGuardados = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
           
-          // Generar folio y fecha
-          const folio = "LOCAL-" + new Date().getTime().toString().slice(-6);
-          const fecha = new Date().toLocaleDateString("es-MX");
-          const hora = new Date().toLocaleTimeString("es-MX");
+          // Obtener último folio local para hacerlo consecutivo
+          let ultimoNumero = 0;
+          registrosGuardados.forEach(reg => {
+            if (reg.folio && reg.folio.startsWith("LOCAL-")) {
+              const num = parseInt(reg.folio.split("-")[1]);
+              if (!isNaN(num) && num > ultimoNumero) {
+                ultimoNumero = num;
+              }
+            }
+          });
           
-          // Procesar CURP para extraer información
-          const infoCURP = procesarCURP(datos.curp);
+          // Generar folio consecutivo
+          const siguienteNumero = ultimoNumero + 1;
+          const folio = "LOCAL-" + siguienteNumero.toString().padStart(5, '0');
+          
+          // Obtener fecha y hora actual formateadas
+          const ahora = new Date();
+          const fecha = formatearFecha(ahora);
+          const hora = formatearHora(ahora);
+          
+          // Extraer y formatear fecha de nacimiento desde CURP
+          const fechaNacimiento = extraerFechaNacimientoDesdeCURP(datos.curp);
+          
+          // Calcular edad automáticamente
+          const edad = calcularEdadDesdeFechaNacimiento(fechaNacimiento);
           
           // Crear registro completo
           const registro = {
@@ -305,19 +458,35 @@
             fecha: fecha,
             hora: hora,
             curp: datos.curp,
-            paterno: infoCURP.paterno || "",
-            materno: infoCURP.materno || "",
-            nombres: infoCURP.nombres || "",
-            fecha_nacimiento: infoCURP.fechaNacimiento || "",
-            sexo: infoCURP.sexo || "",
-            entidad: infoCURP.entidad || "",
-            homoclave: infoCURP.homoclave || "",
+            paterno: "",
+            materno: "",
+            nombres: "",
+            fecha_nacimiento: fechaNacimiento,
+            sexo: "",
+            entidad: "",
+            homoclave: "",
             motivo: datos.motivo,
-            edad: infoCURP.edad || "",
+            edad: edad,
             cajera: datos.cajera,
             referencia: datos.referencia,
             observaciones: datos.observaciones
           };
+          
+          // Procesar información adicional del CURP si está disponible
+          try {
+            const partes = datos.curp.split('||');
+            if (partes.length >= 2) {
+              const datosCURP = partes[1].split('|');
+              registro.paterno = datosCURP[0] || "";
+              registro.materno = datosCURP[1] || "";
+              registro.nombres = datosCURP[2] || "";
+              registro.sexo = datosCURP[3] || "";
+              registro.entidad = datosCURP[5] || "";
+              registro.homoclave = datosCURP[7] || "";
+            }
+          } catch (e) {
+            console.log("No se pudo extraer información adicional del CURP", e);
+          }
           
           // Agregar a la lista
           registrosGuardados.push(registro);
@@ -341,47 +510,6 @@
       });
     }
 
-    // Función para procesar datos del CURP
-    function procesarCURP(curp) {
-      try {
-        // Ejemplo de CURP: RATJ800318HJCMRR07||RAMIREZ|TORRES|JERONIMO RICARDO|HOMBRE|18/03/1980|JALISCO|14|
-        const partes = curp.split('||');
-        if (partes.length < 2) return {};
-        
-        const datos = partes[1].split('|');
-        return {
-          paterno: datos[0] || "",
-          materno: datos[1] || "",
-          nombres: datos[2] || "",
-          sexo: datos[3] || "",
-          fechaNacimiento: datos[4] || "",
-          entidad: datos[5] || "",
-          homoclave: datos[7] || "",
-          edad: datos[4] ? calcularEdad(datos[4]) : ""
-        };
-      } catch (error) {
-        return {};
-      }
-    }
-
-    // Función para calcular edad desde fecha de nacimiento
-    function calcularEdad(fechaNacimiento) {
-      try {
-        const [dia, mes, anio] = fechaNacimiento.split('/').map(Number);
-        const nacimiento = new Date(anio, mes - 1, dia);
-        const hoy = new Date();
-        
-        let edad = hoy.getFullYear() - nacimiento.getFullYear();
-        if (hoy.getMonth() < nacimiento.getMonth() || 
-            (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate())) {
-          edad--;
-        }
-        return edad.toString();
-      } catch (error) {
-        return "";
-      }
-    }
-
     // Función para cargar la tabla desde localStorage
     function cargarDesdeLocal() {
       try {
@@ -396,20 +524,29 @@
         
         // Ordenar registros por fecha y hora (más recientes primero)
         registros.sort((a, b) => {
-          const fechaA = new Date(a.fecha + ' ' + a.hora);
-          const fechaB = new Date(b.fecha + ' ' + b.hora);
-          return fechaB - fechaA;
+          try {
+            // Convertir fechas formato dd/mm/yyyy a yyyy/mm/dd para comparación
+            const fechaAParts = a.fecha.split('/');
+            const fechaBParts = b.fecha.split('/');
+            const fechaAStr = `${fechaAParts[2]}/${fechaAParts[1]}/${fechaAParts[0]} ${a.hora}`;
+            const fechaBStr = `${fechaBParts[2]}/${fechaBParts[1]}/${fechaBParts[0]} ${b.hora}`;
+            return new Date(fechaBStr) - new Date(fechaAStr);
+          } catch (e) {
+            return 0;
+          }
         });
         
         registros.forEach(reg => {
           const fila = document.createElement("tr");
-          [
-            "folio", "fecha", "hora", "curp", "paterno", "materno", "nombres",
-            "fecha_nacimiento", "sexo", "entidad", "homoclave", "motivo", "edad",
-            "cajera", "referencia", "observaciones"
-          ].forEach(campo => {
+          const campos = [
+            reg.folio, reg.fecha, reg.hora, reg.curp, reg.paterno, reg.materno, reg.nombres,
+            reg.fecha_nacimiento, reg.sexo, reg.entidad, reg.homoclave, reg.motivo, reg.edad,
+            reg.cajera, reg.referencia, reg.observaciones
+          ];
+          
+          campos.forEach(valor => {
             const celda = document.createElement("td");
-            celda.textContent = reg[campo] || "";
+            celda.textContent = valor || "";
             fila.appendChild(celda);
           });
           
@@ -458,7 +595,7 @@
       }
     }
 
-    // Función para enviar datos al servidor usando Google Apps Script
+    // Función para enviar datos al servidor
     function enviarDatos(datos) {
       return new Promise((resolve) => {
         // Primero intentamos con fetch y el método tradicional
@@ -466,6 +603,9 @@
         for (const key in datos) {
           formData.append(key, datos[key]);
         }
+        
+        mostrarDebug(`Enviando datos a: ${URL_API}`);
+        mostrarDebug(`Datos: ${formData.toString()}`);
         
         fetch(URL_API, {
           method: 'POST',
@@ -475,11 +615,15 @@
           body: formData
         })
         .then(response => {
+          mostrarDebug(`Respuesta recibida. Status: ${response.status}`);
+          
           // Intentamos leer la respuesta como texto primero
           return response.text().then(text => {
+            mostrarDebug(`Contenido respuesta: ${text}`);
+            
             // Si la respuesta está vacía, asumimos éxito
             if (!text || text.trim() === '') {
-              console.log("Respuesta vacía del servidor, asumiendo éxito");
+              mostrarDebug("Respuesta vacía del servidor, asumiendo éxito");
               return {
                 success: true,
                 folio: "GAS-" + new Date().getTime().toString().slice(-6),
@@ -489,9 +633,12 @@
             
             // Intentamos parsear como JSON
             try {
-              return JSON.parse(text);
+              const jsonResponse = JSON.parse(text);
+              mostrarDebug("Respuesta parseada como JSON correctamente");
+              return jsonResponse;
             } catch (e) {
-              console.warn("Respuesta no es JSON válido:", text);
+              mostrarDebug(`Error parseando JSON: ${e.message}`);
+              
               // Si no es JSON pero contiene "éxito" o similar, asumimos éxito
               if (text.toLowerCase().includes('éxito') || text.toLowerCase().includes('exito') || 
                   text.toLowerCase().includes('success') || text.toLowerCase().includes('folio')) {
@@ -503,7 +650,7 @@
               }
               
               // Si no podemos determinar el éxito, guardamos localmente
-              throw new Error('Respuesta no reconocida');
+              throw new Error('Respuesta no reconocida: ' + text);
             }
           });
         })
@@ -511,6 +658,7 @@
           resolve(response);
         })
         .catch(error => {
+          mostrarDebug(`Error en la solicitud: ${error.message}`);
           console.warn("Error al enviar datos al servidor, guardando localmente:", error);
           // Si falla, guardar localmente
           guardarEnLocal(datos).then(resolve);
@@ -518,23 +666,30 @@
       });
     }
 
-    // Función para cargar la tabla
+    // 📋 Carga registros desde Google Sheets
     function cargarTabla() {
-      // Primero intentar cargar desde el servidor
+      mostrarDebug("Cargando tabla desde: " + URL_API + '?action=get');
+      
       fetch(URL_API + '?action=get')
-        .then(response => response.text())
+        .then(response => {
+          mostrarDebug(`Respuesta GET recibida. Status: ${response.status}`);
+          return response.text();
+        })
         .then(text => {
           let registros;
           
           // Si la respuesta está vacía, intentamos cargar desde localStorage
           if (!text || text.trim() === '') {
+            mostrarDebug("Respuesta vacía del servidor");
             throw new Error('Respuesta vacía del servidor');
           }
           
           // Intentar parsear como JSON
           try {
             registros = JSON.parse(text);
+            mostrarDebug(`Datos parseados correctamente. Registros: ${registros.length}`);
           } catch (e) {
+            mostrarDebug(`Error parseando JSON: ${e.message}`);
             console.warn("Respuesta GET no es JSON válido, usando datos locales");
             throw new Error('Respuesta no JSON');
           }
@@ -547,20 +702,34 @@
             return;
           }
           
-          // Ordenar registros
+          // Ordenar registros (más recientes primero)
           registros.sort((a, b) => {
-            const fechaA = new Date(a.fecha + ' ' + a.hora);
-            const fechaB = new Date(b.fecha + ' ' + b.hora);
-            return fechaB - fechaA;
+            try {
+              // Convertir fechas formato dd/mm/yyyy a yyyy/mm/dd para comparación
+              const fechaAParts = a.FECHA.split('/');
+              const fechaBParts = b.FECHA.split('/');
+              const fechaA = new Date(`${fechaAParts[2]}/${fechaAParts[1]}/${fechaAParts[0]} ${a.HORA}`);
+              const fechaB = new Date(`${fechaBParts[2]}/${fechaBParts[1]}/${fechaBParts[0]} ${b.HORA}`);
+              return fechaB - fechaA;
+            } catch (e) {
+              return 0;
+            }
+          });
+          
+          // Asegurar que los campos de fecha estén formateados correctamente
+          registros.forEach(reg => {
+            reg.FECHA = formatearFecha(reg.FECHA);
+            reg.HORA = formatearHora(reg.HORA);
+            reg['FECHA DE NACIMIENTO'] = formatearFecha(reg['FECHA DE NACIMIENTO']);
           });
           
           // Mostrar registros
           registros.forEach(reg => {
             const fila = document.createElement("tr");
             [
-              "folio", "fecha", "hora", "curp", "paterno", "materno", "nombres",
-              "fecha_nacimiento", "sexo", "entidad", "homoclave", "motivo", "edad",
-              "cajera", "referencia", "observaciones"
+              "FOLIO", "FECHA", "HORA", "CURP", "PATERNO", "MATERNO", "NOMBRE(S)",
+              "FECHA DE NACIMIENTO", "SEXO", "ENTIDAD", "HOMOCLAVE", "MOTIVO", "EDAD", "CAJERA",
+              "NUMERO DE REFERENCIA", "OBSERVACIONES"
             ].forEach(campo => {
               const celda = document.createElement("td");
               celda.textContent = reg[campo] || "";
@@ -568,7 +737,7 @@
             });
             
             // Resaltar si es el último folio guardado
-            if (reg.folio === ultimoFolio) {
+            if (reg.FOLIO === ultimoFolio) {
               fila.classList.add('nueva-fila');
               setTimeout(() => fila.classList.remove('nueva-fila'), 3000);
             }
@@ -581,6 +750,7 @@
           usandoModoLocal = false;
         })
         .catch(err => {
+          mostrarDebug(`Error cargando tabla: ${err.message}`);
           console.warn("Error al cargar desde servidor, cargando datos locales:", err);
           // Mostrar alerta de modo local
           document.getElementById("modo-local").style.display = "block";
@@ -588,6 +758,21 @@
           // Cargar desde localStorage
           cargarDesdeLocal();
         });
+    }
+
+    // 📸 Inicializa el escáner QR
+    function iniciarEscanerQR() {
+      // Esta función se mantiene para compatibilidad
+      console.log("Iniciar escáner QR");
+    }
+
+    // 🧾 Muestra mensajes al usuario
+    function mostrarMensaje(texto) {
+      const status = document.getElementById("status");
+      status.innerHTML = texto;
+      setTimeout(() => {
+        status.innerHTML = "» PRESIONA 'INICIAR ESCANEO' DESPUÉS DE LLENAR LOS CAMPOS «";
+      }, 3000);
     }
 
     // Inicialización cuando carga la página
@@ -608,6 +793,13 @@
       
       // Configurar botón de exportación
       document.getElementById("btnExport").addEventListener("click", exportarDatosLocales);
+      
+      // Configurar botón de depuración
+      document.getElementById("btnDebug").addEventListener("click", () => {
+        modoDebug = !modoDebug;
+        mostrarDebug("Modo depuración " + (modoDebug ? "activado" : "desactivado"));
+        document.getElementById("btnDebug").textContent = modoDebug ? "OCULTAR DEBUG" : "DEPURAR";
+      });
     });
 
     // Manejo de botones de escaneo
@@ -623,7 +815,7 @@
       const referencia = document.getElementById('referencia').value;
       
       if (!motivo || !cajera || !referencia) {
-        status.innerHTML = `<span class="error-message">✗ COMPLETA TODOS LOS CAMPOS OBLIGATORIOS ✗</span>`;
+        mostrarMensaje(`<span class="error-message">✗ COMPLETA TODOS LOS CAMPOS OBLIGATORIOS ✗</span>`);
         return;
       }
       
@@ -647,6 +839,8 @@
               action: "insert"
             };
 
+            mostrarDebug(`CURP escaneado: ${decodedText}`);
+            
             // Enviar datos
             enviarDatos(datosEnvio)
             .then(response => {
@@ -655,12 +849,12 @@
                 
                 if (response.registro) {
                   // Modo local
-                  status.innerHTML = `<span class="warning-message">⚠ REGISTRO LOCAL: ${response.folio}</span>`;
+                  mostrarMensaje(`<span class="warning-message">⚠ REGISTRO LOCAL: ${response.folio}</span>`);
                   // Agregar nuevo registro a la tabla
                   agregarRegistroATabla(response.registro);
                 } else {
                   // Modo servidor
-                  status.innerHTML = `<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`;
+                  mostrarMensaje(`<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`);
                   // Recargar tabla completa después de 1 segundo
                   setTimeout(cargarTabla, 1000);
                 }
@@ -671,12 +865,14 @@
                 document.getElementById('observaciones').value = '';
               } else {
                 const errorMsg = response && response.message ? response.message : 'Error desconocido';
-                status.innerHTML = `<span class="error-message">✗ ERROR: ${errorMsg}</span>`;
+                mostrarMensaje(`<span class="error-message">✗ ERROR: ${errorMsg}</span>`);
+                mostrarDebug(`Error completo: ${JSON.stringify(response)}`);
               }
             })
             .catch(err => {
               console.error(err);
-              status.innerHTML = `<span class="error-message">✗ ERROR DE CONEXIÓN ✗</span>`;
+              mostrarMensaje(`<span class="error-message">✗ ERROR DE CONEXIÓN ✗</span>`);
+              mostrarDebug(`Error de conexión: ${err.message}`);
             });
 
             html5QrCode.stop().then(() => {
@@ -690,14 +886,14 @@
           }
         ).catch(err => {
           console.error(err);
-          status.innerHTML = `<span class="error-message">✗ ERROR AL INICIAR CÁMARA ✗</span>`;
+          mostrarMensaje(`<span class="error-message">✗ ERROR AL INICIAR CÁMARA ✗</span>`);
           btnStart.disabled = false; 
           btnStop.disabled = true;
           reader.classList.remove('scanning');
         });
       } catch (err) {
         console.error(err);
-        status.innerHTML = `<span class="error-message">ERROR: NO SE CARGÓ HTML5QRCODE</span>`;
+        mostrarMensaje(`<span class="error-message">ERROR: NO SE CARGÓ HTML5QRCODE</span>`);
         btnStart.disabled = false; 
         btnStop.disabled = true;
         reader.classList.remove('scanning');
@@ -714,13 +910,35 @@
       }
       
       const fila = document.createElement("tr");
-      [
-        "folio", "fecha", "hora", "curp", "paterno", "materno", "nombres",
-        "fecha_nacimiento", "sexo", "entidad", "homoclave", "motivo", "edad",
-        "cajera", "referencia", "observaciones"
-      ].forEach(campo => {
+      
+      // Asegurar formato correcto de fechas
+      registro.fecha = formatearFecha(registro.fecha);
+      registro.hora = formatearHora(registro.hora);
+      registro.fecha_nacimiento = formatearFecha(registro.fecha_nacimiento);
+      
+      // Mapear campos para coincidir con los encabezados de la tabla
+      const campos = [
+        registro.folio, 
+        registro.fecha, 
+        registro.hora, 
+        registro.curp, 
+        registro.paterno, 
+        registro.materno, 
+        registro.nombres,
+        registro.fecha_nacimiento, 
+        registro.sexo, 
+        registro.entidad, 
+        registro.homoclave, 
+        registro.motivo, 
+        registro.edad, 
+        registro.cajera, 
+        registro.referencia, 
+        registro.observaciones
+      ];
+      
+      campos.forEach(valor => {
         const celda = document.createElement("td");
-        celda.textContent = registro[campo] || "";
+        celda.textContent = valor || "";
         fila.appendChild(celda);
       });
       

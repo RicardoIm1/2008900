@@ -871,18 +871,44 @@
               if (response && response.success) {
                 ultimoFolio = response.folio;
                 
-                if (response.registro) {
-                  // Modo local
-                  mostrarMensaje(`<span class="warning-message">⚠ REGISTRO LOCAL: ${response.folio}</span>`);
-                  // Agregar nuevo registro a la tabla
-                  agregarRegistroATabla(response.registro);
-                } else {
-                  // Modo servidor
-                  mostrarMensaje(`<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`);
-                  // Recargar tabla completa después de 1 segundo
-                  setTimeout(cargarTabla, 1000);
-                }
-                
+                if (response && response.success) {
+  mostrarMensaje(`<span class="${response.registro ? "warning-message" : "success-message"}">
+    ${response.registro ? "⚠ REGISTRO LOCAL:" : "✓ REGISTRO EXITOSO:"} ${response.folio}
+  </span>`);
+
+  // Si vino del servidor no trae "registro", lo construimos rápido:
+  const registro = response.registro || {
+    folio: response.folio,
+    fecha: formatearFecha(new Date()),
+    hora: formatearHora(new Date()),
+    curp: datosEnvio.curp,
+    paterno: "",
+    materno: "",
+    nombres: "",
+    fecha_nacimiento: extraerFechaNacimientoDesdeCURP(datosEnvio.curp),
+    sexo: "",
+    entidad: "",
+    homoclave: "",
+    motivo: datosEnvio.motivo,
+    edad: calcularEdadDesdeFechaNacimiento(extraerFechaNacimientoDesdeCURP(datosEnvio.curp)),
+    cajera: datosEnvio.cajera,
+    referencia: datosEnvio.referencia,
+    observaciones: datosEnvio.observaciones
+  };
+
+  ultimoFolio = response.folio;
+  agregarRegistroATabla(registro);
+
+  // Limpiar formulario
+  document.getElementById('motivo').value = '';
+  document.getElementById('referencia').value = '';
+  document.getElementById('observaciones').value = '';
+} else {
+  const errorMsg = response && response.message ? response.message : 'Error desconocido';
+  mostrarMensaje(`<span class="error-message">✗ ERROR: ${errorMsg}</span>`);
+  mostrarDebug(`Error completo: ${JSON.stringify(response)}`);
+}
+              
                 // Limpiar formulario
                 document.getElementById('motivo').value = '';
                 document.getElementById('referencia').value = '';

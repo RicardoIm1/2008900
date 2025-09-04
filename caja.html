@@ -100,22 +100,32 @@
       margin-top: 10px;
       font-size: 12px;
     }
+    
     table.pacientes th, table.pacientes td {
       border: 1px solid #0f0;
       padding: 6px;
       text-align: left;
+      color: #0f0; /* Asegura que el texto sea verde */
+      background-color: #111; /* Asegura fondo oscuro */
     }
+    
     table.pacientes th {
       background-color: #1a1a1a;
       position: sticky;
       top: 0;
+      color: #0f0; /* Texto verde para las cabeceras */
     }
+    
     table.pacientes tr:nth-child(even) {
-      background-color: #151515;
+     background-color: #151515;
+     color: #0f0; /* Asegura texto verde en filas pares */
     }
+    
     table.pacientes tr:hover {
-      background-color: #1f1f1f;
+     background-color: #1f1f1f;
+     color: #0f0; /* Asegura texto verde al hacer hover */
     }
+    
     #loader-pagina {
       position: fixed;
       top: 0;
@@ -163,11 +173,13 @@
     .nueva-fila {
       animation: highlight 3s;
     }
+    
     @keyframes highlight {
       0% { background-color: #0f0; color: #000; }
       50% { background-color: #2a2a2a; color: #0f0; }
-      100% { background-color: #111; }
+      100% { background-color: #111; color: #0f0; } /* Asegura texto verde al final */
     }
+    
     #reader {
       width: 100%;
       margin: 0 auto;

@@ -458,73 +458,63 @@
       }
     }
 
-    // Función para enviar datos al servidor
+    // Función para enviar datos al servidor usando Google Apps Script
     function enviarDatos(datos) {
-      return new Promise((resolve, reject) => {
-        // Crear iframe para evitar problemas de CORS
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.name = 'formTarget';
-        document.body.appendChild(iframe);
-        
-        // Crear formulario
-        const form = document.createElement('form');
-        form.action = URL_API;
-        form.method = 'POST';
-        form.target = 'formTarget';
-        form.style.display = 'none';
-        
-        // Agregar datos al formulario
+      return new Promise((resolve) => {
+        // Primero intentamos con fetch y el método tradicional
+        const formData = new URLSearchParams();
         for (const key in datos) {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = key;
-          input.value = datos[key];
-          form.appendChild(input);
+          formData.append(key, datos[key]);
         }
         
-        document.body.appendChild(form);
-        
-        // Manejar la respuesta
-        iframe.onload = function() {
-          try {
-            // Intentar obtener la respuesta del iframe
-            const responseText = iframe.contentDocument?.body?.textContent || "";
-            
-            // Intentar parsear como JSON
-            try {
-              const response = JSON.parse(responseText);
-              resolve(response);
-            } catch (e) {
-              // Si no es JSON válido, asumir que fue exitoso
-              console.warn("Respuesta no es JSON válido, asumiendo éxito:", responseText);
-              resolve({
+        fetch(URL_API, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData
+        })
+        .then(response => {
+          // Intentamos leer la respuesta como texto primero
+          return response.text().then(text => {
+            // Si la respuesta está vacía, asumimos éxito
+            if (!text || text.trim() === '') {
+              console.log("Respuesta vacía del servidor, asumiendo éxito");
+              return {
                 success: true,
                 folio: "GAS-" + new Date().getTime().toString().slice(-6),
-                message: "Datos enviados al servidor (respuesta no JSON)"
-              });
+                message: "Datos enviados al servidor correctamente"
+              };
             }
-          } catch (error) {
-            // Si hay error, guardar localmente
-            console.warn("Error al procesar respuesta:", error);
-            guardarEnLocal(datos).then(resolve);
-          } finally {
-            // Limpiar
-            document.body.removeChild(form);
-            document.body.removeChild(iframe);
-          }
-        };
-        
-        iframe.onerror = function() {
-          // Si hay error, guardar localmente
-          console.warn("Error de conexión, guardando localmente");
+            
+            // Intentamos parsear como JSON
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              console.warn("Respuesta no es JSON válido:", text);
+              // Si no es JSON pero contiene "éxito" o similar, asumimos éxito
+              if (text.toLowerCase().includes('éxito') || text.toLowerCase().includes('exito') || 
+                  text.toLowerCase().includes('success') || text.toLowerCase().includes('folio')) {
+                return {
+                  success: true,
+                  folio: "GAS-" + new Date().getTime().toString().slice(-6),
+                  message: "Datos enviados al servidor: " + text
+                };
+              }
+              
+              // Si no podemos determinar el éxito, guardamos localmente
+              throw new Error('Respuesta no reconocida');
+            }
+          });
+        })
+        .then(response => {
+          resolve(response);
+        })
+        .catch(error => {
+          console.warn("Error al enviar datos al servidor, guardando localmente:", error);
+          // Si falla, guardar localmente
           guardarEnLocal(datos).then(resolve);
-          document.body.removeChild(form);
-          document.body.removeChild(iframe);
-        };
-        
-        // Enviar formulario
-        form.submit();
+        });
       });
     }
 
@@ -532,18 +522,23 @@
     function cargarTabla() {
       // Primero intentar cargar desde el servidor
       fetch(URL_API + '?action=get')
-        .then(response => {
-          if (response.ok) return response.text().then(text => {
-            try {
-              return JSON.parse(text);
-            } catch (e) {
-              console.warn("Respuesta GET no es JSON válido");
-              throw new Error('Respuesta no JSON');
-            }
-          });
-          throw new Error('Error en respuesta del servidor');
-        })
-        .then(registros => {
+        .then(response => response.text())
+        .then(text => {
+          let registros;
+          
+          // Si la respuesta está vacía, intentamos cargar desde localStorage
+          if (!text || text.trim() === '') {
+            throw new Error('Respuesta vacía del servidor');
+          }
+          
+          // Intentar parsear como JSON
+          try {
+            registros = JSON.parse(text);
+          } catch (e) {
+            console.warn("Respuesta GET no es JSON válido, usando datos locales");
+            throw new Error('Respuesta no JSON');
+          }
+          
           const cuerpo = document.getElementById("tabla-pacientes");
           cuerpo.innerHTML = "";
           

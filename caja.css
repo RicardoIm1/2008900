@@ -556,3 +556,11 @@
       0%, 100% { background-color: transparent; }
       50% { background-color: rgba(255,0,0,0.5); }
     }
+
+      footer {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
+    }

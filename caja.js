@@ -1,64 +1,916 @@
-// 📸 Inicializa el escáner QR
-function iniciarEscanerQR() {
-  const qrScanner = new Html5Qrcode("qr-reader");
-  const config = { fps: 10, qrbox: 250 };
-
-  qrScanner.start(
-    { facingMode: "environment" },
-    config,
-    (textoQR) => {
-      document.getElementById("curp").value = textoQR;
-      qrScanner.stop(); // Detiene escaneo tras lectura
-    },
-    (error) => {
-      console.warn("Error escaneando:", error);
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>URGENCIAS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 10px;
+      overflow-x: hidden;
     }
-  );
-}
+    .terminal-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    .terminal-escaneo, .terminal-tabla {
+      background-color: #111;
+      border: 1px solid #0f0;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+    }
+    .terminal-escaneo {
+      flex: 1;
+      min-width: 300px;
+    }
+    .terminal-tabla {
+      flex: 2;
+      min-width: 500px;
+      overflow-x: auto;
+    }
+    h2 {
+      text-align: center;
+      border-bottom: 1px solid #0f0;
+      padding-bottom: 10px;
+      margin-top: 0;
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+    }
+    #formularioAdicional {
+      margin-top: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      background-color: #222;
+      color: #0f0;
+      border: 1px solid #0f0;
+      font-family: 'Courier New', monospace;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 3px;
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:disabled {
+      background-color: #444;
+      color: #666;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #3f3;
+    }
+    table.pacientes {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    table.pacientes th, table.pacientes td {
+      border: 1px solid #0f0;
+      padding: 6px;
+      text-align: left;
+    }
+    table.pacientes th {
+      background-color: #1a1a1a;
+      position: sticky;
+      top: 0;
+    }
+    table.pacientes tr:nth-child(even) {
+      background-color: #151515;
+    }
+    table.pacientes tr:hover {
+      background-color: #1f1f1f;
+    }
+    #loader-pagina {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-family: 'Courier New', monospace;
+      color: #0f0;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 255, 0, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #0f0;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .success-message {
+      color: #0f0;
+      font-weight: bold;
+    }
+    .error-message {
+      color: #f00;
+      font-weight: bold;
+    }
+    .warning-message {
+      color: #ff0;
+      font-weight: bold;
+    }
+    .nueva-fila {
+      animation: highlight 3s;
+    }
+    @keyframes highlight {
+      0% { background-color: #0f0; color: #000; }
+      50% { background-color: #2a2a2a; color: #0f0; }
+      100% { background-color: #111; }
+    }
+    #reader {
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+    #reader__dashboard_section {
+      background: #111;
+      padding: 10px;
+    }
+    #reader__camera_selection {
+      background: #222;
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+    .scanning {
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+    @media (max-width: 768px) {
+      .terminal-flex {
+        flex-direction: column;
+      }
+      .terminal-escaneo, .terminal-tabla {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
 
-// 📋 Carga registros desde Google Sheets
-function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbwEgr4ICW8Rx8aPf5JPCUEoGKF3fOs8Cz9aUv69q5Jpiwd0vhoE950niuuWegpgqq7i0g/exec")
-    .then(res => res.json())
-    .then(registros => {
-      const cuerpoTabla = document.getElementById("tabla-pacientes");
-      cuerpoTabla.innerHTML = "";
+<body>
+  <!-- Loader -->
+  <div id="loader-pagina">
+    <div class="spinner"></div>
+    <div style="margin-top: 10px;">Inicializando terminal...</div>
+  </div>
 
-      registros.reverse().forEach(registro => {
-        const fila = document.createElement("tr");
-        [
-          "FOLIO", "FECHA", "HORA", "CURP", "PATERNO", "MATERNO", "NOMBRE(S)",
-          "FECHA DE NACIMIENTO", "SEXO", "ENTIDAD", "HOMOCLAVE", "MOTIVO", "EDAD", "CAJERA",
-          "NUMERO DE REFERENCIA", "OBSERVACIONES"
-        ].forEach(campo => {
-          const celda = document.createElement("td");
-          celda.textContent = registro[campo] || "";
-          fila.appendChild(celda);
-        });
-        cuerpoTabla.appendChild(fila);
+  <div class="terminal-flex">
+    <!-- Escaneo + Formulario -->
+    <div class="terminal-escaneo">
+      <h2>Ingresos por Urgencias</h2>
+      <div id="reader"></div>
+      <div id="status" style="width: 100%; text-align: center; margin: 10px 0;">
+        » PRESIONA "INICIAR ESCANEO" DESPUÉS DE LLENAR LOS CAMPOS «
+      </div>
+
+      <div id="formularioAdicional">
+        <label for="motivo">MOTIVO:</label>
+        <input type="text" id="motivo" placeholder="EJ. CAÍDA DE MOTOCICLETA" required>
+
+        <label for="cajera">CAJERA:</label>
+        <select id="cajera" required>
+          <option value="">-- SELECCIONA TU NOMBRE --</option>
+          <option value="ALICIA">ALICIA</option>
+          <option value="ANGELICA">ANGELICA</option>
+          <option value="BELEN">BELEN</option>
+          <option value="FELIX">FELIX</option>
+          <option value="KARLA V">KARLA V</option>
+          <option value="ROCIO">ROCIO</option>
+          <option value="RUBI">RUBI</option>
+        </select>
+
+        <label for="referencia">NÚMERO DE REFERENCIA:</label>
+        <input type="text" id="referencia" placeholder="EJ. EXPEDIENTE" required>
+
+        <label for="observaciones">OBSERVACIONES:</label>
+        <textarea id="observaciones" placeholder="COMENTARIOS ADICIONALES..."></textarea>
+      </div>
+
+      <div class="button-group">
+        <button id="btnStart">INICIAR ESCANEO</button>
+        <button id="btnStop" disabled>DETENER</button>
+        <button id="btnRefresh" title="Actualizar tabla">ACTUALIZAR</button>
+        <button id="btnExport" title="Exportar datos locales">EXPORTAR</button>
+      </div>
+    </div>
+
+    <!-- Tabla dinámica -->
+    <div class="terminal-tabla">
+      <input type="text" id="busqueda" placeholder="Buscar..." 
+             style="margin-bottom: 10px; width: 100%; padding: 6px; font-family: 'Courier New'; background: #222; color: #0f0; border: 1px solid #0f0;">
+      <div id="modo-local" style="display: none; background: #331100; color: #ff9900; padding: 8px; margin-bottom: 10px; text-align: center;">
+        ⚠ MODO LOCAL: Los datos se guardan en este navegador
+      </div>
+      <table class="pacientes" id="pacientes">
+        <thead>
+          <tr>
+            <th>FOLIO</th><th>FECHA</th><th>HORA</th><th>CURP</th><th>PATERNO</th><th>MATERNO</th>
+            <th>NOMBRE(S)</th><th>FECHA NAC.</th><th>SEXO</th><th>ENTIDAD</th><th>HOMOCLAVE</th>
+            <th>MOTIVO</th><th>EDAD</th><th>CAJERA</th><th>REFERENCIA</th><th>OBSERVACIONES</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-pacientes"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const URL_API = "https://script.google.com/macros/s/AKfycbwEgr4ICW8Rx8aPf5JPCUEoGKF3fOs8Cz9aUv69q5Jpiwd0vhoE950niuuWegpgqq7i0g/exec";
+    let html5QrCode, filaDestacada = null;
+    let usandoModoLocal = false;
+    let ultimoFolio = "";
+
+    // Función para filtrar la tabla
+    function filtrarTabla() {
+      const input = document.getElementById("busqueda").value.toLowerCase();
+      const filas = document.querySelectorAll("#tabla-pacientes tr");
+      
+      filas.forEach(fila => {
+        const celdas = fila.getElementsByTagName("td");
+        let coincide = false;
+        
+        for (let j = 0; j < celdas.length; j++) {
+          if (celdas[j].textContent.toLowerCase().includes(input)) { 
+            coincide = true; 
+            break; 
+          }
+        }
+        
+        fila.style.display = coincide ? "" : "none";
       });
-    })
-    .catch(err => {
-      mostrarMensaje("❌ Error al cargar registros");
-      console.error(err);
+    }
+
+    // Función para formatear fecha como dd/mm/yyyy
+    function formatearFecha(fecha) {
+      if (!fecha) return "";
+      
+      try {
+        // Si ya está en formato dd/mm/yyyy, devolver tal cual
+        if (typeof fecha === 'string' && fecha.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+          return fecha;
+        }
+        
+        const date = new Date(fecha);
+        if (isNaN(date.getTime())) return fecha;
+        
+        const dia = date.getDate().toString().padStart(2, '0');
+        const mes = (date.getMonth() + 1).toString().padStart(2, '0');
+        const anio = date.getFullYear();
+        
+        return `${dia}/${mes}/${anio}`;
+      } catch (e) {
+        return fecha;
+      }
+    }
+
+    // Función para formatear hora como HH:MM
+    function formatearHora(fecha) {
+      if (!fecha) return "";
+      
+      try {
+        const date = new Date(fecha);
+        if (isNaN(date.getTime())) {
+          // Si es un string con formato de hora, devolver tal cual
+          if (typeof fecha === 'string' && fecha.match(/^\d{2}:\d{2}$/)) {
+            return fecha;
+          }
+          return fecha;
+        }
+        
+        const horas = date.getHours().toString().padStart(2, '0');
+        const minutos = date.getMinutes().toString().padStart(2, '0');
+        
+        return `${horas}:${minutos}`;
+      } catch (e) {
+        return fecha;
+      }
+    }
+
+    // Función para extraer y formatear fecha de nacimiento desde CURP
+    function extraerFechaNacimientoDesdeCURP(curp) {
+      if (!curp || curp.length < 10) return "";
+      
+      try {
+        // Extraer fecha del CURP (posiciones 5-10: AAMMDD)
+        // Ejemplo: RATJ800318HJCMRR07 -> 800318 (18/03/1980)
+        const fechaStr = curp.substring(4, 10);
+        if (fechaStr.length !== 6) return "";
+        
+        const anio = "19" + fechaStr.substring(0, 2); // 80 -> 1980
+        const mes = fechaStr.substring(2, 4); // 03
+        const dia = fechaStr.substring(4, 6); // 18
+        
+        return `${dia}/${mes}/${anio}`;
+      } catch (e) {
+        return "";
+      }
+    }
+
+    // Función para calcular edad desde fecha de nacimiento
+    function calcularEdadDesdeFechaNacimiento(fechaNacimiento) {
+      if (!fechaNacimiento) return "";
+      
+      try {
+        // Convertir dd/mm/yyyy a fecha JavaScript
+        const partes = fechaNacimiento.split('/');
+        if (partes.length !== 3) return "";
+        
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1; // Los meses en JS son 0-11
+        const anio = parseInt(partes[2], 10);
+        
+        const nacimiento = new Date(anio, mes, dia);
+        if (isNaN(nacimiento.getTime())) return "";
+        
+        const hoy = new Date();
+        
+        let edad = hoy.getFullYear() - nacimiento.getFullYear();
+        
+        // Ajustar si aún no ha pasado el cumpleaños este año
+        if (hoy.getMonth() < nacimiento.getMonth() || 
+            (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate())) {
+          edad--;
+        }
+        
+        return edad.toString();
+      } catch (error) {
+        return "";
+      }
+    }
+
+    // Función para guardar datos en localStorage
+    function guardarEnLocal(datos) {
+      return new Promise((resolve) => {
+        try {
+          // Obtener datos existentes
+          const registrosGuardados = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
+          
+          // Obtener último folio local para hacerlo consecutivo
+          let ultimoNumero = 0;
+          registrosGuardados.forEach(reg => {
+            if (reg.folio && reg.folio.startsWith("LOCAL-")) {
+              const num = parseInt(reg.folio.split("-")[1]);
+              if (!isNaN(num) && num > ultimoNumero) {
+                ultimoNumero = num;
+              }
+            }
+          });
+          
+          // Generar folio consecutivo
+          const siguienteNumero = ultimoNumero + 1;
+          const folio = "LOCAL-" + siguienteNumero.toString().padStart(5, '0');
+          
+          // Obtener fecha y hora actual formateadas
+          const ahora = new Date();
+          const fecha = formatearFecha(ahora);
+          const hora = formatearHora(ahora);
+          
+          // Procesar CURP para extraer información
+          const infoCURP = procesarCURP(datos.curp);
+          
+          // Extraer y formatear fecha de nacimiento desde CURP
+          const fechaNacimiento = extraerFechaNacimientoDesdeCURP(datos.curp);
+          
+          // Calcular edad automáticamente
+          const edad = calcularEdadDesdeFechaNacimiento(fechaNacimiento);
+          
+          // Crear registro completo
+          const registro = {
+            folio: folio,
+            fecha: fecha,
+            hora: hora,
+            curp: datos.curp,
+            paterno: infoCURP.paterno || "",
+            materno: infoCURP.materno || "",
+            nombres: infoCURP.nombres || "",
+            fecha_nacimiento: fechaNacimiento,
+            sexo: infoCURP.sexo || "",
+            entidad: infoCURP.entidad || "",
+            homoclave: infoCURP.homoclave || "",
+            motivo: datos.motivo,
+            edad: edad,
+            cajera: datos.cajera,
+            referencia: datos.referencia,
+            observaciones: datos.observaciones
+          };
+          
+          // Agregar a la lista
+          registrosGuardados.push(registro);
+          
+          // Guardar en localStorage
+          localStorage.setItem('registrosUrgencias', JSON.stringify(registrosGuardados));
+          
+          // Resolver con éxito
+          resolve({
+            success: true,
+            folio: folio,
+            message: "Datos guardados correctamente con folio: " + folio,
+            registro: registro
+          });
+        } catch (error) {
+          resolve({
+            success: false,
+            message: "Error al guardar localmente: " + error.message
+          });
+        }
+      });
+    }
+
+    // Función para procesar datos del CURP
+    function procesarCURP(curp) {
+      try {
+        // Ejemplo de CURP: RATJ800318HJCMRR07||RAMIREZ|TORRES|JERONIMO RICARDO|HOMBRE|18/03/1980|JALISCO|14|
+        const partes = curp.split('||');
+        if (partes.length < 2) return {};
+        
+        const datos = partes[1].split('|');
+        return {
+          paterno: datos[0] || "",
+          materno: datos[1] || "",
+          nombres: datos[2] || "",
+          sexo: datos[3] || "",
+          entidad: datos[5] || "",
+          homoclave: datos[7] || ""
+        };
+      } catch (error) {
+        return {};
+      }
+    }
+
+    // Función para cargar la tabla desde localStorage
+    function cargarDesdeLocal() {
+      try {
+        const registros = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
+        const cuerpo = document.getElementById("tabla-pacientes");
+        cuerpo.innerHTML = "";
+        
+        if (registros.length === 0) {
+          cuerpo.innerHTML = "<tr><td colspan='16' style='text-align:center'>No hay registros locales disponibles.</td></tr>";
+          return;
+        }
+        
+        // Ordenar registros por fecha y hora (más recientes primero)
+        registros.sort((a, b) => {
+          const fechaA = new Date(a.fecha.split('/').reverse().join('/') + ' ' + a.hora);
+          const fechaB = new Date(b.fecha.split('/').reverse().join('/') + ' ' + b.hora);
+          return fechaB - fechaA;
+        });
+        
+        registros.forEach(reg => {
+          const fila = document.createElement("tr");
+          [
+            "folio", "fecha", "hora", "curp", "paterno", "materno", "nombres",
+            "fecha_nacimiento", "sexo", "entidad", "homoclave", "motivo", "edad",
+            "cajera", "referencia", "observaciones"
+          ].forEach(campo => {
+            const celda = document.createElement("td");
+            celda.textContent = reg[campo] || "";
+            fila.appendChild(celda);
+          });
+          
+          // Resaltar si es el último folio guardado
+          if (reg.folio === ultimoFolio) {
+            fila.classList.add('nueva-fila');
+            setTimeout(() => fila.classList.remove('nueva-fila'), 3000);
+          }
+          
+          cuerpo.appendChild(fila);
+        });
+      } catch (error) {
+        console.error("Error al cargar registros locales:", error);
+      }
+    }
+
+    // Función para exportar datos locales
+    function exportarDatosLocales() {
+      try {
+        const registros = JSON.parse(localStorage.getItem('registrosUrgencias') || '[]');
+        if (registros.length === 0) {
+          alert("No hay datos locales para exportar.");
+          return;
+        }
+        
+        // Convertir a CSV
+        let csv = "FOLIO,FECHA,HORA,CURP,PATERNO,MATERNO,NOMBRES,FECHA_NACIMIENTO,SEXO,ENTIDAD,HOMOCLAVE,MOTIVO,EDAD,CAJERA,REFERENCIA,OBSERVACIONES\n";
+        
+        registros.forEach(reg => {
+          csv += `"${reg.folio}","${reg.fecha}","${reg.hora}","${reg.curp}","${reg.paterno}","${reg.materno}","${reg.nombres}","${reg.fecha_nacimiento}","${reg.sexo}","${reg.entidad}","${reg.homoclave}","${reg.motivo}","${reg.edad}","${reg.cajera}","${reg.referencia}","${reg.observaciones}"\n`;
+        });
+        
+        // Crear enlace de descarga
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const enlace = document.createElement('a');
+        enlace.href = url;
+        enlace.setAttribute('download', 'registros_urgencias.csv');
+        document.body.appendChild(enlace);
+        enlace.click();
+        document.body.removeChild(enlace);
+        
+      } catch (error) {
+        console.error("Error al exportar datos:", error);
+        alert("Error al exportar datos: " + error.message);
+      }
+    }
+
+    // Función para enviar datos al servidor usando Google Apps Script
+    function enviarDatos(datos) {
+      return new Promise((resolve) => {
+        // Primero intentamos con fetch y el método tradicional
+        const formData = new URLSearchParams();
+        for (const key in datos) {
+          formData.append(key, datos[key]);
+        }
+        
+        fetch(URL_API, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: formData
+        })
+        .then(response => {
+          // Intentamos leer la respuesta como texto primero
+          return response.text().then(text => {
+            // Si la respuesta está vacía, asumimos éxito
+            if (!text || text.trim() === '') {
+              console.log("Respuesta vacía del servidor, asumiendo éxito");
+              return {
+                success: true,
+                folio: "GAS-" + new Date().getTime().toString().slice(-6),
+                message: "Datos enviados al servidor correctamente"
+              };
+            }
+            
+            // Intentamos parsear como JSON
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              console.warn("Respuesta no es JSON válido:", text);
+              // Si no es JSON pero contiene "éxito" o similar, asumimos éxito
+              if (text.toLowerCase().includes('éxito') || text.toLowerCase().includes('exito') || 
+                  text.toLowerCase().includes('success') || text.toLowerCase().includes('folio')) {
+                return {
+                  success: true,
+                  folio: "GAS-" + new Date().getTime().toString().slice(-6),
+                  message: "Datos enviados al servidor: " + text
+                };
+              }
+              
+              // Si no podemos determinar el éxito, guardamos localmente
+              throw new Error('Respuesta no reconocida');
+            }
+          });
+        })
+        .then(response => {
+          resolve(response);
+        })
+        .catch(error => {
+          console.warn("Error al enviar datos al servidor, guardando localmente:", error);
+          // Si falla, guardar localmente
+          guardarEnLocal(datos).then(resolve);
+        });
+      });
+    }
+
+    // 📋 Carga registros desde Google Sheets
+    function cargarTabla() {
+      fetch(URL_API + '?action=get')
+        .then(response => response.text())
+        .then(text => {
+          let registros;
+          
+          // Si la respuesta está vacía, intentamos cargar desde localStorage
+          if (!text || text.trim() === '') {
+            throw new Error('Respuesta vacía del servidor');
+          }
+          
+          // Intentar parsear como JSON
+          try {
+            registros = JSON.parse(text);
+          } catch (e) {
+            console.warn("Respuesta GET no es JSON válido, usando datos locales");
+            throw new Error('Respuesta no JSON');
+          }
+          
+          const cuerpo = document.getElementById("tabla-pacientes");
+          cuerpo.innerHTML = "";
+          
+          if (!registros || registros.length === 0) {
+            cuerpo.innerHTML = "<tr><td colspan='16' style='text-align:center'>No hay registros disponibles.</td></tr>";
+            return;
+          }
+          
+          // Ordenar registros (más recientes primero)
+          registros.sort((a, b) => {
+            try {
+              // Convertir fechas formato dd/mm/yyyy a yyyy/mm/dd para comparación
+              const fechaAParts = a.FECHA.split('/');
+              const fechaBParts = b.FECHA.split('/');
+              const fechaA = new Date(`${fechaAParts[2]}/${fechaAParts[1]}/${fechaAParts[0]} ${a.HORA}`);
+              const fechaB = new Date(`${fechaBParts[2]}/${fechaBParts[1]}/${fechaBParts[0]} ${b.HORA}`);
+              return fechaB - fechaA;
+            } catch (e) {
+              return 0;
+            }
+          });
+          
+          // Asegurar que los campos de fecha estén formateados correctamente
+          registros.forEach(reg => {
+            reg.FECHA = formatearFecha(reg.FECHA);
+            reg.HORA = formatearHora(reg.HORA);
+            reg['FECHA DE NACIMIENTO'] = formatearFecha(reg['FECHA DE NACIMIENTO']);
+          });
+          
+          // Mostrar registros
+          registros.forEach(reg => {
+            const fila = document.createElement("tr");
+            [
+              "FOLIO", "FECHA", "HORA", "CURP", "PATERNO", "MATERNO", "NOMBRE(S)",
+              "FECHA DE NACIMIENTO", "SEXO", "ENTIDAD", "HOMOCLAVE", "MOTIVO", "EDAD", "CAJERA",
+              "NUMERO DE REFERENCIA", "OBSERVACIONES"
+            ].forEach(campo => {
+              const celda = document.createElement("td");
+              celda.textContent = reg[campo] || "";
+              fila.appendChild(celda);
+            });
+            
+            // Resaltar si es el último folio guardado
+            if (reg.FOLIO === ultimoFolio) {
+              fila.classList.add('nueva-fila');
+              setTimeout(() => fila.classList.remove('nueva-fila'), 3000);
+            }
+            
+            cuerpo.appendChild(fila);
+          });
+          
+          // Ocultar alerta de modo local
+          document.getElementById("modo-local").style.display = "none";
+          usandoModoLocal = false;
+        })
+        .catch(err => {
+          console.warn("Error al cargar desde servidor, cargando datos locales:", err);
+          // Mostrar alerta de modo local
+          document.getElementById("modo-local").style.display = "block";
+          usandoModoLocal = true;
+          // Cargar desde localStorage
+          cargarDesdeLocal();
+        });
+    }
+
+    // 📸 Inicializa el escáner QR
+    function iniciarEscanerQR() {
+      const qrScanner = new Html5Qrcode("reader");
+      const config = { fps: 10, qrbox: 250 };
+
+      qrScanner.start(
+        { facingMode: "environment" },
+        config,
+        (textoQR) => {
+          document.getElementById("curp").value = textoQR;
+          qrScanner.stop(); // Detiene escaneo tras lectura
+        },
+        (error) => {
+          console.warn("Error escaneando:", error);
+        }
+      );
+    }
+
+    // 🧾 Muestra mensajes al usuario
+    function mostrarMensaje(texto) {
+      const status = document.getElementById("status");
+      status.innerHTML = texto;
+      setTimeout(() => {
+        status.innerHTML = "» PRESIONA 'INICIAR ESCANEO' DESPUÉS DE LLENAR LOS CAMPOS «";
+      }, 3000);
+    }
+
+    // Inicialización cuando carga la página
+    window.addEventListener("load", () => {
+      const loader = document.getElementById('loader-pagina');
+      setTimeout(() => {
+        loader.style.transition = 'opacity 0.5s ease';
+        loader.style.opacity = 0;
+        setTimeout(() => loader.style.display = 'none', 500);
+        cargarTabla();
+      }, 2000);
+      
+      // Configurar evento de búsqueda
+      document.getElementById("busqueda").addEventListener("keyup", filtrarTabla);
+      
+      // Configurar botón de actualización
+      document.getElementById("btnRefresh").addEventListener("click", cargarTabla);
+      
+      // Configurar botón de exportación
+      document.getElementById("btnExport").addEventListener("click", exportarDatosLocales);
     });
-}
 
-// 🧾 Muestra mensajes al usuario
-function mostrarMensaje(texto) {
-  const msg = document.getElementById("mensaje");
-  msg.textContent = texto;
-  msg.style.display = "block";
-  setTimeout(() => msg.style.display = "none", 3000);
-}
+    // Manejo de botones de escaneo
+    const btnStart = document.getElementById('btnStart');
+    const btnStop = document.getElementById('btnStop');
+    const status = document.getElementById('status');
+    const reader = document.getElementById('reader');
 
-// 🚀 Inicializa todo al cargar
-window.onload = () => {
-  iniciarEscanerQR();
-  cargarTabla();
-  document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
-};
+    btnStart.addEventListener('click', () => {
+      // Validar formulario
+      const motivo = document.getElementById('motivo').value;
+      const cajera = document.getElementById('cajera').value;
+      const referencia = document.getElementById('referencia').value;
+      
+      if (!motivo || !cajera || !referencia) {
+        mostrarMensaje(`<span class="error-message">✗ COMPLETA TODOS LOS CAMPOS OBLIGATORIOS ✗</span>`);
+        return;
+      }
+      
+      try {
+        html5QrCode = new Html5Qrcode("reader");
+        btnStart.disabled = true; 
+        btnStop.disabled = false;
+        status.textContent = "» INICIANDO CÁMARA... «";
+        reader.classList.add('scanning');
 
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          (decodedText) => {
+            const datosEnvio = {
+              curp: decodedText.trim(),
+              motivo: document.getElementById('motivo').value,
+              cajera: document.getElementById('cajera').value,
+              referencia: document.getElementById('referencia').value,
+              observaciones: document.getElementById('observaciones').value,
+              action: "insert"
+            };
 
+            // Enviar datos
+            enviarDatos(datosEnvio)
+            .then(response => {
+              if (response && response.success) {
+                ultimoFolio = response.folio;
+                
+                if (response.registro) {
+                  // Modo local
+                  mostrarMensaje(`<span class="warning-message">⚠ REGISTRO LOCAL: ${response.folio}</span>`);
+                  // Agregar nuevo registro a la tabla
+                  agregarRegistroATabla(response.registro);
+                } else {
+                  // Modo servidor
+                  mostrarMensaje(`<span class="success-message">✓ REGISTRO EXITOSO: ${response.folio}</span>`);
+                  // Recargar tabla completa después de 1 segundo
+                  setTimeout(cargarTabla, 1000);
+                }
+                
+                // Limpiar formulario
+                document.getElementById('motivo').value = '';
+                document.getElementById('referencia').value = '';
+                document.getElementById('observaciones').value = '';
+              } else {
+                const errorMsg = response && response.message ? response.message : 'Error desconocido';
+                mostrarMensaje(`<span class="error-message">✗ ERROR: ${errorMsg}</span>`);
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              mostrarMensaje(`<span class="error-message">✗ ERROR DE CONEXIÓN ✗</span>`);
+            });
 
+            html5QrCode.stop().then(() => {
+              btnStart.disabled = false; 
+              btnStop.disabled = true;
+              reader.classList.remove('scanning');
+            });
+          },
+          (errorMessage) => {
+            // Ignorar mensajes de error mientras se escanea
+          }
+        ).catch(err => {
+          console.error(err);
+          mostrarMensaje(`<span class="error-message">✗ ERROR AL INICIAR CÁMARA ✗</span>`);
+          btnStart.disabled = false; 
+          btnStop.disabled = true;
+          reader.classList.remove('scanning');
+        });
+      } catch (err) {
+        console.error(err);
+        mostrarMensaje(`<span class="error-message">ERROR: NO SE CARGÓ HTML5QRCODE</span>`);
+        btnStart.disabled = false; 
+        btnStop.disabled = true;
+        reader.classList.remove('scanning');
+      }
+    });
 
+    // Función para agregar un nuevo registro a la tabla
+    function agregarRegistroATabla(registro) {
+      const cuerpo = document.getElementById("tabla-pacientes");
+      
+      // Si la tabla está vacía, eliminar el mensaje de "no hay registros"
+      if (cuerpo.innerHTML.includes("No hay registros")) {
+        cuerpo.innerHTML = "";
+      }
+      
+      const fila = document.createElement("tr");
+      
+      // Asegurar formato correcto de fechas
+      registro.fecha = formatearFecha(registro.fecha);
+      registro.hora = formatearHora(registro.hora);
+      registro.fecha_nacimiento = formatearFecha(registro.fecha_nacimiento);
+      
+      // Mapear campos para coincidir con los encabezados de la tabla
+      const campos = [
+        registro.folio, 
+        registro.fecha, 
+        registro.hora, 
+        registro.curp, 
+        registro.paterno, 
+        registro.materno, 
+        registro.nombres,
+        registro.fecha_nacimiento, 
+        registro.sexo, 
+        registro.entidad, 
+        registro.homoclave, 
+        registro.motivo, 
+        registro.edad, 
+        registro.cajera, 
+        registro.referencia, 
+        registro.observaciones
+      ];
+      
+      campos.forEach(valor => {
+        const celda = document.createElement("td");
+        celda.textContent = valor || "";
+        fila.appendChild(celda);
+      });
+      
+      // Destacar la nueva fila
+      fila.classList.add('nueva-fila');
+      cuerpo.insertBefore(fila, cuerpo.firstChild);
+      
+      // Quitar el destacado después de 3 segundos
+      setTimeout(() => {
+        fila.classList.remove('nueva-fila');
+      }, 3000);
+    }
+
+    btnStop.addEventListener('click', () => {
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+          status.textContent = "» ESCANEO DETENIDO «";
+          btnStart.disabled = false; 
+          btnStop.disabled = true;
+          reader.classList.remove('scanning');
+        }).catch(err => {
+          console.error(err);
+          status.textContent = "» ERROR AL DETENER ESCANEO «";
+          btnStart.disabled = false; 
+          btnStop.disabled = true;
+          reader.classList.remove('scanning');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

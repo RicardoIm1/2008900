@@ -1,0 +1,219 @@
+    body {
+      background-color: #0a0a0a;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 10px;
+      overflow-x: hidden;
+    }
+    .terminal-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
+    }
+    .terminal-escaneo, .terminal-tabla {
+      background-color: #111;
+      border: 1px solid #0f0;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+    }
+    .terminal-escaneo {
+      flex: 1;
+      min-width: 300px;
+    }
+    .terminal-tabla {
+      flex: 2;
+      min-width: 500px;
+      overflow-x: auto;
+    }
+    h2 {
+      text-align: center;
+      border-bottom: 1px solid #0f0;
+      padding-bottom: 10px;
+      margin-top: 0;
+      font-family: 'VT323', monospace;
+      font-size: 24px;
+    }
+    #formularioAdicional {
+      margin-top: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      background-color: #222;
+      color: #0f0;
+      border: 1px solid #0f0;
+      font-family: 'Courier New', monospace;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 3px;
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:disabled {
+      background-color: #444;
+      color: #666;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #3f3;
+    }
+    table.pacientes {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    
+    table.pacientes th, table.pacientes td {
+      border: 1px solid #0f0;
+      padding: 6px;
+      text-align: left;
+      color: #0f0; /* Asegura que el texto sea verde */
+      background-color: #111; /* Asegura fondo oscuro */
+    }
+    
+    table.pacientes th {
+      background-color: #1a1a1a;
+      position: sticky;
+      top: 0;
+      color: #0f0; /* Texto verde para las cabeceras */
+    }
+    
+    table.pacientes tr:nth-child(even) {
+     background-color: #151515;
+     color: #0f0; /* Asegura texto verde en filas pares */
+    }
+    
+    table.pacientes tr:hover {
+     background-color: #1f1f1f;
+     color: #0f0; /* Asegura texto verde al hacer hover */
+    }
+    
+    #loader-pagina {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-family: 'Courier New', monospace;
+      color: #0f0;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 255, 0, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #0f0;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .success-message {
+      color: #0f0;
+      font-weight: bold;
+    }
+    .error-message {
+      color: #f00;
+      font-weight: bold;
+    }
+    .warning-message {
+      color: #ff0;
+      font-weight: bold;
+    }
+    .debug-message {
+      color: #0ff;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .nueva-fila {
+      animation: highlight 3s;
+    }
+    
+    @keyframes highlight {
+      0% { background-color: #0f0; color: #000; }
+      50% { background-color: #2a2a2a; color: #0f0; }
+      100% { background-color: #111; color: #0f0; } /* Asegura texto verde al final */
+    }
+    
+    #reader {
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+    #reader__dashboard_section {
+      background: #111;
+      padding: 10px;
+    }
+    #reader__camera_selection {
+      background: #222;
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+    .scanning {
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+    #debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid #0f0;
+      padding: 10px;
+      font-size: 12px;
+      max-width: 300px;
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .terminal-flex {
+        flex-direction: column;
+      }
+      .terminal-escaneo, .terminal-tabla {
+        min-width: 100%;
+      }
+    }
+    /* 🔹 Hacer celdas seleccionables */
+      table.pacientes td {
+        cursor: pointer;
+        user-select: text;
+      }
+      
+      /* 🔹 Mejorar animación de nueva fila */
+      @keyframes highlight {
+        0%   { background-color: #0f0; color: #000; }
+        50%  { background-color: #222; color: #0f0; }
+        100% { background-color: #151515; color: #0f0; }
+      }

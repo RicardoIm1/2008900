@@ -294,6 +294,7 @@
           return fecha;
         }
         
+        // Si es una fecha de JavaScript
         const date = new Date(fecha);
         if (isNaN(date.getTime())) return fecha;
         
@@ -409,9 +410,6 @@
           const fecha = formatearFecha(ahora);
           const hora = formatearHora(ahora);
           
-          // Procesar CURP para extraer información
-          const infoCURP = procesarCURP(datos.curp);
-          
           // Extraer y formatear fecha de nacimiento desde CURP
           const fechaNacimiento = extraerFechaNacimientoDesdeCURP(datos.curp);
           
@@ -424,19 +422,35 @@
             fecha: fecha,
             hora: hora,
             curp: datos.curp,
-            paterno: infoCURP.paterno || "",
-            materno: infoCURP.materno || "",
-            nombres: infoCURP.nombres || "",
+            paterno: "",
+            materno: "",
+            nombres: "",
             fecha_nacimiento: fechaNacimiento,
-            sexo: infoCURP.sexo || "",
-            entidad: infoCURP.entidad || "",
-            homoclave: infoCURP.homoclave || "",
+            sexo: "",
+            entidad: "",
+            homoclave: "",
             motivo: datos.motivo,
             edad: edad,
             cajera: datos.cajera,
             referencia: datos.referencia,
             observaciones: datos.observaciones
           };
+          
+          // Procesar información adicional del CURP si está disponible
+          try {
+            const partes = datos.curp.split('||');
+            if (partes.length >= 2) {
+              const datosCURP = partes[1].split('|');
+              registro.paterno = datosCURP[0] || "";
+              registro.materno = datosCURP[1] || "";
+              registro.nombres = datosCURP[2] || "";
+              registro.sexo = datosCURP[3] || "";
+              registro.entidad = datosCURP[5] || "";
+              registro.homoclave = datosCURP[7] || "";
+            }
+          } catch (e) {
+            console.log("No se pudo extraer información adicional del CURP", e);
+          }
           
           // Agregar a la lista
           registrosGuardados.push(registro);
@@ -460,27 +474,6 @@
       });
     }
 
-    // Función para procesar datos del CURP
-    function procesarCURP(curp) {
-      try {
-        // Ejemplo de CURP: RATJ800318HJCMRR07||RAMIREZ|TORRES|JERONIMO RICARDO|HOMBRE|18/03/1980|JALISCO|14|
-        const partes = curp.split('||');
-        if (partes.length < 2) return {};
-        
-        const datos = partes[1].split('|');
-        return {
-          paterno: datos[0] || "",
-          materno: datos[1] || "",
-          nombres: datos[2] || "",
-          sexo: datos[3] || "",
-          entidad: datos[5] || "",
-          homoclave: datos[7] || ""
-        };
-      } catch (error) {
-        return {};
-      }
-    }
-
     // Función para cargar la tabla desde localStorage
     function cargarDesdeLocal() {
       try {
@@ -495,20 +488,29 @@
         
         // Ordenar registros por fecha y hora (más recientes primero)
         registros.sort((a, b) => {
-          const fechaA = new Date(a.fecha.split('/').reverse().join('/') + ' ' + a.hora);
-          const fechaB = new Date(b.fecha.split('/').reverse().join('/') + ' ' + b.hora);
-          return fechaB - fechaA;
+          try {
+            // Convertir fechas formato dd/mm/yyyy a yyyy/mm/dd para comparación
+            const fechaAParts = a.fecha.split('/');
+            const fechaBParts = b.fecha.split('/');
+            const fechaAStr = `${fechaAParts[2]}/${fechaAParts[1]}/${fechaAParts[0]} ${a.hora}`;
+            const fechaBStr = `${fechaBParts[2]}/${fechaBParts[1]}/${fechaBParts[0]} ${b.hora}`;
+            return new Date(fechaBStr) - new Date(fechaAStr);
+          } catch (e) {
+            return 0;
+          }
         });
         
         registros.forEach(reg => {
           const fila = document.createElement("tr");
-          [
-            "folio", "fecha", "hora", "curp", "paterno", "materno", "nombres",
-            "fecha_nacimiento", "sexo", "entidad", "homoclave", "motivo", "edad",
-            "cajera", "referencia", "observaciones"
-          ].forEach(campo => {
+          const campos = [
+            reg.folio, reg.fecha, reg.hora, reg.curp, reg.paterno, reg.materno, reg.nombres,
+            reg.fecha_nacimiento, reg.sexo, reg.entidad, reg.homoclave, reg.motivo, reg.edad,
+            reg.cajera, reg.referencia, reg.observaciones
+          ];
+          
+          campos.forEach(valor => {
             const celda = document.createElement("td");
-            celda.textContent = reg[campo] || "";
+            celda.textContent = valor || "";
             fila.appendChild(celda);
           });
           
@@ -557,7 +559,7 @@
       }
     }
 
-    // Función para enviar datos al servidor usando Google Apps Script
+    // Función para enviar datos al servidor
     function enviarDatos(datos) {
       return new Promise((resolve) => {
         // Primero intentamos con fetch y el método tradicional
@@ -704,20 +706,8 @@
 
     // 📸 Inicializa el escáner QR
     function iniciarEscanerQR() {
-      const qrScanner = new Html5Qrcode("reader");
-      const config = { fps: 10, qrbox: 250 };
-
-      qrScanner.start(
-        { facingMode: "environment" },
-        config,
-        (textoQR) => {
-          document.getElementById("curp").value = textoQR;
-          qrScanner.stop(); // Detiene escaneo tras lectura
-        },
-        (error) => {
-          console.warn("Error escaneando:", error);
-        }
-      );
+      // Esta función se mantiene para compatibilidad
+      console.log("Iniciar escáner QR");
     }
 
     // 🧾 Muestra mensajes al usuario

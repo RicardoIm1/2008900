@@ -17,72 +17,247 @@
       padding: 10px;
       overflow-x: hidden;
     }
-    .terminal-flex { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; }
+    .terminal-flex { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 20px; 
+      justify-content: space-between; 
+    }
     .terminal-escaneo, .terminal-tabla {
-      background-color: #111; border: 1px solid #0f0; padding: 15px; border-radius: 5px;
+      background-color: #111; 
+      border: 1px solid #0f0; 
+      padding: 15px; 
+      border-radius: 5px;
       box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
     }
-    .terminal-escaneo { flex: 1; min-width: 300px; }
-    .terminal-tabla { flex: 2; min-width: 500px; overflow-x: auto; }
-    h2 { text-align: center; border-bottom: 1px solid #0f0; padding-bottom: 10px; margin-top: 0;
-         font-family: 'VT323', monospace; font-size: 24px; }
-    input, select, textarea {
-      width: 100%; padding: 8px; margin-top: 5px; background-color: #222; color: #0f0;
-      border: 1px solid #0f0; font-family: 'Courier New', monospace; box-sizing: border-box;
+    .terminal-escaneo { 
+      flex: 1; 
+      min-width: 300px; 
     }
-    button {
-      flex: 1; padding: 10px; background-color: #0f0; color: #000; border: none; border-radius: 3px;
-      font-family: 'Share Tech Mono', monospace; font-weight: bold; cursor: pointer;
-      transition: background-color 0.3s;
+    .terminal-tabla { 
+      flex: 2; 
+      min-width: 500px; 
+      overflow-x: auto; 
+      max-height: 80vh;
     }
-    button:disabled { background-color: #444; color: #666; cursor: not-allowed; }
-    button:hover:not(:disabled) { background-color: #3f3; }
-    table.pacientes { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+    h2 {
+      text-align: center; 
+      border-bottom: 1px solid #0f0; 
+      padding-bottom: 10px; 
+      margin-top: 0;
+      font-family: 'VT323', monospace; 
+      font-size: 24px;
+    }
+    table.pacientes { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 10px; 
+      font-size: 12px; 
+    }
     table.pacientes th, table.pacientes td {
-      border: 1px solid #0f0; padding: 6px; text-align: left; color: #0f0; background-color: #111;
+      border: 1px solid #0f0; 
+      padding: 6px; 
+      text-align: left; 
+      color: #0f0; 
+      background-color: #111;
     }
-    table.pacientes th { background-color: #1a1a1a; position: sticky; top: 0; }
-    table.pacientes tr:nth-child(even) { background-color: #151515; }
-    table.pacientes tr:hover { background-color: #1f1f1f; }
-    .nueva-fila { animation: highlight 3s; }
+    table.pacientes th { 
+      background-color: #1a1a1a; 
+      position: sticky; 
+      top: 0; 
+      z-index: 10;
+    }
+    table.pacientes tr:nth-child(even) { 
+      background-color: #151515; 
+    }
+    table.pacientes tr:hover { 
+      background-color: #1f1f1f; 
+    }
+    table.pacientes td { 
+      cursor: pointer; 
+      user-select: text; 
+    }
+    .nueva-fila { 
+      animation: highlight 3s; 
+    }
     @keyframes highlight {
       0% { background-color: #0f0; color: #000; }
       50% { background-color: #222; color: #0f0; }
-      100% { background-color: #151515; color: #0f0; }
+      100% { background-color: #111; color: #0f0; }
+    }
+    
+    /* Nuevos estilos */
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: bold;
+      color: #0f0;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      background-color: #222;
+      color: #0f0;
+      border: 1px solid #0f0;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      flex: 1;
+      padding: 10px;
+      background-color: #1a1a1a;
+      color: #0f0;
+      border: 1px solid #0f0;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: 'VT323', monospace;
+      font-size: 18px;
+      transition: all 0.3s;
+    }
+    button:hover {
+      background-color: #0f0;
+      color: #000;
+    }
+    #reader {
+      width: 100%;
+      margin: 15px 0;
+      position: relative;
+    }
+    #reader__dashboard_section_csr {
+      background: #1a1a1a;
+      padding: 10px;
+      border: 1px solid #0f0;
+    }
+    #reader__scan_region {
+      border: 2px dashed #0f0 !important;
+    }
+    #reader__scan_region img {
+      filter: invert(1) hue-rotate(90deg);
+    }
+    .scan-feedback {
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+      min-height: 20px;
+    }
+    .success {
+      color: #0f0;
+      animation: blink 1s infinite;
+    }
+    .error {
+      color: #f00;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #1a1a1a;
+      border: 1px solid #0f0;
+      font-size: 12px;
     }
   </style>
 </head>
+
 <body>
-  <!-- Escaneo -->
   <div class="terminal-flex">
     <div class="terminal-escaneo">
       <h2>Ingresos por Urgencias</h2>
+      
       <div id="reader"></div>
-      <div id="status" style="text-align: center; margin: 10px 0;">
-        » PRESIONA "INICIAR ESCANEO" DESPUÉS DE LLENAR LOS CAMPOS «
+      <div id="scan-feedback" class="scan-feedback"></div>
+      
+      <div id="formularioAdicional">
+        <div class="form-group">
+          <label for="curp">CURP:</label>
+          <input type="text" id="curp" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="paterno">PATERNO:</label>
+          <input type="text" id="paterno" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="materno">MATERNO:</label>
+          <input type="text" id="materno" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="nombres">NOMBRE(S):</label>
+          <input type="text" id="nombres" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="sexo">SEXO:</label>
+          <input type="text" id="sexo" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="fecha_nacimiento">FECHA NAC.:</label>
+          <input type="text" id="fecha_nacimiento" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="entidad">ENTIDAD:</label>
+          <input type="text" id="entidad" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="motivo">MOTIVO:</label>
+          <input type="text" id="motivo" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="cajera">CAJERA:</label>
+          <select id="cajera" required>
+            <option value="">-- SELECCIONA --</option>
+            <option value="ALICIA">ALICIA</option>
+            <option value="ANGELICA">ANGELICA</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="referencia">REFERENCIA:</label>
+          <input type="text" id="referencia">
+        </div>
+        
+        <div class="form-group">
+          <label for="observaciones">OBSERVACIONES:</label>
+          <textarea id="observaciones"></textarea>
+        </div>
       </div>
-      <label for="motivo">MOTIVO:</label>
-      <input type="text" id="motivo" required>
-      <label for="cajera">CAJERA:</label>
-      <select id="cajera" required>
-        <option value="">-- SELECCIONA TU NOMBRE --</option>
-        <option value="ALICIA">ALICIA</option>
-        <option value="ANGELICA">ANGELICA</option>
-        <option value="BELEN">BELEN</option>
-        <option value="FELIX">FELIX</option>
-      </select>
-      <label for="referencia">REFERENCIA:</label>
-      <input type="text" id="referencia" required>
-      <label for="observaciones">OBSERVACIONES:</label>
-      <textarea id="observaciones"></textarea>
+      
       <div class="button-group">
-        <button id="btnStart">INICIAR ESCANEO</button>
-        <button id="btnStop" disabled>DETENER</button>
+        <button id="btnGuardar">GUARDAR</button>
+        <button id="btnRefresh">ACTUALIZAR</button>
+        <button id="btnLimpiar">LIMPIAR</button>
+      </div>
+      
+      <div class="status-bar">
+        <span id="contador">Total: 0 registros</span>
+        <span id="status">Listo</span>
       </div>
     </div>
 
-    <!-- Tabla -->
     <div class="terminal-tabla">
+      <h2>Registros de Pacientes</h2>
       <table class="pacientes" id="pacientes">
         <thead>
           <tr>
@@ -96,72 +271,258 @@
     </div>
   </div>
 
-  <script>
-    let html5QrCode, ultimoFolio = "";
-
-    function formatearFecha(fecha) {
-      const d = new Date(fecha);
-      if (isNaN(d)) return "";
-      return d.toLocaleDateString("es-MX");
+<script>
+  // Almacenamiento de datos (simulado)
+  let pacientes = JSON.parse(localStorage.getItem('pacientesUrgencias')) || [];
+  let contadorFolio = pacientes.length > 0 ? Math.max(...pacientes.map(p => parseInt(p.folio.split('-')[1]))) + 1 : 1;
+  
+  // Inicializar el escáner QR
+  const html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader", 
+    { 
+      fps: 10, 
+      qrbox: { width: 250, height: 250 },
+      supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+      showTorchButtonIfSupported: true
+    }, 
+    false
+  );
+  
+  // Función para analizar CURP
+  function parseCURP(curp) {
+    // Formato básico de CURP: 4 letras + 6 números + 1 sexo + 2 estado + 3 consonantes + 2 números
+    if (!curp || curp.length < 18) return null;
+    
+    const sexo = curp.charAt(10) === 'H' ? 'HOMBRE' : 'MUJER';
+    
+    // Extraer fecha de nacimiento (6 dígitos después de los 4 primeros caracteres)
+    const fechaStr = curp.substr(4, 6);
+    let año = parseInt(fechaStr.substr(0, 2));
+    const mes = parseInt(fechaStr.substr(2, 2)) - 1;
+    const dia = parseInt(fechaStr.substr(4, 2));
+    
+    // Ajustar el siglo (asumimos que son personas entre 1920 y 2020)
+    año = año < 30 ? 2000 + año : 1900 + año;
+    
+    const fechaNacimiento = new Date(año, mes, dia);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    if (hoy.getMonth() < fechaNacimiento.getMonth() || 
+        (hoy.getMonth() === fechaNacimiento.getMonth() && hoy.getDate() < fechaNacimiento.getDate())) {
+      edad--;
     }
-    function formatearHora(fecha) {
-      const d = new Date(fecha);
-      if (isNaN(d)) return "";
-      return d.toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"});
+    
+    // Mapeo de códigos de estado a nombres
+    const estados = {
+      'AS': 'Aguascalientes', 'BC': 'Baja California', 'BS': 'Baja California Sur',
+      'CC': 'Campeche', 'CL': 'Coahuila', 'CM': 'Colima', 'CS': 'Chiapas',
+      'CH': 'Chihuahua', 'DF': 'Ciudad de México', 'DG': 'Durango', 'GT': 'Guanajuato',
+      'GR': 'Guerrero', 'HG': 'Hidalgo', 'JC': 'Jalisco', 'MC': 'México',
+      'MN': 'Michoacán', 'MS': 'Morelos', 'NT': 'Nayarit', 'NL': 'Nuevo León',
+      'OC': 'Oaxaca', 'PL': 'Puebla', 'QT': 'Querétaro', 'QR': 'Quintana Roo',
+      'SP': 'San Luis Potosí', 'SL': 'Sinaloa', 'SR': 'Sonora', 'TC': 'Tabasco',
+      'TS': 'Tamaulipas', 'TL': 'Tlaxcala', 'VZ': 'Veracruz', 'YN': 'Yucatán',
+      'ZS': 'Zacatecas', 'NE': 'Extranjero'
+    };
+    
+    const codigoEstado = curp.substr(11, 2);
+    const estado = estados[codigoEstado] || codigoEstado;
+    
+    return {
+      curp: curp,
+      paterno: '', // Estos campos normalmente vendrían de otra fuente
+      materno: '',
+      nombres: '',
+      sexo: sexo,
+      fecha_nacimiento: `${dia.toString().padStart(2, '0')}/${(mes+1).toString().padStart(2, '0')}/${año}`,
+      edad: edad,
+      entidad: estado,
+      homoclave: curp.substr(13, 3)
+    };
+  }
+  
+  // Configurar el escáner QR
+  html5QrcodeScanner.render((decodedText, decodedResult) => {
+    const feedback = document.getElementById('scan-feedback');
+    feedback.textContent = 'CURP detectada!';
+    feedback.className = 'scan-feedback success';
+    
+    // Procesar el código QR (asumimos que es una CURP)
+    const datosCURP = parseCURP(decodedText);
+    
+    if (datosCURP) {
+      document.getElementById('curp').value = datosCURP.curp;
+      document.getElementById('sexo').value = datosCURP.sexo;
+      document.getElementById('fecha_nacimiento').value = datosCURP.fecha_nacimiento;
+      document.getElementById('entidad').value = datosCURP.entidad;
+      
+      // Simular datos de nombre (en un sistema real estos vendrían de una base de datos)
+      document.getElementById('paterno').value = 'ApellidoSimulado';
+      document.getElementById('materno').value = 'MaternoSimulado';
+      document.getElementById('nombres').value = 'NombreSimulado';
+      
+      setTimeout(() => {
+        feedback.textContent = 'Datos cargados. Complete el formulario.';
+      }, 1500);
+    } else {
+      feedback.textContent = 'CURP no válida. Intente de nuevo.';
+      feedback.className = 'scan-feedback error';
     }
-    function extraerCURP(curpRaw) {
-      return curpRaw.split("||")[0].trim();
-    }
+    
+    // Reiniciar el escáner después de un breve tiempo
+    setTimeout(() => {
+      html5QrcodeScanner.clear();
+      html5QrcodeScanner.render();
+      feedback.textContent = '';
+    }, 3000);
+  }, (errorMessage) => {
+    // Ignorar errores de escaneo, suceden frecuentemente
+  });
+  
+  // Función para agregar fila a la tabla
+  function agregarFila(datos) {
+    const cuerpo = document.getElementById("tabla-pacientes");
+    
+    // Crear fila
+    const fila = document.createElement("tr");
+    const campos = [
+      datos.folio, datos.fecha, datos.hora, datos.curp, datos.paterno,
+      datos.materno, datos.nombres, datos.fecha_nacimiento, datos.sexo,
+      datos.entidad, datos.homoclave, datos.motivo, datos.edad,
+      datos.cajera, datos.referencia, datos.observaciones
+    ];
 
-    // 🚀 Agregar fila a la tabla
-    function agregarRegistroATabla(registro) {
-      const cuerpo = document.getElementById("tabla-pacientes");
-
-      const fila = document.createElement("tr");
-      const campos = [
-        registro.folio, registro.fecha, registro.hora, registro.curp, registro.paterno,
-        registro.materno, registro.nombres, registro.fecha_nacimiento, registro.sexo,
-        registro.entidad, registro.homoclave, registro.motivo, registro.edad,
-        registro.cajera, registro.referencia, registro.observaciones
-      ];
-      campos.forEach(valor => {
-        const celda = document.createElement("td");
-        celda.textContent = valor || "";
-        fila.appendChild(celda);
-      });
-
-      fila.classList.add("nueva-fila");
-      cuerpo.insertBefore(fila, cuerpo.firstChild);
-      setTimeout(() => fila.classList.remove("nueva-fila"), 3000);
-    }
-
-    // 🎥 Escaneo QR
-    document.getElementById("btnStart").addEventListener("click", () => {
-      html5QrCode = new Html5Qrcode("reader");
-      html5QrCode.start(
-        { facingMode: "environment" }, { fps: 10, qrbox: 250 },
-        (decodedText) => {
-          const ahora = new Date();
-          const registro = {
-            folio: "LOCAL-" + Date.now().toString().slice(-6),
-            fecha: formatearFecha(ahora),
-            hora: formatearHora(ahora),
-            curp: extraerCURP(decodedText),
-            paterno: "", materno: "", nombres: "",
-            fecha_nacimiento: "", sexo: "", entidad: "", homoclave: "",
-            motivo: document.getElementById("motivo").value,
-            edad: "", cajera: document.getElementById("cajera").value,
-            referencia: document.getElementById("referencia").value,
-            observaciones: document.getElementById("observaciones").value
-          };
-          agregarRegistroATabla(registro);
-          html5QrCode.stop();
-        }
-      );
+    campos.forEach(valor => {
+      const td = document.createElement("td");
+      td.textContent = valor || "";
+      fila.appendChild(td);
     });
-    document.getElementById("btnStop").addEventListener("click", () => {
-      if (html5QrCode) html5QrCode.stop();
+
+    // Insertar al inicio y animar
+    cuerpo.insertBefore(fila, cuerpo.firstChild);
+    fila.classList.add("nueva-fila");
+    setTimeout(() => fila.classList.remove("nueva-fila"), 3000);
+    
+    // Actualizar contador
+    document.getElementById('contador').textContent = `Total: ${pacientes.length} registros`;
+  }
+  
+  // Cargar datos existentes al iniciar
+  function cargarDatos() {
+    const cuerpo = document.getElementById("tabla-pacientes");
+    cuerpo.innerHTML = '';
+    
+    pacientes.forEach(paciente => {
+      agregarFila(paciente);
     });
-  </script>
+    
+    document.getElementById('contador').textContent = `Total: ${pacientes.length} registros`;
+  }
+  
+  // Evento guardar
+  document.getElementById("btnGuardar").addEventListener("click", () => {
+    const motivo = document.getElementById("motivo").value;
+    const cajera = document.getElementById("cajera").value;
+    const curp = document.getElementById("curp").value;
+    
+    if (!motivo || !cajera || !curp) {
+      document.getElementById('status').textContent = 'Error: Complete los campos requeridos';
+      document.getElementById('status').style.color = '#f00';
+      return;
+    }
+    
+    const ahora = new Date();
+    const datos = {
+      folio: "URG-" + (contadorFolio++).toString().padStart(4, "0"),
+      fecha: ahora.toLocaleDateString("es-MX"),
+      hora: ahora.toLocaleTimeString("es-MX", {hour: "2-digit", minute: "2-digit"}),
+      curp: curp,
+      paterno: document.getElementById("paterno").value,
+      materno: document.getElementById("materno").value,
+      nombres: document.getElementById("nombres").value,
+      fecha_nacimiento: document.getElementById("fecha_nacimiento").value,
+      sexo: document.getElementById("sexo").value,
+      entidad: document.getElementById("entidad").value,
+      homoclave: document.getElementById("curp").value.substr(13, 3),
+      motivo: motivo,
+      edad: calcularEdad(document.getElementById("fecha_nacimiento").value),
+      cajera: cajera,
+      referencia: document.getElementById("referencia").value,
+      observaciones: document.getElementById("observaciones").value
+    };
+    
+    pacientes.unshift(datos);
+    localStorage.setItem('pacientesUrgencias', JSON.stringify(pacientes));
+    agregarFila(datos);
+    
+    document.getElementById('status').textContent = 'Registro guardado correctamente';
+    document.getElementById('status').style.color = '#0f0';
+    
+    // Limpiar formulario
+    setTimeout(() => {
+      document.getElementById('status').textContent = 'Listo';
+      document.getElementById('status').style.color = '#0f0';
+      document.getElementById("btnLimpiar").click();
+    }, 2000);
+  });
+  
+  // Función para calcular edad desde fecha de nacimiento
+  function calcularEdad(fechaNac) {
+    if (!fechaNac) return '';
+    
+    const partes = fechaNac.split('/');
+    if (partes.length !== 3) return '';
+    
+    const nacimiento = new Date(partes[2], partes[1] - 1, partes[0]);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+    
+    return edad;
+  }
+  
+  // Evento actualizar
+  document.getElementById("btnRefresh").addEventListener("click", () => {
+    document.getElementById('status').textContent = 'Tabla actualizada';
+    document.getElementById('status').style.color = '#0f0';
+    cargarDatos();
+    
+    setTimeout(() => {
+      document.getElementById('status').textContent = 'Listo';
+    }, 1500);
+  });
+  
+  // Evento limpiar formulario
+  document.getElementById("btnLimpiar").addEventListener("click", () => {
+    document.getElementById("curp").value = '';
+    document.getElementById("paterno").value = '';
+    document.getElementById("materno").value = '';
+    document.getElementById("nombres").value = '';
+    document.getElementById("sexo").value = '';
+    document.getElementById("fecha_nacimiento").value = '';
+    document.getElementById("entidad").value = '';
+    document.getElementById("motivo").value = '';
+    document.getElementById("cajera").selectedIndex = 0;
+    document.getElementById("referencia").value = '';
+    document.getElementById("observaciones").value = '';
+    
+    document.getElementById('status').textContent = 'Formulario limpiado';
+    document.getElementById('status').style.color = '#0ff';
+    
+    setTimeout(() => {
+      document.getElementById('status').textContent = 'Listo';
+    }, 1500);
+  });
+  
+  // Inicializar
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarDatos();
+    document.getElementById('status').textContent = 'Listo';
+  });
+</script>
 </body>
 </html>

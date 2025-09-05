@@ -16,6 +16,49 @@ function iniciarEscanerQR() {
   );
 }
 
+// Función para formatear hora hh:mm (FRONTEND)
+function formatearHora(valor) {
+  if (!valor) return "";
+  
+  // Si ya está en formato hh:mm, devolverlo tal cual
+  if (typeof valor === 'string' && /^\d{2}:\d{2}$/.test(valor)) {
+    return valor;
+  }
+  
+  // Si es un objeto Date o timestamp
+  const fecha = new Date(valor);
+  if (!isNaN(fecha)) {
+    return fecha.toLocaleTimeString("es-MX", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false // Formato 24 horas
+    });
+  }
+  
+  // Si es string con formato "8:42:52 p.m."
+  if (typeof valor === 'string') {
+    try {
+      if (valor.includes('p.m.') || valor.includes('a.m.')) {
+        const [horaPart] = valor.split(' ');
+        const [horas, minutos] = horaPart.split(':');
+        
+        let horas24 = parseInt(horas);
+        if (valor.includes('p.m.') && horas24 < 12) {
+          horas24 += 12;
+        } else if (valor.includes('a.m.') && horas24 === 12) {
+          horas24 = 0;
+        }
+        
+        return horas24.toString().padStart(2, '0') + ':' + minutos.padStart(2, '0');
+      }
+    } catch (e) {
+      console.warn("Error formateando hora:", valor, e);
+    }
+  }
+  
+  return valor; // Devolver original si no se puede formatear
+}
+
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
   fetch("https://script.google.com/macros/s/AKfycbyZlmYgYaNJZQRFTo8JY1HfX9iWrWCHQuw3Zh-jnB3LZUy9Gnkf15R1iWID5rUzbirbQA/exec")
@@ -58,6 +101,7 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
+
 
 
 

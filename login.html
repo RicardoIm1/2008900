@@ -70,13 +70,7 @@
             margin-bottom: 0.8rem;
             color: #fff;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            /* Se ha eliminado la animación de pulse */
         }
         
         h1 {
@@ -291,7 +285,6 @@
             const clave = e.target.clave.value;
             
             // Simulación de respuesta (para propósitos de demostración)
-            // En tu código real, mantendrías la llamada fetch a Google Apps Script
             const simularExito = true; // Cambiar a false para simular error
             
             setTimeout(() => {

@@ -230,35 +230,50 @@
     </div>
 
     <script>
-        // Footer dinámico
-        document.getElementById('footerText').innerHTML =
-            `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+         function setEstado(estado) {
+            const dashboard = document.getElementById('dashboard');
+            const estadoTexto = document.getElementById('estadoTexto');
+            dashboard.classList.remove('loading', 'success', 'error');
+            dashboard.classList.add(estado);
 
-        // Manejo del formulario
+            switch (estado) {
+                case 'loading':
+                    estadoTexto.innerHTML = '<i class="fas fa-sync fa-spin"></i> Cargando sistema...';
+                    break;
+                case 'success':
+                    estadoTexto.innerHTML = '<i class="fas fa-check-circle"></i> Sistema operativo con éxito ✅';
+                    break;
+                case 'error':
+                    estadoTexto.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
+                    break;
+            }
+        }
+       // Manejo del formulario
         document.getElementById("formularioLogin").addEventListener("submit", async function(e) {
             e.preventDefault();
             const usuario = e.target.usuario.value;
             const clave = e.target.clave.value;
-            
-            // Simulación de respuesta (para propósitos de demostración)
-            // En tu código real, mantendrías la llamada fetch a Google Apps Script
-            const simularExito = true; // Cambiar a false para simular error
-            
-            setTimeout(() => {
-                if (simularExito) {
-                    document.getElementById("loginForm").classList.add("success");
-                    setTimeout(() => {
-                        alert("¡Inicio de sesión exitoso! Redirigiendo...");
-                        // window.location.href = "dashboard.html";
-                    }, 1500);
-                } else {
-                    document.getElementById("loginForm").classList.add("error");
-                    alert("Error: Credenciales incorrectas");
-                    setTimeout(() => {
-                        document.getElementById("loginForm").classList.remove("error");
-                    }, 2000);
-                }
-            }, 800);
+
+            const respuesta = await fetch("https://script.google.com/macros/s/AKfycbzkCh4Ib4ci3Tlw_XBfslfIN7x56DTM4KSudjBOIYrMNiNyJvPJ231-uyM5j6-5XifL/exec", {
+                method: "POST",
+                body: JSON.stringify({ usuario, clave }),
+                headers: { "Content-Type": "application/json" }
+            });
+
+            const resultado = await respuesta.json();
+
+            if (resultado.success) {
+                document.getElementById("loginForm").classList.add("success");
+                setTimeout(() => {
+                    window.location.href = resultado.rol === "admin" ? "admin.html" : "dashboard.html";
+                }, 1500);
+            } else {
+                document.getElementById("loginForm").classList.add("error");
+                alert("Error: " + resultado.error);
+                setTimeout(() => {
+                    document.getElementById("loginForm").classList.remove("error");
+                }, 2000);
+            }
         });
     </script>
 </body>

@@ -61,7 +61,7 @@ function formatearHora(valor) {
 
 // 📋 Carga registros desde Google Sheets
 function cargarTabla() {
-  fetch("https://script.google.com/macros/s/AKfycbwR5-5p0BSnESHy5hzqmGZMAW8KWP3KKigIlWGTVVf_wiKHaGTogjSF_GzUg04qM6JTLQ/exec")
+  fetch("https://script.google.com/macros/s/AKfycbzBL9Ms9YkkB_M8xnMepCSQ7zT3wXHTJXiM82GojntZy25bddXiQBp3QjxCrCEldNb6_g/exec")
     .then(res => res.json())
     .then(registros => {
       const cuerpoTabla = document.getElementById("tabla-pacientes");
@@ -120,9 +120,8 @@ function enviarDatos() {
 
   // ✅ AGREGAR ESTOS LOGS:
   console.log("📤 DATOS A ENVIAR:", datos);
-  console.log("🔗 URL de destino:", "https://script.google.com/macros/s/AKfycbwR5-5p0BSnESHy5hzqmGZMAW8KWP3KKigIlWGTVVf_wiKHaGTogjSF_GzUg04qM6JTLQ/exec");
 
-  fetch("https://script.google.com/macros/s/AKfycbwR5-5p0BSnESHy5hzqmGZMAW8KWP3KKigIlWGTVVf_wiKHaGTogjSF_GzUg04qM6JTLQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzBL9Ms9YkkB_M8xnMepCSQ7zT3wXHTJXiM82GojntZy25bddXiQBp3QjxCrCEldNb6_g/exec", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -150,6 +149,7 @@ function enviarDatos() {
     mostrarMensaje("❌ Error de conexión");
   });
 }
+
 
 
 

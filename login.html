@@ -28,6 +28,8 @@
           background: rgba(255, 255, 255, 0.2);
           box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
         }
+.glass.success { background: rgba(70, 227, 99, 0.35); }
+.glass.error { background: rgba(240, 50, 60, 0.45); }
 
     </style>
 </head>
@@ -92,5 +94,35 @@
     document.getElementById('footerText').innerHTML =
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
 </script>
+
+<script>
+document.getElementById("formularioLogin").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const usuario = e.target.usuario.value;
+  const clave = e.target.clave.value;
+
+  const respuesta = await fetch("https://script.google.com/macros/s/AKfycbzkCh4Ib4ci3Tlw_XBfslfIN7x56DTM4KSudjBOIYrMNiNyJvPJ231-uyM5j6-5XifL/exec", {
+    method: "POST",
+    body: JSON.stringify({ usuario, clave }),
+    headers: { "Content-Type": "application/json" }
+  });
+
+  const resultado = await respuesta.json();
+
+  if (resultado.success) {
+    document.getElementById("loginForm").classList.add("glass", "success");
+    setTimeout(() => {
+      window.location.href = resultado.rol === "admin" ? "admin.html" : "dashboard.html";
+    }, 1500);
+  } else {
+    document.getElementById("loginForm").classList.add("glass", "error");
+    alert("Error: " + resultado.error);
+    setTimeout(() => {
+      document.getElementById("loginForm").classList.remove("error");
+    }, 2000);
+  }
+});
+</script>
+
 </body>
 </html>

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
-    <link href="caja3.css" rel="stylesheet">
+  <link href="caja3.css" rel="stylesheet">
 </head>
 
 <body>
@@ -91,6 +91,29 @@
     const URL_API = "https://script.google.com/macros/s/AKfycbwEgr4ICW8Rx8aPf5JPCUEoGKF3fOs8Cz9aUv69q5Jpiwd0vhoE950niuuWegpgqq7i0g/exec";
     let html5QrCode, filaDestacada = null;
 
+    // Función para formatear fecha dd/mm/yyyy
+    function formatearFecha(valor) {
+      if (!valor) return "";
+      const fecha = new Date(valor);
+      if (isNaN(fecha)) return valor;
+      return fecha.toLocaleDateString("es-MX", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+      });
+    }
+
+    // Función para formatear hora hh:mm
+    function formatearHora(valor) {
+      if (!valor) return "";
+      const fecha = new Date(valor);
+      if (isNaN(fecha)) return valor;
+      return fecha.toLocaleTimeString("es-MX", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
     // Función para filtrar la tabla
     function filtrarTabla() {
       const input = document.getElementById("busqueda").value.toLowerCase();
@@ -136,16 +159,15 @@
           registros.forEach(reg => {
             const fila = document.createElement("tr");
             
-            // Mapear los datos a las celdas - VERIFICANDO NOMBRES DE PROPIEDADES
             const valores = [
               reg.folio || reg.FOLIO || "",
-              reg.fecha || reg.FECHA || "",
-              reg.hora || reg.HORA || "",
+              formatearFecha(reg.fecha || reg.FECHA || ""),
+              formatearHora(reg.fecha || reg.FECHA || reg.hora || reg.HORA || ""),
               reg.curp || reg.CURP || "",
               reg.paterno || reg.PATERNO || "",
               reg.materno || reg.MATERNO || "",
               reg.nombres || reg.NOMBRES || reg["NOMBRE(S)"] || "",
-              reg.fecha_nacimiento || reg.fechaNacimiento || reg["FECHA DE NACIMIENTO"] || "",
+              formatearFecha(reg.fecha_nacimiento || reg.fechaNacimiento || reg["FECHA DE NACIMIENTO"] || ""),
               reg.sexo || reg.SEXO || "",
               reg.entidad || reg.ENTIDAD || "",
               reg.homoclave || reg.HOMOCLAVE || "",

@@ -20,14 +20,14 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Poppins', sans-serif;
   overflow: hidden;
   position: relative;
 }
 
 #dashboard {
-  padding: 3rem;  /* más compacto */
-  margin: 2rem; /* menos aire */
+  padding: 1.3rem;  /* más compacto */
+  margin: 1.3rem; /* menos aire */
 }
 
 .glass.loading {

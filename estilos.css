@@ -26,7 +26,7 @@ body, html {
 }
 
 #dashboard {
-  padding: 2rem;  /* más compacto */
+  padding: 1.2rem;  /* más compacto */
   margin: 1.5rem; /* menos aire */
 }
 

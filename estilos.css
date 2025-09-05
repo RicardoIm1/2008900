@@ -5,6 +5,7 @@
     }
 
 body {
+   position:absolute;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
       /* background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); */

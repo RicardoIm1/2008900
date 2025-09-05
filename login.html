@@ -5,31 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso Institucional - Hospital Regional Puerto Vallarta</title>
     <link href="estilos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Estilos base del formulario */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 450px;
+            margin: 2rem auto;
+            transition: all 0.3s ease;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: white;
+        }
+        
+        .status {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Estilos para el formulario vertical */
+        .form-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: white;
+            font-size: 1rem;
+        }
+        
         input[type="text"],
         input[type="password"] {
-          width: 100%;
-          padding: 0.6rem;
-          border-radius: 8px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          background: rgba(255, 255, 255, 0.1);
-          color: white;
-          font-size: 0.85rem;
-          backdrop-filter: blur(5px);
-          transition: all 0.3s ease;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.95rem;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
         }
         
         input::placeholder {
-          color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.6);
         }
         
         input:focus {
-          outline: none;
-          background: rgba(255, 255, 255, 0.2);
-          box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
         }
-        .glass.success { background: rgba(70, 227, 99, 0.35); }
-        .glass.error { background: rgba(240, 50, 60, 0.45); }
+        
+        /* Botones en columna */
+        .botones-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+        
+        .botones-vertical button {
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button[type="submit"] {
+            background: rgba(70, 130, 180, 0.8);
+            color: white;
+        }
+        
+        button[type="submit"]:hover {
+            background: rgba(70, 130, 180, 1);
+        }
+        
+        button[type="reset"] {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        button[type="reset"]:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Estados del formulario */
+        .glass.success { 
+            background: rgba(70, 227, 99, 0.35); 
+        }
+        
+        .glass.error { 
+            background: rgba(240, 50, 60, 0.45); 
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .glass {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -45,19 +163,18 @@
             <p>Ingresa tus credenciales para continuar</p>
         </div>
 
-        <form id="formularioLogin">
-            <div class="grid">
-                    <h3>Usuario</h3>
-                    <input type="text" name="usuario" placeholder="ej. j.ramirez" required>
-                    <h3>Contraseña</h3>
-                    <input type="password" name="clave" placeholder="••••••••" required>
-                <!--div class="celda">
-                < <div class="celda">
-                </div>
-                </div-->
+        <form id="formularioLogin" class="form-vertical">
+            <div class="form-group">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario" placeholder="ej. j.ramirez" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="clave">Contraseña</label>
+                <input type="password" id="clave" name="clave" placeholder="••••••••" required>
             </div>
 
-            <div class="botones">
+            <div class="botones-vertical">
                 <button type="submit">Iniciar sesión</button>
                 <button type="reset">Limpiar</button>
             </div>
@@ -66,62 +183,59 @@
         <footer>
           <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
         </footer>
-  
     </div>
 
-<script>
-    function setEstado(estado) {
-      const dashboard = document.getElementById('dashboard');
-      const estadoTexto = document.getElementById('estadoTexto');
-      dashboard.classList.remove('loading', 'success', 'error');
-      dashboard.classList.add(estado);
+    <script>
+        function setEstado(estado) {
+            const dashboard = document.getElementById('dashboard');
+            const estadoTexto = document.getElementById('estadoTexto');
+            dashboard.classList.remove('loading', 'success', 'error');
+            dashboard.classList.add(estado);
 
-      switch (estado) {
-        case 'loading':
-          estadoTexto.innerHTML = '<i class="fas fa-sync fa-spin"></i> Cargando sistema...';
-          break;
-        case 'success':
-          estadoTexto.innerHTML = '<i class="fas fa-check-circle"></i> Sistema operativo con éxito ✅';
-          break;
-        case 'error':
-          estadoTexto.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
-          break;
-      }
-    }
+            switch (estado) {
+                case 'loading':
+                    estadoTexto.innerHTML = '<i class="fas fa-sync fa-spin"></i> Cargando sistema...';
+                    break;
+                case 'success':
+                    estadoTexto.innerHTML = '<i class="fas fa-check-circle"></i> Sistema operativo con éxito ✅';
+                    break;
+                case 'error':
+                    estadoTexto.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
+                    break;
+            }
+        }
 
-    // Footer dinámico
-    document.getElementById('footerText').innerHTML =
-      `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
-</script>
+        // Footer dinámico
+        document.getElementById('footerText').innerHTML =
+            `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
 
-<script>
-document.getElementById("formularioLogin").addEventListener("submit", async function(e) {
-  e.preventDefault();
-  const usuario = e.target.usuario.value;
-  const clave = e.target.clave.value;
+        // Manejo del formulario
+        document.getElementById("formularioLogin").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const usuario = e.target.usuario.value;
+            const clave = e.target.clave.value;
 
-  const respuesta = await fetch("https://script.google.com/macros/s/AKfycbzkCh4Ib4ci3Tlw_XBfslfIN7x56DTM4KSudjBOIYrMNiNyJvPJ231-uyM5j6-5XifL/exec", {
-    method: "POST",
-    body: JSON.stringify({ usuario, clave }),
-    headers: { "Content-Type": "application/json" }
-  });
+            const respuesta = await fetch("https://script.google.com/macros/s/AKfycbzkCh4Ib4ci3Tlw_XBfslfIN7x56DTM4KSudjBOIYrMNiNyJvPJ231-uyM5j6-5XifL/exec", {
+                method: "POST",
+                body: JSON.stringify({ usuario, clave }),
+                headers: { "Content-Type": "application/json" }
+            });
 
-  const resultado = await respuesta.json();
+            const resultado = await respuesta.json();
 
-  if (resultado.success) {
-    document.getElementById("loginForm").classList.add("glass", "success");
-    setTimeout(() => {
-      window.location.href = resultado.rol === "admin" ? "admin.html" : "dashboard.html";
-    }, 1500);
-  } else {
-    document.getElementById("loginForm").classList.add("glass", "error");
-    alert("Error: " + resultado.error);
-    setTimeout(() => {
-      document.getElementById("loginForm").classList.remove("error");
-    }, 2000);
-  }
-});
-</script>
-
+            if (resultado.success) {
+                document.getElementById("loginForm").classList.add("success");
+                setTimeout(() => {
+                    window.location.href = resultado.rol === "admin" ? "admin.html" : "dashboard.html";
+                }, 1500);
+            } else {
+                document.getElementById("loginForm").classList.add("error");
+                alert("Error: " + resultado.error);
+                setTimeout(() => {
+                    document.getElementById("loginForm").classList.remove("error");
+                }, 2000);
+            }
+        });
+    </script>
 </body>
 </html>

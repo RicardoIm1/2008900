@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Institucional - Hospital Regional Puerto Vallarta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a6fc4, #0c4080);
+            padding: 20px;
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            color: white;
+        }
+        
+        .header {
+            padding: 25px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        
+        .status {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .status p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        form {
+            padding: 25px;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .celda h3 {
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            color: #333;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+        
+        input::placeholder {
+            color: #888;
+        }
+        
+        .botones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button[type="submit"] {
+            background: #0c4080;
+            color: white;
+        }
+        
+        button[type="submit"]:hover {
+            background: #0a3569;
+            transform: translateY(-2px);
+        }
+        
+        button[type="reset"] {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        button[type="reset"]:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        footer {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.15);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 500px) {
+            .glass {
+                border-radius: 12px;
+            }
+            
+            .botones {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass" id="loginForm">
+        <div class="header">
+            <div class="logo">
+                <span class="logo-icon">🔐</span>
+                <h1>Acceso Institucional</h1>
+            </div>
+        </div>
+
+        <div class="status">
+            <p>Ingresa tus credenciales para continuar</p>
+        </div>
+
+        <form id="formularioLogin">
+            <div class="grid">
+                <div class="celda">
+                    <h3>Usuario</h3>
+                    <input type="text" name="usuario" placeholder="ej. j.ramirez" required>
+                </div>
+                <div class="celda">
+                    <h3>Contraseña</h3>
+                    <input type="password" name="clave" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <div class="botones">
+                <button type="submit">Iniciar sesión</button>
+                <button type="reset">Limpiar</button>
+            </div>
+        </form>
+
+        <footer>
+            <p>Hospital Regional Puerto Vallarta · Sistema Modular</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('formularioLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Aquí se puede agregar la lógica de validación
+            const usuario = this.elements.usuario.value;
+            const clave = this.elements.clave.value;
+            
+            console.log('Intento de login:', { usuario, clave });
+            
+            // Simulación de proceso de login
+            // En un caso real, aquí se haría una petición al servidor
+            alert(`Intento de acceso con usuario: ${usuario}`);
+        });
+    </script>
+</body>
+</html>

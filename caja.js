@@ -101,6 +101,56 @@ window.onload = () => {
   cargarTabla();
   document.getElementById("btn-enviar").addEventListener("click", enviarDatos);
 };
+// 🚀 Función para enviar datos al backend (AGREGA ESTOS LOGS)
+function enviarDatos() {
+  // Obtener datos del formulario
+  const datos = {
+    curp: document.getElementById("curp").value,
+    paterno: document.getElementById("paterno").value,
+    materno: document.getElementById("materno").value,
+    nombres: document.getElementById("nombres").value,
+    sexo: document.getElementById("sexo").value,
+    entidad: document.getElementById("entidad").value,
+    homoclave: document.getElementById("homoclave").value,
+    motivo: document.getElementById("motivo").value,
+    cajera: document.getElementById("cajera").value,
+    referencia: document.getElementById("referencia").value,
+    observaciones: document.getElementById("observaciones").value
+  };
+
+  // ✅ AGREGAR ESTOS LOGS:
+  console.log("📤 DATOS A ENVIAR:", datos);
+  console.log("🔗 URL de destino:", "https://script.google.com/macros/s/AKfycbyZlmYgYaNJZQRFTo8JY1HfX9iWrWCHQuw3Zh-jnB3LZUy9Gnkf15R1iWID5rUzbirbQA/exec");
+
+  fetch("https://script.google.com/macros/s/AKfycbyZlmYgYaNJZQRFTo8JY1HfX9iWrWCHQuw3Zh-jnB3LZUy9Gnkf15R1iWID5rUzbirbQA/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(datos)
+  })
+  .then(response => {
+    console.log("📥 STATUS de respuesta:", response.status, response.statusText);
+    return response.json();
+  })
+  .then(data => {
+    console.log("✅ RESPUESTA del backend:", data);
+    
+    if (data.success) {
+      console.log("🎉 Folio generado:", data.folio);
+      mostrarMensaje("✅ " + data.message);
+      cargarTabla(); // Recargar tabla
+    } else {
+      console.error("❌ Error:", data.error);
+      mostrarMensaje("❌ Error: " + (data.error || "Error desconocido"));
+    }
+  })
+  .catch(error => {
+    console.error("💥 ERROR en fetch:", error);
+    mostrarMensaje("❌ Error de conexión");
+  });
+}
+
 
 
 

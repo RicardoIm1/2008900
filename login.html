@@ -18,19 +18,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-/*             background: linear-gradient(135deg, #1a2a6c, #2b5876, #4e4376); */
-              background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
-
+            background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
             padding: 20px;
-            /* animation: backgroundShift 15s ease infinite;
         }
-        
-        @keyframes backgroundShift {
-            0% { background: linear-gradient(135deg, #1a2a6c, #2b5876, #4e4376); }
-            33% { background: linear-gradient(135deg, #2b5876, #4e4376, #1a2a6c); }
-            66% { background: linear-gradient(135deg, #4e4376, #1a2a6c, #2b5876); }
-            100% { background: linear-gradient(135deg, #1a2a6c, #2b5876, #4e4376); }
-        }*/
         
         .glass {
             background: rgba(255, 255, 255, 0.1);
@@ -42,7 +32,7 @@
             width: 100%;
             max-width: 450px;
             transition: all 0.4s ease;
-            /* Efecto de respiración */
+            /* Efecto de respiración - CORREGIDO */
             animation: breathing 4s ease-in-out infinite;
         }
         
@@ -71,7 +61,6 @@
             display: block;
             margin-bottom: 0.8rem;
             color: #fff;
-            /* Se eliminó la animación de pulso y text-shadow */
         }
         
         h1 {
@@ -134,13 +123,6 @@
             background: rgba(255, 255, 255, 0.2);
             box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
             border-color: rgba(255, 255, 255, 0.4);
-            animation: inputGlow 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes inputGlow {
-            0% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.25); }
-            50% { box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
-            100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.25); }
         }
         
         .botones-vertical {
@@ -167,20 +149,12 @@
         button[type="submit"] {
             background: rgba(56, 142, 60, 0.8);
             color: white;
-            animation: buttonBreathing 3s ease-in-out infinite;
-        }
-        
-        @keyframes buttonBreathing {
-            0% { transform: scale(1); box-shadow: 0 4px 10px rgba(56, 142, 60, 0.4); }
-            50% { transform: scale(1.02); box-shadow: 0 6px 15px rgba(56, 142, 60, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 4px 10px rgba(56, 142, 60, 0.4); }
         }
         
         button[type="submit"]:hover {
             background: rgba(56, 142, 60, 1);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(56, 142, 60, 0.5);
-            animation: none;
         }
         
         button[type="reset"] {
@@ -202,12 +176,12 @@
         
         .glass.success { 
             background: rgba(70, 227, 99, 0.35);
-            animation: pulse 1.5s infinite, breathing 4s ease-in-out infinite;
+            animation: pulse 1.5s infinite;
         }
         
         .glass.error { 
             background: rgba(240, 50, 60, 0.45);
-            animation: shake 0.5s, breathing 4s ease-in-out infinite;
+            animation: shake 0.5s;
         }
         
         @keyframes pulse {
@@ -305,7 +279,6 @@
             const clave = e.target.clave.value;
             
             // Simulación de respuesta (para propósitos de demostración)
-            // En tu código real, mantendrías la llamada fetch a Google Apps Script
             const simularExito = true; // Cambiar a false para simular error
             
             setTimeout(() => {

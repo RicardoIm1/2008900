@@ -27,7 +27,7 @@ body, html {
 
 #dashboard {
   padding: 3rem;  /* más compacto */
-  margin: 1.5rem; /* menos aire */
+  margin: 2rem; /* menos aire */
 }
 
 .glass.loading {

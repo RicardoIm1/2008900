@@ -42,20 +42,29 @@
         </footer>
     </div>
 
-    <script>
-        document.getElementById('formularioLogin').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Aquí se puede agregar la lógica de validación
-            const usuario = this.elements.usuario.value;
-            const clave = this.elements.clave.value;
-            
-            console.log('Intento de login:', { usuario, clave });
-            
-            // Simulación de proceso de login
-            // En un caso real, aquí se haría una petición al servidor
-            alert(`Intento de acceso con usuario: ${usuario}`);
-        });
-    </script>
+<script>
+    function setEstado(estado) {
+      const dashboard = document.getElementById('dashboard');
+      const estadoTexto = document.getElementById('estadoTexto');
+      dashboard.classList.remove('loading', 'success', 'error');
+      dashboard.classList.add(estado);
+
+      switch (estado) {
+        case 'loading':
+          estadoTexto.innerHTML = '<i class="fas fa-sync fa-spin"></i> Cargando sistema...';
+          break;
+        case 'success':
+          estadoTexto.innerHTML = '<i class="fas fa-check-circle"></i> Sistema operativo con éxito ✅';
+          break;
+        case 'error':
+          estadoTexto.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
+          break;
+      }
+    }
+
+    // Footer dinámico
+    document.getElementById('footerText').innerHTML =
+      `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+</script>
 </body>
 </html>

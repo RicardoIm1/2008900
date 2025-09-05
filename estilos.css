@@ -106,8 +106,10 @@ body, html {
 }
 
 .logo-icon {
-  font-size: 2rem;
-  color: #ffdd00;
+    font-size: 2.8rem;
+    display: block;
+    margin-bottom: 0.8rem;
+    color: #ffdd00;
 }
 
 .grid {

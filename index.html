@@ -28,9 +28,6 @@
       <div class="celda"><h3><i class="fas fa-chart-pie"></i> Estadísticas</h3><p>Datos en tiempo real y análisis</p></div>
       <div class="celda"><h3><i class="fas fa-cog"></i> Configuración</h3><p>Ajustes y personalización</p></div>
       <div class="celda"><h3><i class="fas fa-user"></i> Perfil</h3><p>Información de usuario y preferencias</p></div>
-      <div class="celda"><h3><i class="fas fa-chart-line"></i> Dashboard</h3><p>Resumen del sistema y métricas</p></div>
-      <div class="celda"><h3><i class="fas fa-chart-pie"></i> Estadísticas</h3><p>Datos en tiempo real y análisis</p></div>
-      <div class="celda"><h3><i class="fas fa-cog"></i> Configuración</h3><p>Ajustes y personalización</p></div>
       <a href="caja.html" style="text-decoration: none; color: inherit;">
         <div class="celda">
           <h3><i class="fas fa-files"></i> Caja</h3>
@@ -81,72 +78,6 @@
     // Footer dinámico
     document.getElementById('footerText').innerHTML =
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
-
-    // Partículas con rebote
-    const canvas = document.getElementById("particlesCanvas");
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
-    class Particle {
-      constructor() {
-        this.radius = Math.random() * 4 + 2;
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.vx = (Math.random() - 0.5) * 2;
-        this.vy = (Math.random() - 0.5) * 2;
-        this.color = "rgba(255,255,255,0.7)";
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // Rebote en bordes
-        if (this.x < this.radius || this.x > canvas.width - this.radius) {
-          this.vx *= -1;
-        }
-        if (this.y < this.radius || this.y > canvas.height - this.radius) {
-          this.vy *= -1;
-        }
-
-        this.draw();
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < 80; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => p.update());
-      requestAnimationFrame(animateParticles);
-    }
-
-    initParticles();
-    animateParticles();
-    
-    window.onclick = function(event) {
-      const modal = document.getElementById('modal');
-      if (event.target === modal) {
-        cerrarModal();
-  }
-}
 </script>
 
 

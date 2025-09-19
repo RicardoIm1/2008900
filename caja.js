@@ -122,7 +122,8 @@ function enviarDatos() {
   // ✅ AGREGAR ESTOS LOGS:
   console.log("📤 DATOS A ENVIAR:", datos);
 
-  fetch("https://script.google.com/macros/s/AKfycbzBL9Ms9YkkB_M8xnMepCSQ7zT3wXHTJXiM82GojntZy25bddXiQBp3QjxCrCEldNb6_g/exec", {
+  //fetch("https://script.google.com/macros/s/AKfycbzBL9Ms9YkkB_M8xnMepCSQ7zT3wXHTJXiM82GojntZy25bddXiQBp3QjxCrCEldNb6_g/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbwEgr4ICW8Rx8aPf5JPCUEoGKF3fOs8Cz9aUv69q5Jpiwd0vhoE950niuuWegpgqq7i0g/exec", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -150,6 +151,7 @@ function enviarDatos() {
     mostrarMensaje("❌ Error de conexión");
   });
 }
+
 
 
 

@@ -146,7 +146,8 @@
         top: 0;
         z-index: 10;
         font-size: 0.9rem;
-        justify-content: left;
+        text-align: left;
+        
     }
 
     #pacientes th, #pacientes td {

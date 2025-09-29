@@ -125,8 +125,7 @@
     }
 
     #pacientes thead{
-        color:pink;
-        font-size:2rem;
+        color:red;
     }
     #pacientes th, #pacientes td {
       border: 1px solid #333;

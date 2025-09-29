@@ -1,4 +1,13 @@
-    /* Estilos básicos para la tabla */
+    :root {
+      --neon-green: #00ff9d;
+      --neon-pink: #ff00aa;
+      --neon-blue: #00e1ff;
+      --dark-bg: #0a0a12;
+      --darker-bg: #050508;
+      --glow: 0 0 10px;
+    }
+
+/* Estilos básicos para la tabla */
     body {
       font-family: 'Courier New', monospace;
       background-color: #0a0a0a;
@@ -125,7 +134,7 @@
     }
 
     #pacientes thead{
-        color:red;
+        color:var(--neon-pink);
         background: #0f0;
         justify-content:center;
     }
@@ -135,12 +144,12 @@
       text-align: left;
     }
     
-    #pacientes th {
+/*     #pacientes th {
       background-color: #1a1a1a;
       position: sticky;
       top: 0;
       z-index: 10;
-    }
+    } */
     
     #pacientes tr:nth-child(even) {
       background-color: #151515;

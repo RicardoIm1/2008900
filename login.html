@@ -329,11 +329,10 @@ footer {
         document.getElementById('footerText').innerHTML =
             `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
     </script>
-    
-<script>
-    const form = document.getElementById('loginForm');
+        <script>
+    const form = document.getElementById('formularioLogin'); // ✅ ID correcto
     const messageDiv = document.getElementById('message');
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxE_jl7H_zfOsKy14XTWN_Y67qU0UOmx0KmxxIglsdCOV4HzDETWgzwijFIaYWpLiYp/exec';
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbzVZm8UZhOJ8zhW9Go1WecPccbK7mnmx5gf8rHIrY1TPBBx3aJ838wpvBzLw0oQcdI-/exec';
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -343,33 +342,34 @@ footer {
         const password = document.getElementById('password').value;
 
         try {
-            const formData = new FormData();
-            formData.append('username', username);
-            formData.append('password', password);
-
             const response = await fetch(scriptUrl, {
                 method: 'POST',
-                // Modo 'no-cors' y sin especificar cabecera 'Content-Type'
-                // para evitar el preflight.
-                mode: 'no-cors',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
             });
 
-            // Para manejar la respuesta en modo 'no-cors'
-            // No se puede acceder al cuerpo de la respuesta directamente.
-            // La validación debe hacerse del lado del servidor.
-            messageDiv.textContent = 'Solicitud enviada. Verificando en el servidor...';
-            
-            // Para obtener la respuesta, tendrás que hacer la validación del
-            // lado del servidor y redirigir. No es posible acceder a la respuesta
-            // con un fetch en modo 'no-cors' por seguridad.
+            const result = await response.json(); // ✅ parsear respuesta
+
+            if (result.success) {
+                messageDiv.textContent = `¡Acceso exitoso como ${result.role}! Redirigiendo...`;
+                if (result.role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else if (result.role === 'lector') {
+                    window.location.href = 'lector.html';
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+            } else {
+                messageDiv.textContent = 'Usuario o contraseña incorrectos.';
+            }
 
         } catch (error) {
-            messageDiv.textContent = 'Error al enviar la solicitud.';
+            messageDiv.textContent = 'Error al conectar. Verifica tu URL de Apps Script.';
             console.error('Error:', error);
         }
     });
 </script>
+
 
 
 </body>

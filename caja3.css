@@ -134,9 +134,12 @@
       font-size: 0.8rem;
     }
 
-  #pacientes thead th {
+#pacientes thead {
     color: var(--neon-blue);
-    justify-content: center;
+}
+
+#pacientes th {
+    text-align: left;
     background-color: #1a1a1a;
     position: sticky;
     top: 0;

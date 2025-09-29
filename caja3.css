@@ -141,7 +141,6 @@
     }
     
     #pacientes th {
-        justify-content: center;
         background-color: #1a1a1a;
         position: sticky;
         top: 0;
@@ -152,7 +151,7 @@
     #pacientes th, #pacientes td {
       border: 1px solid #333;
       padding: 6px;
-      text-align: left;
+      text-align: center;
     }
     
     

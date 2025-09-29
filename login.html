@@ -330,50 +330,47 @@ footer {
             `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
     </script>
     
-    <script>
-        const form = document.getElementById('formularioLogin');
-        const messageDiv = document.getElementById('message');
-    
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwYf2C_qpiTpJoWO41JKKX3mRNVS63z8D2rLLa56-0F70UooS8NxGhgidxdoXv3UETi/exec';
-    
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            messageDiv.textContent = 'Validando credenciales...';
+<script>
+    const form = document.getElementById('loginForm');
+    const messageDiv = document.getElementById('message');
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwYf2C_qpiTpJoWO41JKKX3mRNVS63z8D2rLLa56-0F70UooS8NxGhgidxdoXv3UETi/exec';
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        messageDiv.textContent = 'Validando credenciales...';
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            const response = await fetch(scriptUrl, {
+                method: 'POST',
+                // Modo 'no-cors' y sin especificar cabecera 'Content-Type'
+                // para evitar el preflight.
+                mode: 'no-cors',
+                body: formData
+            });
+
+            // Para manejar la respuesta en modo 'no-cors'
+            // No se puede acceder al cuerpo de la respuesta directamente.
+            // La validación debe hacerse del lado del servidor.
+            messageDiv.textContent = 'Solicitud enviada. Verificando en el servidor...';
             
-            const username = document.getElementById('usuario').value;
-            const password = document.getElementById('clave').value;
-    
-            try {
-                const response = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-    
-                const result = await response.json();
-    
-                if (result.success) {
-                    messageDiv.textContent = `¡Acceso exitoso como ${result.role}! Redirigiendo...`;
-                    if (result.role === 'admin') {
-                        window.location.href = 'admin.html';
-                    } else if (result.role === 'lector') {
-                        window.location.href = 'lector.html';
-                    } else if (result.role === 'caja') {
-                        window.location.href = 'caja.html';
-                    } else {
-                        window.location.href = 'dashboard.html';
-                    }
-                } else {
-                    messageDiv.textContent = 'Usuario o contraseña incorrectos.';
-                }
-    
-            } catch (error) {
-                messageDiv.textContent = 'Error al conectar. Verifica tu URL de Apps Script.';
-                console.error('Error:', error);
-            }
-        });
-    </script>
+            // Para obtener la respuesta, tendrás que hacer la validación del
+            // lado del servidor y redirigir. No es posible acceder a la respuesta
+            // con un fetch en modo 'no-cors' por seguridad.
+
+        } catch (error) {
+            messageDiv.textContent = 'Error al enviar la solicitud.';
+            console.error('Error:', error);
+        }
+    });
+</script>
+
 
 </body>
 </html>

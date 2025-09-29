@@ -127,6 +127,7 @@
       max-width: 20%;
       border-radius:5px;
     }
+
     #pacientes {
       width: 100%;
       border-collapse: collapse;
@@ -135,9 +136,9 @@
 
     #pacientes thead{
         color:var(--neon-pink);
-        background: #0f0;
         justify-content:center;
     }
+
     #pacientes th, #pacientes td {
       border: 1px solid #333;
       padding: 6px;

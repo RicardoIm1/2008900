@@ -115,7 +115,7 @@
     }
 
     #busqueda{
-        width: 20%;
+        max-width: 20%;
     }
     #pacientes {
       width: 100%;

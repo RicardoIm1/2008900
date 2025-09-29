@@ -134,21 +134,15 @@
       font-size: 0.8rem;
     }
 
-    #pacientes thead {
-        color: var(--neon-blue);
-        text-align: center;
-
-    }
-    
-    #pacientes th {
-        background-color: #1a1a1a;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        font-size: 0.9rem;
-/*         text-align: left;
- */        
-    }
+  #pacientes thead th {
+    color: var(--neon-blue);
+    justify-content: center;
+    background-color: #1a1a1a;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 1rem;
+}
 
     #pacientes th, #pacientes td {
       border: 1px solid #333;

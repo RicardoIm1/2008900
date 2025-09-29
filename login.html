@@ -324,5 +324,56 @@
             }, 800);
         });
     </script>
+
+   <script>
+        const form = document.getElementById('loginForm');
+        const messageDiv = document.getElementById('message');
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwnOEJKwrCF4PyNqa8AFAlrcMtlglbbilHr4PRHYIg/dev'; // Pega aquí tu URL
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            messageDiv.textContent = 'Validando...';
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Necesario para evitar errores CORS en GitHub Pages
+                    body: JSON.stringify({ username, password }),
+                    headers: { 'Content-Type': 'text/plain' } // Ajustado para 'no-cors'
+                });
+
+                // Para manejar la respuesta de 'no-cors', se debe hacer de forma diferente
+                // debido a las restricciones. La app de Apps Script no puede devolver un JSON directamente
+                // a una petición 'no-cors'. La validación debe hacerse del lado del servidor.
+                messageDiv.textContent = 'Si las credenciales son correctas, serás redirigido...';
+                
+                // Redirección simulada (funciona si la app de Apps Script te envía una redirección)
+                // En este caso, la validación se haría del lado del servidor de Google.
+                // Como esta es una validación más compleja, te muestro una alternativa simple:
+                
+                // Conectando con Apps Script de forma segura (con manejo de respuesta)
+                const realResponse = await fetch(scriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ username, password })
+                });
+                const result = await realResponse.json();
+
+                if (result.success) {
+                    messageDiv.textContent = `¡Acceso exitoso como ${result.role}! Redirigiendo...`;
+                    // window.location.href = `/pagina-${result.role}.html`; // Ejemplo de redirección
+                } else {
+                    messageDiv.textContent = 'Usuario o contraseña incorrectos.';
+                }
+
+            } catch (error) {
+                messageDiv.textContent = 'Error al conectar con el servidor.';
+                console.error(error);
+            }
+        });
+    </script>
 </body>
 </html>

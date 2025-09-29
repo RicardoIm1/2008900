@@ -297,39 +297,13 @@
         // Footer dinámico
         document.getElementById('footerText').innerHTML =
             `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
-
-        // Manejo del formulario
-        document.getElementById("formularioLogin").addEventListener("submit", async function(e) {
-            e.preventDefault();
-            const usuario = e.target.usuario.value;
-            const clave = e.target.clave.value;
-            
-            // Simulación de respuesta (para propósitos de demostración)
-            const simularExito = true; // Cambiar a false para simular error
-            
-            setTimeout(() => {
-                if (simularExito) {
-                    document.getElementById("loginForm").classList.add("success");
-                    setTimeout(() => {
-                        alert("¡Inicio de sesión exitoso! Redirigiendo...");
-                        // window.location.href = "dashboard.html";
-                    }, 1500);
-                } else {
-                    document.getElementById("loginForm").classList.add("error");
-                    alert("Error: Credenciales incorrectas");
-                    setTimeout(() => {
-                        document.getElementById("loginForm").classList.remove("error");
-                    }, 2000);
-                }
-            }, 800);
-        });
     </script>
 
    <script>
     const form = document.getElementById('loginForm');
     const messageDiv = document.getElementById('message');
     // Reemplaza esto con la URL que copiaste de tu implementación de Apps Script
-        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwnOEJKwrCF4PyNqa8AFAlrcMtlglbbilHr4PRHYIg/dev'; // Pega aquí tu URL
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzuKJQ2GNozN1JD40s_dwWt0S6BCVXaWUoJGH-G9P0a9ZfHPANo5FkBgJE-tIGuWoB0/exec'; // Pega aquí tu URL
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault(); // Evita que el formulario se envíe de la forma tradicional

@@ -123,7 +123,11 @@
       border-collapse: collapse;
       font-size: 0.8rem;
     }
-    
+
+    #pacientes thead{
+        color:pink;
+        font-size:2rem;
+    }
     #pacientes th, #pacientes td {
       border: 1px solid #333;
       padding: 6px;

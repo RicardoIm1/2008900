@@ -126,7 +126,8 @@
 
     #pacientes thead{
         color:red;
-        text-align: center;
+        background: #0f0;
+        justify-content:center;
     }
     #pacientes th, #pacientes td {
       border: 1px solid #333;

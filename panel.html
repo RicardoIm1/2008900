@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Clínicas Ultimate</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Clínicas Ultimate</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
@@ -46,43 +46,74 @@
 </head>
 <body>
 
-<canvas id="particlesCanvas"></canvas>
-
-<div class="sidebar">
-  <h2>Panel Clínicas</h2>
-  <button onclick="mostrar('pacientes')">Pacientes</button>
-  <button onclick="mostrar('cumplimiento')">Cumplimiento</button>
-  <button onclick="mostrar('alertas')">Alertas</button>
-  <button onclick="mostrar('reportes')">Reportes</button>
+  <canvas id="particlesCanvas"></canvas>
+  
+  <div class="sidebar">
+    <h2>Panel Clínicas</h2>
+    <button onclick="mostrar('pacientes')">Pacientes</button>
+    <button onclick="mostrar('cumplimiento')">Cumplimiento</button>
+    <button onclick="mostrar('alertas')">Alertas</button>
+    <button onclick="mostrar('reportes')">Reportes</button>
+  </div>
+  
+  <div id="dashboard" class="glass">
+    <div class="filters">
+      <select id="mesSelect">
+        <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+      </select>
+      <select id="unidadSelect">
+        <option value="all">Todas Unidades</option>
+        <option value="U1">Unidad 1</option>
+        <option value="U2">Unidad 2</option>
+      </select>
+    </div>
+  
+    <div class="grid">
+      <div class="celda" id="kpiPacientes"><h3>Pacientes Mes</h3><p>1,254</p></div>
+      <div class="celda" id="kpiCumplimiento"><h3>Cumplimiento</h3><p>89%</p></div>
+      <div class="celda" id="kpiAlertas"><h3>Alertas Críticas</h3><p>12</p></div>
+      <div class="celda" id="kpiErrores"><h3>Errores Registros</h3><p>3</p></div>
+    </div>
+  
+    <div class="grid">
+      <div class="celda"><canvas id="pacientesChart"></canvas></div>
+      <div class="celda"><canvas id="cumplimientoChart"></canvas></div>
+      <div class="celda"><canvas id="alertasChart"></canvas></div>
+    </div>
+    <footer>
+      <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
+    </footer>
+  </div>
 </div>
 
-<div id="dashboard" class="glass">
-  <div class="filters">
-    <select id="mesSelect">
-      <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
-    </select>
-    <select id="unidadSelect">
-      <option value="all">Todas Unidades</option>
-      <option value="U1">Unidad 1</option>
-      <option value="U2">Unidad 2</option>
-    </select>
-  </div>
+  <script>
+    function setEstado(estado) {
+      const dashboard = document.getElementById('dashboard');
+      const estadoTexto = document.getElementById('estadoTexto');
+      dashboard.classList.remove('loading', 'success', 'error');
+      dashboard.classList.add(estado);
 
-  <div class="grid">
-    <div class="celda" id="kpiPacientes"><h3>Pacientes Mes</h3><p>1,254</p></div>
-    <div class="celda" id="kpiCumplimiento"><h3>Cumplimiento</h3><p>89%</p></div>
-    <div class="celda" id="kpiAlertas"><h3>Alertas Críticas</h3><p>12</p></div>
-    <div class="celda" id="kpiErrores"><h3>Errores Registros</h3><p>3</p></div>
-  </div>
+      switch (estado) {
+        case 'loading':
+          estadoTexto.innerHTML = '<i class="fas fa-sync fa-spin"></i> Cargando sistema...';
+          break;
+        case 'success':
+          estadoTexto.innerHTML = '<i class="fas fa-check-circle"></i> Sistema operativo con éxito ✅';
+          break;
+        case 'error':
+          estadoTexto.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
+          break;
+      }
+    }
 
-  <div class="grid">
-    <div class="celda"><canvas id="pacientesChart"></canvas></div>
-    <div class="celda"><canvas id="cumplimientoChart"></canvas></div>
-    <div class="celda"><canvas id="alertasChart"></canvas></div>
-  </div>
+    // Footer dinámico
+    document.getElementById('footerText').innerHTML =
+      `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+</script>
 
-  <footer>© 2025 Departamento de Estadísticas Clínicas — H.R.P.V</footer>
-</div>
+
+</body>
+</html>
 
 <script>
   // Mock datos para gráficos

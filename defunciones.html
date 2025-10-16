@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="estilos.css" rel="stylesheet">
   <style>
-/* Contenedor principal en dos columnas */
+/* Contenedor horizontal para formulario y tabla */
 .contenedor-flex {
   display: flex;
   gap: 1rem;
@@ -22,9 +22,7 @@
   flex: 0 0 30%;
   display: grid;
   gap: 0.5rem;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-  max-height: 100%;
+  overflow: hidden; /* sin scroll */
 }
 
 /* Tabla ocupa 70% con scroll vertical */
@@ -32,10 +30,10 @@
   flex: 0 0 70%;
   max-height: 100%;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
   padding: 0.5rem;
-/*   background: rgba(255, 255, 255, 0.8); */
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Estilo de tabla */
@@ -47,18 +45,20 @@
 .tabla-wrapper th,
 .tabla-wrapper td {
   padding: 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   text-align: left;
+  color: white;
 }
 
 .tabla-wrapper thead {
   position: sticky;
   top: 0;
-/*   background: #f0f0f0; */  
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
   z-index: 1;
 }
 
-/* Responsivo para pantallas pequeñas */
+/* Responsivo para móviles */
 @media (max-width: 768px) {
   .contenedor-flex {
     flex-direction: column;
@@ -70,11 +70,8 @@
     flex: 1 1 100%;
     max-height: none;
   }
-
-  .formulario {
-    padding-right: 0;
-  }
 }
+
 </style>
 </head>
 <body>

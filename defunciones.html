@@ -142,32 +142,17 @@
   
   <div id="estado-mensaje" class="status" style="display:none; width:100%"></div>
 
-    <form id="crud-form" class="formulario-grid">
-  <input type="hidden" id="id">
+    <div class="contenedor-flex">
+  <!-- Formulario (30%) -->
+  <form id="crud-form" class="formulario">
+    <input type="hidden" id="id">
 
-  <div class="grupo-campos">
-    <div class="campo">
-      <label for="folio">Folio</label>
-      <input id="folio">
-    </div>
-    <div class="campo">
-      <label for="nombre">Nombre</label>
-      <input id="nombre" required>
-    </div>
-    <div class="campo">
-      <label for="fechaDefuncion">Fecha de Defunción</label>
-      <input id="fechaDefuncion" type="date">
-    </div>
-    <div class="campo">
-      <label for="area">Área</label>
-      <input id="area">
-    </div>
-    <div class="campo">
-      <label for="edad">Edad</label>
-      <input id="edad" type="number">
-    </div>
-    <div class="campo">
-      <label for="sexo">Sexo</label>
+    <div class="campo"><label>Folio</label><input id="folio"></div>
+    <div class="campo"><label>Nombre</label><input id="nombre" required></div>
+    <div class="campo"><label>Fecha de Defunción</label><input id="fechaDefuncion" type="date"></div>
+    <div class="campo"><label>Área</label><input id="area"></div>
+    <div class="campo"><label>Edad</label><input id="edad" type="number"></div>
+    <div class="campo"><label>Sexo</label>
       <select id="sexo">
         <option value="">Seleccione</option>
         <option value="Masculino">Masculino</option>
@@ -175,55 +160,36 @@
         <option value="Intersexual">Intersexual</option>
       </select>
     </div>
-    <div class="campo">
-      <label for="diagnostico">Diagnóstico</label>
-      <textarea id="diagnostico"></textarea>
-    </div>
-    <div class="campo">
-      <label for="observaciones">Observaciones</label>
-      <textarea id="observaciones"></textarea>
-    </div>
-    <div class="campo">
-      <label for="expediente">Expediente</label>
-      <input id="expediente">
-    </div>
-    <div class="campo">
-      <label for="medico">Médico</label>
-      <input id="medico">
-    </div>
-  </div>
+    <div class="campo"><label>Diagnóstico</label><textarea id="diagnostico"></textarea></div>
+    <div class="campo"><label>Observaciones</label><textarea id="observaciones"></textarea></div>
+    <div class="campo"><label>Expediente</label><input id="expediente"></div>
+    <div class="campo"><label>Médico</label><input id="medico"></div>
 
-  <div class="botones">
-    <button type="submit">
-      <i class="fas fa-save"></i> Guardar
-    </button>
-    <button type="button" id="btn-limpiar">
-      <i class="fas fa-broom"></i> Limpiar
-    </button>
-  </div>
-</form>
+    <div class="botones">
+      <button type="submit"><i class="fas fa-save"></i> Guardar</button>
+      <button type="button" id="btn-limpiar"><i class="fas fa-broom"></i> Limpiar</button>
+    </div>
+  </form>
 
-    
-      <!-- Tabla -->
-      <div class="status">
-        <table class="tabla-wrapper">
-          <thead>
-            <tr>
-              <th>N°</th>
-              <th>Folio</th>
-              <th>Nombre</th>
-              <th>Fecha</th>
-              <th>Área</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
+  <!-- Tabla (70%) -->
+  <div class="tabla-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Folio</th>
+          <th>Nombre</th>
+          <th>Fecha</th>
+          <th>Área</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
       <tbody id="tabla-registros">
         <tr><td colspan="6">Cargando...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      </tbody>
+    </table>
   </div>
+</div>
 
 
   <script>

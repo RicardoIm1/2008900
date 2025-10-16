@@ -15,102 +15,65 @@
   height: calc(100vh - 150px); /* ajusta según tu header */
   overflow: hidden;
   flex-wrap: nowrap;
-  padding: 1rem;
-  background: #1c1c1e; /* fondo oscuro moderno */
 }
 
-/* Formulario (30%) */
+/* Formulario ocupa 30% */
 .formulario {
   flex: 0 0 30%;
+  overflow: hidden; /* sin scroll */
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  gap: 0.5rem; /* espacio uniforme entre campos */
+  max-width: 400px; /* ancho cómodo */
+  margin: auto;
   height: 100%;
-  box-sizing: border-box;
 }
 
-/* Inputs y textarea */
+/* Inputs, selects y textarea */
 .formulario input,
 .formulario select,
 .formulario textarea {
-  padding: 6px 10px;
+  padding: 6px 8px;
   font-size: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  outline: none;
-  transition: border 0.2s, background 0.2s;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.formulario input:focus,
-.formulario select:focus,
-.formulario textarea:focus {
-  border-color: #0a84ff;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* Textarea mínimo */
 .formulario textarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 50px;
 }
 
 /* Botones */
 .botones {
   display: flex;
   gap: 10px;
-  margin-top: auto;
+  margin-top: 10px;
 }
 
 .botones button {
   flex: 1;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 5px;
   border: none;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
 }
 
-.botones button:first-child {
-  background: #0a84ff;
-  color: white;
-}
-
-.botones button:first-child:hover {
-  background: #0066cc;
-}
-
-.botones button:last-child {
-  background: #ff3b30;
-  color: white;
-}
-
-.botones button:last-child:hover {
-  background: #cc2a20;
-}
-
-/* Tabla (70%) */
+/* Tabla ocupa 70% con scroll vertical */
 .tabla-wrapper {
-  flex: 1;
+  flex: 0 0 70%;
   max-height: 100%;
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* Tabla elegante */
+/* Estilo de tabla */
 .tabla-wrapper table {
   width: 100%;
   border-collapse: collapse;
-  color: white;
 }
 
 .tabla-wrapper th,
@@ -118,12 +81,13 @@
   padding: 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   text-align: left;
+  color: white;
 }
 
 .tabla-wrapper thead {
   position: sticky;
   top: 0;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(5px);
   z-index: 1;
 }

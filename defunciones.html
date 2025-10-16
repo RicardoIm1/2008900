@@ -15,85 +15,87 @@
   
   <div id="estado-mensaje" class="status" style="display:none; width:100%"></div>
 
-  <!-- Formulario -->
-  <form id="crud-form" class="grid">
-    <input type="hidden" id="id">
-
-    <div class="celda">
-      <label>Folio</label>
-      <input id="folio">
-    </div>
-    <div class="celda">
-      <label>Nombre</label>
-      <input id="nombre" required>
-    </div>
-    <div class="celda">
-      <label>Fecha de Defunción</label>
-      <input id="fechaDefuncion" type="date">
-    </div>
-    <div class="celda">
-      <label>Área</label>
-      <input id="area">
-    </div>
-    <div class="celda">
-      <label>Edad</label>
-      <input id="edad" type="number">
-    </div>
-    <div class="celda">
-      <label>Sexo</label>
-      <select id="sexo">
-        <option value="">Seleccione</option>
-        <option value="Masculino">Masculino</option>
-        <option value="Femenino">Femenino</option>
-        <option value="Intersexual">Intersexual</option>
-      </select>
-    </div>
-    <div class="celda">
-      <label>Diagnóstico</label>
-      <textarea id="diagnostico"></textarea>
-    </div>
-    <div class="celda">
-      <label>Observaciones</label>
-      <textarea id="observaciones"></textarea>
-    </div>
-    <div class="celda">
-      <label>Expediente</label>
-      <input id="expediente">
-    </div>
-    <div class="celda">
-      <label>Médico</label>
-      <input id="medico">
-    </div>
-
-    <div class="botones">
-      <button type="submit">
-        <i class="fas fa-save"></i> Guardar
-      </button>
-      <button type="button" id="btn-limpiar">
-        <i class="fas fa-broom"></i> Limpiar
-      </button>
-    </div>
-  </form>
-
-  <!-- Tabla -->
-  <div class="status">
-    <table>
-      <thead>
-        <tr>
-          <th>N°</th>
-          <th>Folio</th>
-          <th>Nombre</th>
-          <th>Fecha</th>
-          <th>Área</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    <div class="contenedor-flex">
+      <!-- Formulario -->
+      <form id="crud-form" class="grid">
+        <input type="hidden" id="id">
+    
+        <div class="celda">
+          <label>Folio</label>
+          <input id="folio">
+        </div>
+        <div class="celda">
+          <label>Nombre</label>
+          <input id="nombre" required>
+        </div>
+        <div class="celda">
+          <label>Fecha de Defunción</label>
+          <input id="fechaDefuncion" type="date">
+        </div>
+        <div class="celda">
+          <label>Área</label>
+          <input id="area">
+        </div>
+        <div class="celda">
+          <label>Edad</label>
+          <input id="edad" type="number">
+        </div>
+        <div class="celda">
+          <label>Sexo</label>
+          <select id="sexo">
+            <option value="">Seleccione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Intersexual">Intersexual</option>
+          </select>
+        </div>
+        <div class="celda">
+          <label>Diagnóstico</label>
+          <textarea id="diagnostico"></textarea>
+        </div>
+        <div class="celda">
+          <label>Observaciones</label>
+          <textarea id="observaciones"></textarea>
+        </div>
+        <div class="celda">
+          <label>Expediente</label>
+          <input id="expediente">
+        </div>
+        <div class="celda">
+          <label>Médico</label>
+          <input id="medico">
+        </div>
+    
+        <div class="botones">
+          <button type="submit">
+            <i class="fas fa-save"></i> Guardar
+          </button>
+          <button type="button" id="btn-limpiar">
+            <i class="fas fa-broom"></i> Limpiar
+          </button>
+        </div>
+      </form>
+    
+      <!-- Tabla -->
+      <div class="status">
+        <table class="tabla-wrapper">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Folio</th>
+              <th>Nombre</th>
+              <th>Fecha</th>
+              <th>Área</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
       <tbody id="tabla-registros">
         <tr><td colspan="6">Cargando...</td></tr>
-      </tbody>
-    </table>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-</div>
 
 
   <script>

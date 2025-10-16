@@ -101,35 +101,34 @@
     const GAS_URL = "https://script.google.com/macros/s/AKfycbwHuJe7oVjl9Zz5DYuUbQB29y8mfA27W_ztig_-BuYT3qDksHmOerkgttbNt8_XS7KW/exec";
 
     async function cargarRegistros() {
-      const tbody = document.getElementById("tabla-registros");
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-gray-500">
-        <i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = GAS_URL + '?action=readData';
+    document.body.appendChild(iframe);
+  
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject('Tiempo de espera excedido'), 7000);
+  
+      window.addEventListener('message', function handler(event) {
+        clearTimeout(timeout);
+        window.removeEventListener('message', handler);
+        document.body.removeChild(iframe);
+  
+        if (!event.data) {
+          reject('Respuesta vacía');
+          return;
+        }
+        if (event.data.success) {
+          allRecords = event.data.rows || [];
+          renderTable(allRecords);
+          resolve(event.data);
+        } else {
+          reject(event.data.error || 'Error desconocido');
+        }
+      });
+    });
+  }
 
-      try {
-        const res = await fetch(GAS_URL + "?action=readData");
-        const response = await res.json();
-        if (!response.success) throw new Error(response.error);
-        const registros = response.rows || [];
-        tbody.innerHTML = registros.map((r, i) => `
-          <tr class="hover:bg-gray-50">
-            <td class="p-3">${i + 1}</td>
-            <td class="p-3">${r.folio || ''}</td>
-            <td class="p-3">${r.nombre || ''}</td>
-            <td class="p-3">${r.fechaDefuncion || ''}</td>
-            <td class="p-3">${r.area || ''}</td>
-            <td class="p-3 space-x-1">
-              <button onclick='editarRegistro(${JSON.stringify(r)})' class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-sm">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button onclick='eliminarRegistro("${r.id}")' class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-sm">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </td>
-          </tr>`).join('');
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-500">${err.message}</td></tr>`;
-      }
-    }
 
     async function guardarRegistro(e) {
       e.preventDefault();

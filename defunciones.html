@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarRegistros();
   
   if (typeof google === 'undefined' || !google.script || !google.script.run) {
-    document.body.classList.add('border-4', 'border-red-500');
+    document.body.classList.add('border-4'/* , 'border-red-500' */);
     showToast("Modo desarrollo activado - Usando datos de prueba", "info");
   }
 });

@@ -206,6 +206,24 @@
   </div>
 </div>
 
+    <script type="module">
+    import { setEstado, ejecutarConEstado } from './estadoSistema.js';
+  
+    // Ejemplo manual
+    // setEstado('loading');
+    // setEstado('success');
+    // setEstado('error');
+  
+    // Ejemplo automático
+    async function guardarDatos() {
+      await ejecutarConEstado(
+        new Promise((resolve, reject) => {
+          setTimeout(() => resolve('ok'), 1500);
+        }),
+        'Guardando información...'
+      );
+    }
+  </script>
 
   <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz9UPRyGZclZyn_H0w-Wcp-tQd36In7oxkrMsyiGJeISFIgQJuARaSLLp55ID_y0dXV/exec";

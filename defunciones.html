@@ -7,13 +7,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="estilos.css" rel="stylesheet">
   <style>
-  /* Contenedor principal en dos columnas */
+/* Contenedor principal en dos columnas */
 .contenedor-flex {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
   height: calc(100vh - 150px); /* ajusta según tu header */
   overflow: hidden;
+  flex-wrap: nowrap;
 }
 
 /* Formulario ocupa 30% */
@@ -23,6 +24,7 @@
   gap: 0.5rem;
   overflow-y: auto;
   padding-right: 0.5rem;
+  max-height: 100%;
 }
 
 /* Tabla ocupa 70% con scroll vertical */
@@ -54,6 +56,24 @@
   top: 0;
   background: #f0f0f0;
   z-index: 1;
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+  .contenedor-flex {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .formulario,
+  .tabla-wrapper {
+    flex: 1 1 100%;
+    max-height: none;
+  }
+
+  .formulario {
+    padding-right: 0;
+  }
 }
 </style>
 </head>

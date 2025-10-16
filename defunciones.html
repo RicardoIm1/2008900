@@ -17,46 +17,49 @@
   flex-wrap: nowrap;
 }
 
-/* Formulario ocupa 30% */
+/* Formulario ocupa 30% de ancho real */
 .formulario {
-  flex: 0 0 30%;
-  overflow: hidden; /* sin scroll */
+  flex: 0 0 30%;        /* 30% del contenedor */
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* espacio uniforme entre campos */
-  max-width: 400px; /* ancho cómodo */
-  margin: auto;
-  height: 100%;
+  gap: 0.75rem;         /* un poco más de espacio entre campos */
+  padding: 1rem;        /* separación interna */
+  box-sizing: border-box;
+  height: 100%;          /* llena altura del contenedor */
+  overflow: hidden;      /* sin scroll */
 }
 
 /* Inputs, selects y textarea */
 .formulario input,
 .formulario select,
 .formulario textarea {
-  padding: 6px 8px;
+  width: 100%;           /* ocupa todo el ancho disponible */
+  padding: 8px 10px;     /* un poco más cómodo */
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 .formulario textarea {
   resize: vertical;
-  min-height: 50px;
+  min-height: 60px;      /* textarea un poco más alto */
 }
 
 /* Botones */
 .botones {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: auto;      /* empuja los botones al final del formulario */
 }
 
 .botones button {
   flex: 1;
-  padding: 8px;
+  padding: 10px;          /* botones un poco más grandes para balance visual */
   border-radius: 5px;
   border: none;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 /* Tabla ocupa 70% con scroll vertical */

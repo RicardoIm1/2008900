@@ -131,6 +131,23 @@
     grid-template-columns: 1fr;
   }
 }
+.bloque {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.bloque-horizontal {
+  display: flex;
+  gap: 10px; /* separación entre campos */
+  margin-bottom: 10px;
+}
+
+.bloque-horizontal > div {
+  flex: 1; /* que cada input ocupe proporcionalmente el espacio */
+  display: flex;
+  flex-direction: column;
+}
 
 </style>
 </head>
@@ -144,15 +161,35 @@
 
     <div class="contenedor-flex">
   <!-- Formulario (30%) -->
-  <form id="crud-form" class="formulario">
-    <input type="hidden" id="id">
+<form id="crud-form" class="formulario">
+  <input type="hidden" id="id">
 
-    <div class="campo"><label>Folio</label><input id="folio"></div>
-    <div class="campo"><label>Nombre</label><input id="nombre" required></div>
-    <div class="campo"><label>Fecha de Defunción</label><input id="fechaDefuncion" type="date"></div>
-    <div class="campo"><label>Área</label><input id="area"></div>
-    <div class="campo"><label>Edad</label><input id="edad" type="number"></div>
-    <div class="campo"><label>Sexo</label>
+  <div class="bloque">
+    <label>Folio</label>
+    <input id="folio">
+  </div>
+
+  <div class="bloque">
+    <label>Nombre</label>
+    <input id="nombre" required>
+  </div>
+
+  <div class="bloque">
+    <label>Fecha de Defunción</label>
+    <input id="fechaDefuncion" type="date">
+  </div>
+
+  <div class="bloque-horizontal">
+    <div>
+      <label>Área</label>
+      <input id="area">
+    </div>
+    <div>
+      <label>Edad</label>
+      <input id="edad" type="number">
+    </div>
+    <div>
+      <label>Sexo</label>
       <select id="sexo">
         <option value="">Seleccione</option>
         <option value="Masculino">Masculino</option>
@@ -160,16 +197,35 @@
         <option value="Intersexual">Intersexual</option>
       </select>
     </div>
-    <div class="campo"><label>Diagnóstico</label><textarea id="diagnostico"></textarea></div>
-    <div class="campo"><label>Observaciones</label><textarea id="observaciones"></textarea></div>
-    <div class="campo"><label>Expediente</label><input id="expediente"></div>
-    <div class="campo"><label>Médico</label><input id="medico"></div>
+  </div>
 
-    <div class="botones">
-      <button type="submit"><i class="fas fa-save"></i> Guardar</button>
-      <button type="button" id="btn-limpiar"><i class="fas fa-broom"></i> Limpiar</button>
+  <div class="bloque">
+    <label>Diagnóstico</label>
+    <textarea id="diagnostico"></textarea>
+  </div>
+
+  <div class="bloque">
+    <label>Observaciones</label>
+    <textarea id="observaciones"></textarea>
+  </div>
+
+  <div class="bloque-horizontal">
+    <div>
+      <label>Expediente</label>
+      <input id="expediente">
     </div>
-  </form>
+    <div>
+      <label>Médico</label>
+      <input id="medico">
+    </div>
+  </div>
+
+  <div class="botones">
+    <button type="submit"><i class="fas fa-save"></i> Guardar</button>
+    <button type="button" id="btn-limpiar"><i class="fas fa-broom"></i> Limpiar</button>
+  </div>
+</form>
+
 
   <!-- Tabla (70%) -->
   <div class="tabla-wrapper">

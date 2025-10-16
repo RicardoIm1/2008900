@@ -206,24 +206,25 @@
   </div>
 </div>
 
-    <script type="module">
-    import { setEstado, ejecutarConEstado } from './estadoSistema.js';
-  
-    // Ejemplo manual
-    // setEstado('loading');
-    // setEstado('success');
-    // setEstado('error');
-  
-    // Ejemplo automático
-    async function guardarDatos() {
-      await ejecutarConEstado(
-        new Promise((resolve, reject) => {
-          setTimeout(() => resolve('ok'), 1500);
-        }),
-        'Guardando información...'
-      );
-    }
-  </script>
+<script type="module">
+  import { setEstado, ejecutarConEstado } from './estadoSistema.js';
+
+  // Estado manual:
+  document.querySelector('#btnCargar').onclick = () => setEstado('loading');
+  document.querySelector('#btnExito').onclick = () => setEstado('success');
+  document.querySelector('#btnError').onclick = () => setEstado('error');
+
+  // Ejemplo con promesa simulada:
+  async function guardarDatos() {
+    await ejecutarConEstado(
+      new Promise((resolve, reject) => {
+        setTimeout(() => resolve('ok'), 2000);
+      }),
+      'Guardando información...'
+    );
+  }
+</script>
+
 
   <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycbz9UPRyGZclZyn_H0w-Wcp-tQd36In7oxkrMsyiGJeISFIgQJuARaSLLp55ID_y0dXV/exec";

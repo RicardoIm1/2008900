@@ -15,6 +15,8 @@
   <div class="header">
     <h1>Registro de Defunciones</h1>
   </div>
+  
+  <div id="estado-mensaje" class="status" style="display:none;"></div>
 
   <!-- Formulario -->
   <form id="crud-form" class="grid">
@@ -98,102 +100,136 @@
 
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbyVa5APnYBodAMIMbyflkvJ0vtxiJrzG2l_c8DUeXAKiy4BHz79s5F-2jGZLVrMwJQM/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyVa5APnYBodAMIMbyflkvJ0vtxiJrzG2l_c8DUeXAKiy4BHz79s5F-2jGZLVrMwJQM/exec";
 
-    async function cargarRegistros() {
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = GAS_URL + '?action=readData';
-    document.body.appendChild(iframe);
-  
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject('Tiempo de espera excedido'), 7000);
-  
-      window.addEventListener('message', function handler(event) {
-        clearTimeout(timeout);
-        window.removeEventListener('message', handler);
-        document.body.removeChild(iframe);
-  
-        if (!event.data) {
-          reject('Respuesta vacía');
-          return;
-        }
-        if (event.data.success) {
-          allRecords = event.data.rows || [];
-          renderTable(allRecords);
-          resolve(event.data);
-        } else {
-          reject(event.data.error || 'Error desconocido');
-        }
-      });
-    });
+  function mostrarEstado(mensaje, tipo = "info") {
+    const contenedor = document.getElementById("estado-mensaje");
+    contenedor.textContent = mensaje;
+    contenedor.className = "status glass " + tipo;
+    contenedor.style.display = "block";
+    setTimeout(() => contenedor.style.display = "none", 5000);
   }
 
+  async function cargarRegistros() {
+    mostrarEstado("Cargando registros...", "loading");
+    try {
+      const res = await fetch(GAS_URL + "?action=readData");
+      if (!res.ok) throw new Error("Error al cargar registros");
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || "Error desconocido");
+      renderTable(json.rows || []);
+      mostrarEstado("Registros cargados correctamente", "success");
+    } catch (err) {
+      mostrarEstado("Error al cargar registros: " + err.message, "error");
+    }
+  }
 
-    async function guardarRegistro(e) {
-      e.preventDefault();
-      const data = {
-        action: document.getElementById('id').value ? "updateData" : "createData",
-        id: document.getElementById('id').value,
-        folio: document.getElementById('folio').value,
-        nombre: document.getElementById('nombre').value,
-        fechaDefuncion: document.getElementById('fechaDefuncion').value,
-        area: document.getElementById('area').value,
-        edad: document.getElementById('edad').value,
-        sexo: document.getElementById('sexo').value,
-        diagnostico: document.getElementById('diagnostico').value,
-        expediente: document.getElementById('expediente').value,
-        medico: document.getElementById('medico').value,
-        observaciones: document.getElementById('observaciones').value
-      };
+  async function guardarRegistro(e) {
+    e.preventDefault();
+    mostrarEstado("Guardando registro...", "loading");
+
+    const data = {
+      action: document.getElementById('id').value ? "updateData" : "createData",
+      id: document.getElementById('id').value,
+      folio: document.getElementById('folio').value,
+      nombre: document.getElementById('nombre').value,
+      fechaDefuncion: document.getElementById('fechaDefuncion').value,
+      area: document.getElementById('area').value,
+      edad: document.getElementById('edad').value,
+      sexo: document.getElementById('sexo').value,
+      diagnostico: document.getElementById('diagnostico').value,
+      expediente: document.getElementById('expediente').value,
+      medico: document.getElementById('medico').value,
+      observaciones: document.getElementById('observaciones').value
+    };
+
+    try {
       const res = await fetch(GAS_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       });
       const json = await res.json();
-      alert(json.success ? "Guardado exitoso" : "Error: " + json.error);
+      if (!json.success) throw new Error(json.error || "Error desconocido");
+      mostrarEstado("Registro guardado correctamente", "success");
       limpiarFormulario();
       cargarRegistros();
+    } catch (err) {
+      mostrarEstado("Error al guardar: " + err.message, "error");
     }
+  }
 
-    async function eliminarRegistro(id) {
-      if (!confirm("¿Eliminar este registro?")) return;
+  async function eliminarRegistro(id) {
+    if (!confirm("¿Eliminar este registro?")) return;
+    mostrarEstado("Eliminando registro...", "loading");
+
+    try {
       const res = await fetch(GAS_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "deleteData", id })
       });
       const json = await res.json();
-      alert(json.success ? "Registro eliminado" : "Error: " + json.error);
+      if (!json.success) throw new Error(json.error || "Error desconocido");
+      mostrarEstado("Registro eliminado", "success");
       cargarRegistros();
+    } catch (err) {
+      mostrarEstado("Error al eliminar: " + err.message, "error");
+    }
+  }
+
+  function editarRegistro(r) {
+    document.getElementById('id').value = r.id || '';
+    document.getElementById('folio').value = r.folio || '';
+    document.getElementById('nombre').value = r.nombre || '';
+    document.getElementById('fechaDefuncion').value = r.fechaDefuncion || '';
+    document.getElementById('area').value = r.area || '';
+    document.getElementById('edad').value = r.edad || '';
+    document.getElementById('sexo').value = r.sexo || '';
+    document.getElementById('diagnostico').value = r.diagnostico || '';
+    document.getElementById('expediente').value = r.expediente || '';
+    document.getElementById('medico').value = r.medico || '';
+    document.getElementById('observaciones').value = r.observaciones || '';
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function limpiarFormulario() {
+    document.getElementById('crud-form').reset();
+    document.getElementById('id').value = '';
+  }
+
+  function renderTable(registros) {
+    const tbody = document.getElementById("tabla-registros");
+    tbody.innerHTML = "";
+
+    if (registros.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6">Sin registros</td></tr>`;
+      return;
     }
 
-    function editarRegistro(r) {
-      document.getElementById('id').value = r.id || '';
-      document.getElementById('folio').value = r.folio || '';
-      document.getElementById('nombre').value = r.nombre || '';
-      document.getElementById('fechaDefuncion').value = r.fechaDefuncion || '';
-      document.getElementById('area').value = r.area || '';
-      document.getElementById('edad').value = r.edad || '';
-      document.getElementById('sexo').value = r.sexo || '';
-      document.getElementById('diagnostico').value = r.diagnostico || '';
-      document.getElementById('expediente').value = r.expediente || '';
-      document.getElementById('medico').value = r.medico || '';
-      document.getElementById('observaciones').value = r.observaciones || '';
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function limpiarFormulario() {
-      document.getElementById('crud-form').reset();
-      document.getElementById('id').value = '';
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById('crud-form').addEventListener('submit', guardarRegistro);
-      document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
-      cargarRegistros();
+    registros.forEach((r, i) => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${i + 1}</td>
+        <td>${r.folio || ""}</td>
+        <td>${r.nombre || ""}</td>
+        <td>${r.fechaDefuncion || ""}</td>
+        <td>${r.area || ""}</td>
+        <td>
+          <button onclick='editarRegistro(${JSON.stringify(r)})'>✏️</button>
+          <button onclick='eliminarRegistro("${r.id}")'>🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(fila);
     });
-  </script>
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById('crud-form').addEventListener('submit', guardarRegistro);
+    document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
+    cargarRegistros();
+  });
+</script>
+
 </body>
 </html>

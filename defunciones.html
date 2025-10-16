@@ -71,6 +71,66 @@
     max-height: none;
   }
 }
+.formulario-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.grupo-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.campo {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.campo label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: white;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.85rem;
+  resize: vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .grupo-campos {
+    grid-template-columns: 1fr;
+  }
+}
 
 </style>
 </head>
@@ -82,68 +142,67 @@
   
   <div id="estado-mensaje" class="status" style="display:none; width:100%"></div>
 
-    <div class="contenedor-flex">
-      <!-- Formulario -->
-      <!-- <form id="crud-form" class="grid"> -->
-      <form id="crud-form" class="formulario grid">
+    <form id="crud-form" class="formulario-grid">
+  <input type="hidden" id="id">
 
-        <input type="hidden" id="id">
-    
-        <div class="celda">
-          <label>Folio</label>
-          <input id="folio">
-        </div>
-        <div class="celda">
-          <label>Nombre</label>
-          <input id="nombre" required>
-        </div>
-        <div class="celda">
-          <label>Fecha de Defunción</label>
-          <input id="fechaDefuncion" type="date">
-        </div>
-        <div class="celda">
-          <label>Área</label>
-          <input id="area">
-        </div>
-        <div class="celda">
-          <label>Edad</label>
-          <input id="edad" type="number">
-        </div>
-        <div class="celda">
-          <label>Sexo</label>
-          <select id="sexo">
-            <option value="">Seleccione</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Femenino">Femenino</option>
-            <option value="Intersexual">Intersexual</option>
-          </select>
-        </div>
-        <div class="celda">
-          <label>Diagnóstico</label>
-          <textarea id="diagnostico"></textarea>
-        </div>
-        <div class="celda">
-          <label>Observaciones</label>
-          <textarea id="observaciones"></textarea>
-        </div>
-        <div class="celda">
-          <label>Expediente</label>
-          <input id="expediente">
-        </div>
-        <div class="celda">
-          <label>Médico</label>
-          <input id="medico">
-        </div>
-    
-        <div class="botones">
-          <button type="submit">
-            <i class="fas fa-save"></i> Guardar
-          </button>
-          <button type="button" id="btn-limpiar">
-            <i class="fas fa-broom"></i> Limpiar
-          </button>
-        </div>
-      </form>
+  <div class="grupo-campos">
+    <div class="campo">
+      <label for="folio">Folio</label>
+      <input id="folio">
+    </div>
+    <div class="campo">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" required>
+    </div>
+    <div class="campo">
+      <label for="fechaDefuncion">Fecha de Defunción</label>
+      <input id="fechaDefuncion" type="date">
+    </div>
+    <div class="campo">
+      <label for="area">Área</label>
+      <input id="area">
+    </div>
+    <div class="campo">
+      <label for="edad">Edad</label>
+      <input id="edad" type="number">
+    </div>
+    <div class="campo">
+      <label for="sexo">Sexo</label>
+      <select id="sexo">
+        <option value="">Seleccione</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Femenino">Femenino</option>
+        <option value="Intersexual">Intersexual</option>
+      </select>
+    </div>
+    <div class="campo">
+      <label for="diagnostico">Diagnóstico</label>
+      <textarea id="diagnostico"></textarea>
+    </div>
+    <div class="campo">
+      <label for="observaciones">Observaciones</label>
+      <textarea id="observaciones"></textarea>
+    </div>
+    <div class="campo">
+      <label for="expediente">Expediente</label>
+      <input id="expediente">
+    </div>
+    <div class="campo">
+      <label for="medico">Médico</label>
+      <input id="medico">
+    </div>
+  </div>
+
+  <div class="botones">
+    <button type="submit">
+      <i class="fas fa-save"></i> Guardar
+    </button>
+    <button type="button" id="btn-limpiar">
+      <i class="fas fa-broom"></i> Limpiar
+    </button>
+  </div>
+</form>
+
     
       <!-- Tabla -->
       <div class="status">

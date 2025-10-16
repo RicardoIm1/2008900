@@ -1,62 +1,30 @@
-// 📁 estadoSistema.js
-// Módulo universal para manejar estados visuales (loading, success, error)
-// con transiciones suaves y compatibilidad total con tus estilos base.
+// Módulo de estado visual con retorno automático al color base
+export function setEstado(estado) {
+  const contenedor = document.querySelector('.glass') || document.body;
 
-export function setEstado(estado, mensaje = null) {
-  const dashboard = document.querySelector('.glass');
-  const estadoTexto = document.querySelector('#estadoTexto');
+  // limpia estados previos
+  contenedor.classList.remove('loading', 'success', 'error');
 
-  if (!dashboard) {
-    console.warn('⚠️ No se encontró el contenedor .glass');
-    return;
-  }
+  // aplica el nuevo
+  contenedor.classList.add(estado);
 
-  // Activar animación de transición suave
-  dashboard.style.transition = 'background 0.8s ease, box-shadow 0.8s ease, border 0.8s ease, opacity 0.4s ease';
-  dashboard.style.opacity = '0.7';
-
-  // Pequeño retardo para aplicar el nuevo estado tras desvanecer
-  setTimeout(() => {
-    dashboard.classList.remove('loading', 'success', 'error');
-    dashboard.classList.add(estado);
-
-    // Restaurar opacidad con efecto “fade-in”
-    dashboard.style.opacity = '1';
-  }, 200);
-
-  // Actualizar mensaje de estado
-  if (estadoTexto) {
-    switch (estado) {
-      case 'loading':
-        estadoTexto.innerHTML = mensaje || '<i class="fas fa-sync fa-spin"></i> Cargando...';
-        break;
-      case 'success':
-        estadoTexto.innerHTML = mensaje || '<i class="fas fa-check-circle"></i> Operación exitosa ✅';
-        break;
-      case 'error':
-        estadoTexto.innerHTML = mensaje || '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
-        break;
-      default:
-        estadoTexto.innerHTML = mensaje || 'Estado desconocido';
-    }
-
-    // Animar el texto también
-    estadoTexto.style.transition = 'opacity 0.5s ease';
-    estadoTexto.style.opacity = '0';
-    setTimeout(() => (estadoTexto.style.opacity = '1'), 100);
+  // si es success o error, regresa al color neutro después de un instante
+  if (estado === 'success' || estado === 'error') {
+    setTimeout(() => {
+      contenedor.classList.remove(estado);
+    }, 1500); // duración visible: 1.5 s
   }
 }
 
-// Función auxiliar: ejecuta una promesa mostrando estados automáticos
-export async function ejecutarConEstado(promise, mensajeCarga = 'Procesando...') {
-  setEstado('loading', mensajeCarga);
+export async function ejecutarConEstado(promesa, estadoInicial = 'loading') {
+  const contenedor = document.querySelector('.glass') || document.body;
+  setEstado(estadoInicial);
   try {
-    const resultado = await promise;
-    setEstado('success', 'Operación completada con éxito ✅');
+    const resultado = await promesa;
+    setEstado('success');
     return resultado;
-  } catch (err) {
-    console.error(err);
-    setEstado('error', 'Error durante la operación ❌');
-    throw err;
+  } catch (error) {
+    setEstado('error');
+    throw error;
   }
 }

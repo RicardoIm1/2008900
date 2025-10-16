@@ -6,6 +6,56 @@
   <title>Registro de Defunciones</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="estilos.css" rel="stylesheet">
+  <style>
+  /* Contenedor principal en dos columnas */
+.contenedor-flex {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  height: calc(100vh - 150px); /* ajusta según tu header */
+  overflow: hidden;
+}
+
+/* Formulario ocupa 30% */
+.formulario {
+  flex: 0 0 30%;
+  display: grid;
+  gap: 0.5rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Tabla ocupa 70% con scroll vertical */
+.tabla-wrapper {
+  flex: 0 0 70%;
+  max-height: 100%;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Estilo de tabla */
+.tabla-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-wrapper th,
+.tabla-wrapper td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.tabla-wrapper thead {
+  position: sticky;
+  top: 0;
+  background: #f0f0f0;
+  z-index: 1;
+}
+</style>
 </head>
 <body>
   <div class="glass">

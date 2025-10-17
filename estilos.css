@@ -71,6 +71,7 @@ body, html {
   animation: breathe 4s infinite ease-in-out;
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: white;
+  margin: 2rem auto;
 }
 
 @keyframes breathe {

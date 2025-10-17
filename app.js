@@ -383,3 +383,36 @@ function mostrarRegistrosLocales() {
     mostrarMensaje('info', `📱 Tienes ${registros.length} registros pendientes de sincronizar`);
   }
 }
+
+// Agregar al final de app.js
+function agregarBotonesDebug() {
+  const contenedor = document.querySelector('.botones');
+  
+  const botonDebug = document.createElement('button');
+  botonDebug.innerHTML = '🐛 Ver Estado';
+  botonDebug.onclick = function() {
+    console.log('=== DEBUG INFO ===');
+    console.log('URL GAS:', GAS_URL);
+    console.log('Formulario:', {
+      nombre: document.getElementById('nombre').value,
+      folio: document.getElementById('folio').value,
+      fecha: document.getElementById('fechaDefuncion').value
+    });
+    
+    // Probar la URL directamente
+    window.open(GAS_URL, '_blank');
+  };
+  
+  const botonLimpiarLocal = document.createElement('button');
+  botonLimpiarLocal.innerHTML = '🧹 Limpiar Local';
+  botonLimpiarLocal.onclick = function() {
+    localStorage.removeItem('defunciones_pendientes');
+    mostrarMensaje('success', 'LocalStorage limpiado');
+  };
+  
+  contenedor.appendChild(botonDebug);
+  contenedor.appendChild(botonLimpiarLocal);
+}
+
+// Llamar en DOMContentLoaded
+agregarBotonesDebug();

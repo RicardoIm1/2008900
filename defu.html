@@ -12,7 +12,7 @@
       display: flex;
       gap: 1rem;
       align-items: flex-start;
-      height: calc(100vh - 150px);
+      height: calc(100vh - 180px);
       overflow: hidden;
       flex-wrap: nowrap;
     }
@@ -27,7 +27,6 @@
       box-sizing: border-box;
       height: 100%;
       overflow: hidden;
-      transition: background-color 0.3s;
     }
 
     /* Inputs y textarea */
@@ -90,38 +89,6 @@
       z-index: 1;
     }
 
-    /* Notificaciones elegantes */
-    .notificacion {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 20px;
-      border-radius: 8px;
-      color: white;
-      font-weight: 500;
-      z-index: 1000;
-      transform: translateX(120%);
-      transition: transform 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      max-width: 300px;
-    }
-
-    .notificacion.mostrar {
-      transform: translateX(0);
-    }
-
-    .notificacion.success {
-      background: rgba(40, 167, 69, 0.9);
-    }
-
-    .notificacion.error {
-      background: rgba(220, 53, 69, 0.9);
-    }
-
-    .notificacion.info {
-      background: rgba(23, 162, 184, 0.9);
-    }
-
     /* Botones de acción en tabla */
     .acciones-tabla {
       display: flex;
@@ -146,10 +113,64 @@
       color: #dc3545;
     }
 
+    /* Estados del container con respiración */
+    .glass {
+      position: relative;
+      width: 95%;
+      max-width: 1200px;
+      padding: 2rem;
+      margin: 2rem auto;
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: background 5s ease, box-shadow 5s ease, border 5s ease;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: white;
+      animation: breathe 4s infinite ease-in-out;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+      50% {
+        transform: scale(1.005);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    .glass.loading {
+      background: rgba(0, 123, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 123, 255, 0.4);
+      border: 1px solid rgba(0, 123, 255, 0.4);
+      transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
+    }
+
+    .glass.success {
+      background: rgba(70, 227, 99, 0.35);
+      box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
+      border: 1px solid rgba(40, 167, 69, 0.4);
+      transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
+    }
+
+    .glass.error {
+      background: rgba(240, 50, 60, 0.45);
+      box-shadow: 0 8px 32px rgba(220, 53, 69, 0.4);
+      border: 1px solid rgba(220, 53, 69, 0.4);
+      transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .contenedor-flex { flex-direction: column; height: auto; }
       .formulario, .tabla-wrapper { flex: 1 1 100%; height: auto; }
+      .glass {
+        width: 98%;
+        padding: 1rem;
+        margin: 1rem auto;
+      }
     }
   </style>
 </head>
@@ -213,28 +234,90 @@
   </div>
 </div>
 
-<div id="notificacion" class="notificacion"></div>
-
 <script>
-// Configuración
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzTd3NQZuEKXIrIjI9qTRBolbeB9RlJ0d0RETuPunYQqE2Xz4860uiwAqGKiXXg3mfK/exec";
+// ========== estadoSistema.js ==========
+let intensidadUso = 0;
+let respiracionInterval;
 
-// Sistema de notificaciones elegantes
-function mostrarNotificacion(mensaje, tipo = 'info', duracion = 4000) {
-  const notificacion = document.getElementById('notificacion');
-  notificacion.textContent = mensaje;
-  notificacion.className = 'notificacion ' + tipo;
-  notificacion.classList.add('mostrar');
-  
-  setTimeout(() => {
-    notificacion.classList.remove('mostrar');
-  }, duracion);
+function iniciarRespiracion() {
+  const dashboard = document.querySelector('.glass');
+  if (!dashboard) return;
+
+  clearInterval(respiracionInterval);
+  let fase = 0;
+  respiracionInterval = setInterval(() => {
+    fase += 0.04 + Math.random() * 0.02;
+    const intensidad = Math.min(0.2 + intensidadUso / 50, 0.7);
+    const escala = 1 + Math.sin(fase) * intensidad * 0.05;
+    dashboard.style.transform = `scale(${escala})`;
+  }, 100);
 }
+
+function setEstado(estado, mensaje = null) {
+  const dashboard = document.querySelector('.glass');
+  const estadoTexto = document.querySelector('#estadoTexto');
+
+  if (!dashboard) {
+    console.warn('⚠️ No se encontró el contenedor .glass');
+    return;
+  }
+
+  intensidadUso = Math.min(intensidadUso + 1, 20);
+  iniciarRespiracion();
+  setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 10000);
+
+  dashboard.style.transition = 'background 0.5s ease, box-shadow 0.8s ease, border 0.5s ease';
+  dashboard.classList.remove('loading', 'success', 'error');
+
+  switch (estado) {
+    case 'loading':
+      dashboard.classList.add('loading');
+      break;
+    case 'success':
+      dashboard.classList.add('success');
+      break;
+    case 'error':
+      dashboard.classList.add('error');
+      break;
+  }
+
+  if (estadoTexto) {
+    const iconos = {
+      loading: '<i class="fas fa-sync fa-spin"></i> Procesando...',
+      success: '<i class="fas fa-check-circle"></i> Éxito ✅',
+      error: '<i class="fas fa-exclamation-circle"></i> Error ❌'
+    };
+    estadoTexto.innerHTML = mensaje || iconos[estado] || 'Listo';
+    estadoTexto.style.opacity = '1';
+  }
+
+  // 🔄 Restaurar a cristalino en 5 s - CORREGIDO
+  setTimeout(() => {
+    dashboard.style.transition = 'background 5s ease, box-shadow 5s ease, border 5s ease';
+    dashboard.classList.remove('loading', 'success', 'error');
+  }, 5000);
+}
+
+async function ejecutarConEstado(promise, mensajeCarga = 'Procesando...') {
+  setEstado('loading', mensajeCarga);
+  try {
+    const resultado = await promise;
+    setEstado('success', 'Operación completada con éxito ✅');
+    return resultado;
+  } catch (err) {
+    console.error(err);
+    setEstado('error', 'Error durante la operación ❌');
+    throw err;
+  }
+}
+
+// ========== app.js ==========
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzTd3NQZuEKXIrIjI9qTRBolbeB9RlJ0d0RETuPunYQqE2Xz4860uiwAqGKiXXg3mfK/exec";
 
 // Función para cargar datos
 async function cargarRegistros() {
   try {
-    mostrarNotificacion('🔄 Cargando registros...', 'info');
+    console.log('🔄 Cargando registros...');
     
     const response = await fetch(GAS_URL);
     const text = await response.text();
@@ -242,13 +325,13 @@ async function cargarRegistros() {
     
     if (data.success) {
       mostrarTabla(data.rows);
-      mostrarNotificacion(`✅ ${data.rows.length} registros cargados`, 'success');
+      setEstado('success', `✅ ${data.rows.length} registros cargados`);
     } else {
       throw new Error(data.error || 'Error del servidor');
     }
   } catch (error) {
     console.error('❌ Error:', error);
-    mostrarNotificacion('❌ Error cargando datos: ' + error.message, 'error');
+    setEstado('error', '❌ Error: ' + error.message);
     document.getElementById('tabla-registros').innerHTML = '<tr><td colspan="6">Error cargando datos</td></tr>';
   }
 }
@@ -272,11 +355,11 @@ async function guardar(e) {
   };
 
   if (!datos.nombre) {
-    mostrarNotificacion('❌ El nombre es obligatorio', 'error');
+    setEstado('error', '❌ El nombre es obligatorio');
     return;
   }
 
-  mostrarNotificacion('💾 Guardando registro...', 'info');
+  console.log('💾 Enviando datos:', datos);
 
   try {
     // Usar fetch en lugar de formulario para evitar nueva pestaña
@@ -289,6 +372,8 @@ async function guardar(e) {
       formData.append(key, datos[key] || '');
     });
 
+    setEstado('loading', '💾 Guardando registro...');
+    
     const response = await fetch(GAS_URL, {
       method: 'POST',
       body: formData
@@ -296,18 +381,18 @@ async function guardar(e) {
 
     const htmlResponse = await response.text();
     
-    // Verificar si fue exitoso buscando en el HTML
+    // Verificar si fue exitoso
     if (htmlResponse.includes('✅') || htmlResponse.includes('EXITOSAMENTE')) {
-      mostrarNotificacion('✅ Registro guardado correctamente', 'success');
+      setEstado('success', '✅ Registro guardado correctamente');
       limpiarForm();
-      cargarRegistros();
+      setTimeout(() => cargarRegistros(), 1000);
     } else {
       throw new Error('Error en la respuesta del servidor');
     }
     
   } catch (error) {
     console.error('❌ Error:', error);
-    mostrarNotificacion('❌ Error guardando registro: ' + error.message, 'error');
+    setEstado('error', '❌ Error guardando registro: ' + error.message);
   }
 }
 
@@ -316,7 +401,7 @@ async function eliminar(id) {
   if (!confirm('¿Está seguro de eliminar este registro?')) return;
 
   try {
-    mostrarNotificacion('🗑️ Eliminando registro...', 'info');
+    setEstado('loading', '🗑️ Eliminando registro...');
     
     const formData = new FormData();
     formData.append('action', 'deleteData');
@@ -330,15 +415,15 @@ async function eliminar(id) {
     const htmlResponse = await response.text();
     
     if (htmlResponse.includes('✅') || htmlResponse.includes('ELIMINADO')) {
-      mostrarNotificacion('✅ Registro eliminado', 'success');
-      cargarRegistros();
+      setEstado('success', '✅ Registro eliminado');
+      setTimeout(() => cargarRegistros(), 1000);
     } else {
       throw new Error('Error al eliminar');
     }
     
   } catch (error) {
     console.error('❌ Error eliminando:', error);
-    mostrarNotificacion('❌ Error eliminando registro: ' + error.message, 'error');
+    setEstado('error', '❌ Error eliminando registro: ' + error.message);
   }
 }
 
@@ -374,7 +459,7 @@ function mostrarTabla(registros) {
 // Editar registro
 async function editar(id) {
   try {
-    mostrarNotificacion('📝 Cargando datos para editar...', 'info');
+    setEstado('loading', '📝 Cargando datos para editar...');
     
     const response = await fetch(GAS_URL);
     const data = await response.json();
@@ -398,19 +483,19 @@ async function editar(id) {
         document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar';
         document.getElementById('btn-cancelar').style.display = 'block';
         
-        mostrarNotificacion('✏️ Modo edición activado', 'info');
+        setEstado('success', '✏️ Modo edición activado');
         window.scrollTo(0, 0);
       }
     }
   } catch (error) {
-    mostrarNotificacion('❌ Error cargando registro para editar', 'error');
+    setEstado('error', '❌ Error cargando registro para editar');
   }
 }
 
 // Cancelar edición
 function cancelarEdicion() {
   limpiarForm();
-  mostrarNotificacion('❌ Edición cancelada', 'info');
+  setEstado('info', '❌ Edición cancelada');
 }
 
 // Limpiar formulario
@@ -419,7 +504,7 @@ function limpiarForm() {
   document.getElementById('id').value = '';
   document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-save"></i> Guardar';
   document.getElementById('btn-cancelar').style.display = 'none';
-  mostrarNotificacion('🧹 Formulario limpiado', 'info');
+  setEstado('success', '🧹 Formulario limpiado');
 }
 
 // Inicialización
@@ -429,6 +514,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('crud-form').addEventListener('submit', guardar);
   document.getElementById('btn-limpiar').addEventListener('click', limpiarForm);
   document.getElementById('btn-cancelar').addEventListener('click', cancelarEdicion);
+  
+  // Iniciar respiración
+  iniciarRespiracion();
   
   // Cargar datos
   cargarRegistros();

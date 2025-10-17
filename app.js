@@ -6,20 +6,39 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbz-tgeLs_rUxPcbmxPHPKav
 
 // --- UTIL: fetch JSON con manejo de errores ---
 async function fetchJson(url, opts = {}) {
-  console.log("🔍 Fetch a:", url, opts);
+  console.log("🔍 Fetch a:", url);
+  
   try {
     const res = await fetch(url, {
       ...opts,
-      mode: 'cors'
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+        ...opts.headers
+      }
     });
+    
     console.log("📥 Respuesta status:", res.status, res.statusText);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    console.log("📊 Datos recibidos:", data);
-    return data;
-  } catch (error) {
-    console.error("❌ Error en fetchJson:", error);
-    throw error;
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
+    const text = await res.text();
+    console.log("📄 Respuesta texto:", text);
+    
+    // Intentar parsear JSON
+    try {
+      return JSON.parse(text);
+    } catch (parseError) {
+      console.error("❌ Error parseando JSON:", parseError);
+      throw new Error("Respuesta no es JSON válido: " + text.substring(0, 100));
+    }
+    
+  } catch (err) {
+    console.error("❌ Error en fetchJson:", err);
+    throw err;
   }
 }
 

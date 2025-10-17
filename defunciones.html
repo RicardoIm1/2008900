@@ -261,40 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
   // --- Guardar o actualizar registro ---
-  async function guardarRegistro(e) {
-    e.preventDefault();
-    const idVal = document.getElementById('id').value;
-    const payload = {
-      action: idVal ? "updateData" : "createData",
-      id: idVal || undefined,
-      folio: document.getElementById('folio').value,
-      nombre: document.getElementById('nombre').value,
-      fechaDefuncion: document.getElementById('fechaDefuncion').value,
-      area: document.getElementById('area').value,
-      edad: document.getElementById('edad').value,
-      sexo: document.getElementById('sexo').value,
-      diagnostico: document.getElementById('diagnostico').value,
-      expediente: document.getElementById('expediente').value,
-      medico: document.getElementById('medico').value,
-      observaciones: document.getElementById('observaciones').value
-    };
-
-    try {
-      const promise = fetchJson(GAS_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const json = await ejecutarConEstado(promise, idVal ? "Actualizando registro..." : "Creando registro...");
-      if (!json.success) throw new Error(json.error || "Error al guardar");
-      setEstado("success", idVal ? "Registro actualizado" : "Registro creado");
-      limpiarFormulario();
-      await cargarRegistros();
-    } catch (err) {
-      console.error(err);
-      setEstado("error", "Error al guardar: " + (err.message || err));
-    }
-  }
+https://script.google.com/macros/s/AKfycbwOGCuYlMiIwXVoE7uVWChpZVGdih4RpvJz1m0BLTpIZtBvH1cUT8Lf9YczvLARUp4/exec
 
   // --- Eliminar registro ---
   async function eliminarRegistro(id) {

@@ -246,3 +246,39 @@ document.addEventListener('DOMContentLoaded', function() {
 // Funciones globales para los botones
 window.editar = editar;
 window.eliminar = eliminar;
+
+// Función para verificar manualmente si se guardó
+async function verificarGuardado() {
+  try {
+    const response = await fetch(GAS_URL);
+    const data = await response.json();
+    
+    const ultimoRegistro = data.rows[0]; // El más reciente debería ser el primero
+    console.log('Último registro:', ultimoRegistro);
+    
+    if (ultimoRegistro && ultimoRegistro.nombre === 'SANCHEZ VALENCIA ANTONIO') {
+      mostrarMensaje('success', '✅ Verificado: El registro SÍ se guardó');
+    } else {
+      mostrarMensaje('error', '❌ El registro NO aparece en la base de datos');
+    }
+  } catch (error) {
+    console.error('Error verificando:', error);
+  }
+}
+
+// Agrega un botón temporal para verificar
+function agregarBotonVerificacion() {
+  const boton = document.createElement('button');
+  boton.textContent = '🔍 Verificar Guardado';
+  boton.onclick = verificarGuardado;
+  boton.style.margin = '10px';
+  boton.style.padding = '5px 10px';
+  
+  document.querySelector('.botones').appendChild(boton);
+}
+
+// En la inicialización, agrega:
+document.addEventListener('DOMContentLoaded', function() {
+  // ... código existente ...
+  agregarBotonVerificacion();
+});

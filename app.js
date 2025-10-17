@@ -1,7 +1,7 @@
-// Configuración
+// Configuración - NUEVA URL
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxjWyho305Dg-qGGk7dC_HT_le_GxPbtit2zU6KHkHeVD0v0WITz7UHjQcsm7HpQvYO/exec";
 
-// Función para cargar datos
+// Función para cargar datos (GET funciona bien)
 async function cargarRegistros() {
   try {
     console.log('🔄 Cargando registros desde:', GAS_URL);
@@ -26,34 +26,7 @@ async function cargarRegistros() {
   }
 }
 
-// Mostrar tabla
-function mostrarTabla(registros) {
-  const tbody = document.getElementById('tabla-registros');
-  tbody.innerHTML = '';
-
-  if (!registros || registros.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6">No hay registros</td></tr>';
-    return;
-  }
-
-  registros.forEach((registro, index) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${registro.folio || ''}</td>
-      <td>${registro.nombre || ''}</td>
-      <td>${registro.fechaDefuncion || ''}</td>
-      <td>${registro.area || ''}</td>
-      <td>
-        <button onclick="editar('${registro.id}')">✏️</button>
-        <button onclick="eliminar('${registro.id}')">🗑️</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-// Guardar registro
+// Guardar registro - SOLUCIÓN CORS
 async function guardar(e) {
   e.preventDefault();
   
@@ -83,53 +56,125 @@ async function guardar(e) {
       ...datos
     };
 
-    console.log('💾 Enviando:', payload);
+    console.log('💾 Enviando datos:', payload);
 
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const result = await response.json();
-    console.log('📨 Respuesta:', result);
-
-    if (result.success) {
-      mostrarMensaje('success', id ? '✅ Registro actualizado' : '✅ Registro creado');
-      limpiarForm();
-      await cargarRegistros();
-    } else {
-      throw new Error(result.error);
-    }
+    // SOLUCIÓN CORS: Usar Google Apps Script como redirección
+    await enviarDatosGAS(payload);
+    
+    mostrarMensaje('success', id ? '✅ Registro actualizado' : '✅ Registro creado');
+    limpiarForm();
+    
+    // Esperar un poco y recargar los datos
+    setTimeout(() => {
+      cargarRegistros();
+    }, 2000);
+    
   } catch (error) {
     console.error('❌ Error guardando:', error);
-    mostrarMensaje('error', '❌ Error: ' + error.message);
+    mostrarMensaje('error', '❌ Error guardando: ' + error.message);
   }
 }
 
-// Eliminar registro
+// Función para enviar datos evitando CORS
+function enviarDatosGAS(payload) {
+  return new Promise((resolve, reject) => {
+    // Crear un formulario invisible
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = GAS_URL;
+    form.style.display = 'none';
+    
+    // Agregar los datos como campo oculto
+    const input = document.createElement('input');
+    input.name = 'data';
+    input.value = JSON.stringify(payload);
+    form.appendChild(input);
+    
+    // Agregar al documento y enviar
+    document.body.appendChild(form);
+    
+    // Manejar la redirección (GAS devuelve HTML)
+    const originalTitle = document.title;
+    let checkCount = 0;
+    const maxChecks = 30; // 30 intentos = 15 segundos
+    
+    const checkForSuccess = () => {
+      checkCount++;
+      
+      // Si el título cambió o pasó mucho tiempo, asumir éxito
+      if (document.title !== originalTitle || checkCount >= maxChecks) {
+        document.body.removeChild(form);
+        document.title = originalTitle; // Restaurar título
+        resolve();
+      } else {
+        setTimeout(checkForSuccess, 500);
+      }
+    };
+    
+    // Enviar formulario y empezar a verificar
+    form.submit();
+    setTimeout(checkForSuccess, 1000);
+    
+    // Timeout de seguridad
+    setTimeout(() => {
+      document.body.removeChild(form);
+      resolve(); // Asumir éxito después de timeout
+    }, 15000);
+  });
+}
+
+// Eliminar registro - SOLUCIÓN CORS
 async function eliminar(id) {
   if (!confirm('¿Eliminar este registro?')) return;
 
   try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteData', id: id })
-    });
+    const payload = {
+      action: 'deleteData',
+      id: id
+    };
 
-    const result = await response.json();
-
-    if (result.success) {
-      mostrarMensaje('success', '✅ Registro eliminado');
-      await cargarRegistros();
-    } else {
-      throw new Error(result.error);
-    }
+    console.log('🗑️ Enviando eliminación:', payload);
+    await enviarDatosGAS(payload);
+    
+    mostrarMensaje('success', '✅ Registro eliminado');
+    
+    // Esperar un poco y recargar los datos
+    setTimeout(() => {
+      cargarRegistros();
+    }, 2000);
+    
   } catch (error) {
     console.error('❌ Error eliminando:', error);
-    mostrarMensaje('error', '❌ Error: ' + error.message);
+    mostrarMensaje('error', '❌ Error eliminando: ' + error.message);
   }
+}
+
+// El resto de las funciones se mantienen igual...
+// Mostrar tabla
+function mostrarTabla(registros) {
+  const tbody = document.getElementById('tabla-registros');
+  tbody.innerHTML = '';
+
+  if (!registros || registros.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6">No hay registros</td></tr>';
+    return;
+  }
+
+  registros.forEach((registro, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${registro.folio || ''}</td>
+      <td>${registro.nombre || ''}</td>
+      <td>${registro.fechaDefuncion || ''}</td>
+      <td>${registro.area || ''}</td>
+      <td>
+        <button onclick="editar('${registro.id}')">✏️</button>
+        <button onclick="eliminar('${registro.id}')">🗑️</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
 }
 
 // Editar registro

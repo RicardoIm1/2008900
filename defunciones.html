@@ -229,6 +229,36 @@
       if (tbody) tbody.innerHTML = `<tr><td colspan="6">Error al cargar registros</td></tr>`;
     }
   }
+  // Agrega esto después de cargarRegistros()
+async function testConexion() {
+  try {
+    console.log("🔍 Probando conexión con:", GAS_URL);
+    const response = await fetch(`${GAS_URL}?action=readData`);
+    const text = await response.text();
+    console.log("📥 Respuesta cruda:", text);
+    
+    const json = JSON.parse(text);
+    console.log("📊 Datos parseados:", json);
+    
+    if (json.success) {
+      setEstado("success", `✅ Conexión exitosa. ${json.rows?.length || 0} registros encontrados`);
+    } else {
+      setEstado("error", `❌ Error: ${json.error}`);
+    }
+  } catch (err) {
+    console.error("❌ Error de conexión:", err);
+    setEstado("error", "Error de conexión: " + err.message);
+  }
+}
+
+// Llama a esta función en DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById('crud-form').addEventListener('submit', guardarRegistro);
+  document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
+  
+  // Probar conexión primero
+  testConexion().then(() => cargarRegistros());
+});
 
   // --- Guardar o actualizar registro ---
   async function guardarRegistro(e) {

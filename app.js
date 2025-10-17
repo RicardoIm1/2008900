@@ -236,11 +236,27 @@ function mostrarMensaje(tipo, mensaje) {
 document.addEventListener('DOMContentLoaded', function() {
   console.log('🚀 Iniciando aplicación...');
   
-  document.getElementById('crud-form').addEventListener('submit', guardar);
+  // CAMBIO AQUÍ: Usar guardarDirecto en lugar de guardar
+  document.getElementById('crud-form').addEventListener('submit', guardarDirecto);
   document.getElementById('btn-limpiar').addEventListener('click', limpiarForm);
+  
+  // Mostrar registros locales si existen
+  mostrarRegistrosLocales();
   
   // Cargar datos
   cargarRegistros();
+  
+  // Escuchar mensajes de la ventana emergente
+  window.addEventListener('message', function(event) {
+    if (event.data.type === 'registroGuardado') {
+      console.log('✅ Mensaje de confirmación recibido:', event.data);
+      mostrarMensaje('success', '✅ ' + event.data.nombre + ' guardado exitosamente');
+      cargarRegistros();
+    }
+  });
+  
+  // Agregar botones de debug
+  agregarBotonesDebug();
 });
 
 // Funciones globales para los botones

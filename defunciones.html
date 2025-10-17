@@ -210,25 +210,6 @@
 <script type="module">
   import { setEstado, ejecutarConEstado } from './estadoSistema.js';
 
-  // Estado manual:
-  document.querySelector('#btnCargar').onclick = () => setEstado('loading');
-  document.querySelector('#btnExito').onclick = () => setEstado('success');
-  document.querySelector('#btnError').onclick = () => setEstado('error');
-
-  // Ejemplo con promesa simulada:
-  async function guardarDatos() {
-    await ejecutarConEstado(
-      new Promise((resolve, reject) => {
-        setTimeout(() => resolve('ok'), 2000);
-      }),
-      'Guardando información...'
-    );
-  }
-</script>
-
-<script type="module">
-  import { setEstado, ejecutarConEstado } from './estadoSistema.js';
-
   // --- Pega aquí la URL del deploy que obtuviste en Apps Script ---
   const GAS_URL = "https://script.google.com/macros/s/AKfycbxNCzBhD5DxR1SXNAVvcRN6NHzyJVJnhSnuPJTk-yORkqzJjT3_j1CkU5BwisAupT3e/exec";
 

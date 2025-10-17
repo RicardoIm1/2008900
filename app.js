@@ -2,7 +2,7 @@ import { setEstado, ejecutarConEstado } from './estadoSistema.js';
 
 console.log("🚀 app.js cargado correctamente");
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbz-tgeLs_rUxPcbmxPHPKavRzA_ltbOOigC4zaz-UMdhWlntccsyKOzuj_9datlA_1A/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyXRSYsNz5P-72SC4jKVJ_5LzmgWwpjNIRP6htTKy2RLjm7LwpEWADvEWA0xUstEyBU/exec";
 
 // --- UTIL: fetch JSON con manejo de errores ---
 async function fetchJson(url, opts = {}) {

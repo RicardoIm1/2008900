@@ -282,3 +282,104 @@ document.addEventListener('DOMContentLoaded', function() {
   // ... código existente ...
   agregarBotonVerificacion();
 });
+
+// Función DIRECTA para guardar - Sin CORS issues
+async function guardarDirecto(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById('id').value;
+  const datos = {
+    folio: document.getElementById('folio').value,
+    nombre: document.getElementById('nombre').value,
+    fechaDefuncion: document.getElementById('fechaDefuncion').value,
+    area: document.getElementById('area').value,
+    edad: document.getElementById('edad').value,
+    sexo: document.getElementById('sexo').value,
+    diagnostico: document.getElementById('diagnostico').value,
+    expediente: document.getElementById('expediente').value,
+    medico: document.getElementById('medico').value,
+    observaciones: document.getElementById('observaciones').value
+  };
+
+  if (!datos.nombre) {
+    mostrarMensaje('error', '❌ El nombre es obligatorio');
+    return;
+  }
+
+  console.log('💾 Intentando guardar directo:', datos);
+
+  try {
+    // Método 1: Usar Google Sheets API v4
+    await guardarConSheetsAPI(datos);
+    
+  } catch (error) {
+    console.error('❌ Error con API:', error);
+    // Método 2: Fallback - Guardar en localStorage temporal
+    guardarEnLocalStorage(datos);
+  }
+}
+
+// Método 1: Google Sheets API
+async function guardarConSheetsAPI(datos) {
+  // Esto requiere configuración de OAuth2, pero probemos un approach simple
+  const payload = {
+    action: 'createData',
+    ...datos
+  };
+
+  // Crear un formulario que se envía a Google Apps Script
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = GAS_URL;
+  form.target = '_blank'; // Abrir en nueva pestaña
+  form.style.display = 'none';
+
+  // Agregar todos los campos individualmente
+  Object.keys(payload).forEach(key => {
+    const input = document.createElement('input');
+    input.name = key;
+    input.value = payload[key] || '';
+    form.appendChild(input);
+  });
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+
+  mostrarMensaje('success', '✅ Enviando datos... Revisa la nueva pestaña');
+  
+  // Recargar después de 3 segundos
+  setTimeout(() => {
+    cargarRegistros();
+    mostrarMensaje('success', '📊 Datos recargados');
+  }, 3000);
+}
+
+// Método 2: Fallback - Guardar en localStorage
+function guardarEnLocalStorage(datos) {
+  const timestamp = new Date().toISOString();
+  const registro = {
+    id: 'local-' + Date.now(),
+    timestamp: timestamp,
+    ...datos
+  };
+
+  // Guardar en localStorage
+  const registrosLocales = JSON.parse(localStorage.getItem('defunciones_pendientes') || '[]');
+  registrosLocales.push(registro);
+  localStorage.setItem('defunciones_pendientes', JSON.stringify(registrosLocales));
+
+  mostrarMensaje('warning', '⚠️ Guardado local (sin conexión). ID: ' + registro.id);
+  limpiarForm();
+  
+  console.log('📱 Registro guardado localmente:', registro);
+}
+
+// Función para mostrar registros locales
+function mostrarRegistrosLocales() {
+  const registros = JSON.parse(localStorage.getItem('defunciones_pendientes') || '[]');
+  console.log('📱 Registros locales:', registros);
+  if (registros.length > 0) {
+    mostrarMensaje('info', `📱 Tienes ${registros.length} registros pendientes de sincronizar`);
+  }
+}

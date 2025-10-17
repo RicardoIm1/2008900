@@ -1,5 +1,5 @@
 // Configuración
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxMV5csdT9IKUtabp2BIJqEF3Yq_-bOszsfqCBy4R_-tQmtAw_GbEPadSwZmBBXB0NM/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxjWyho305Dg-qGGk7dC_HT_le_GxPbtit2zU6KHkHeVD0v0WITz7UHjQcsm7HpQvYO/exec";
 
 // Función simple para hacer requests
 async function makeRequest(url, options = {}) {

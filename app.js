@@ -1,21 +1,36 @@
 import { setEstado, ejecutarConEstado } from './estadoSistema.js';
 
+console.log("🚀 app.js cargado correctamente");
+
 const GAS_URL = "https://script.google.com/macros/s/AKfycbz-tgeLs_rUxPcbmxPHPKavRzA_ltbOOigC4zaz-UMdhWlntccsyKOzuj_9datlA_1A/exec";
 
 // --- UTIL: fetch JSON con manejo de errores ---
 async function fetchJson(url, opts = {}) {
-  const res = await fetch(url, {
-    ...opts,
-    mode: 'cors'
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return await res.json();
+  console.log("🔍 Fetch a:", url, opts);
+  try {
+    const res = await fetch(url, {
+      ...opts,
+      mode: 'cors'
+    });
+    console.log("📥 Respuesta status:", res.status, res.statusText);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    console.log("📊 Datos recibidos:", data);
+    return data;
+  } catch (error) {
+    console.error("❌ Error en fetchJson:", error);
+    throw error;
+  }
 }
 
 // --- Renderizar tabla ---
 function renderTable(registros) {
+  console.log("📋 Renderizando tabla con", registros?.length, "registros");
   const tbody = document.getElementById("tabla-registros");
-  if (!tbody) return;
+  if (!tbody) {
+    console.error("❌ No se encontró tabla-registros");
+    return;
+  }
   tbody.innerHTML = "";
 
   if (!registros || registros.length === 0) {
@@ -32,6 +47,7 @@ function renderTable(registros) {
     btnEditar.type = "button";
     btnEditar.title = "Editar";
     btnEditar.innerHTML = "✏️";
+    btnEditar.style.marginRight = "5px";
     btnEditar.addEventListener("click", () => editarRegistro(r));
 
     const btnEliminar = document.createElement("button");
@@ -57,14 +73,17 @@ function renderTable(registros) {
 
 // --- Cargar registros con estado ---
 async function cargarRegistros() {
+  console.log("🔄 Cargando registros...");
   try {
     const promise = fetchJson(`${GAS_URL}?action=readData`, { method: "GET" });
     const json = await ejecutarConEstado(promise, "Cargando registros...");
+    console.log("📊 Resultado de carga:", json);
+    
     if (!json.success) throw new Error(json.error || "Error al cargar");
     renderTable(json.rows);
     setEstado("success", "Registros cargados correctamente");
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error cargando registros:", err);
     setEstado("error", "Error al cargar registros: " + (err.message || err));
     const tbody = document.getElementById("tabla-registros");
     if (tbody) tbody.innerHTML = `<tr><td colspan="6">Error al cargar registros</td></tr>`;
@@ -74,6 +93,8 @@ async function cargarRegistros() {
 // --- Guardar o actualizar registro ---
 async function guardarRegistro(e) {
   e.preventDefault();
+  console.log("💾 Iniciando guardado...");
+  
   const idVal = document.getElementById('id').value;
   const payload = {
     action: idVal ? "updateData" : "createData",
@@ -90,25 +111,32 @@ async function guardarRegistro(e) {
     observaciones: document.getElementById('observaciones').value
   };
 
+  console.log("📤 Payload:", payload);
+
   try {
     const promise = fetchJson(GAS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+    
     const json = await ejecutarConEstado(promise, idVal ? "Actualizando registro..." : "Creando registro...");
+    console.log("📥 Respuesta del servidor:", json);
+    
     if (!json.success) throw new Error(json.error || "Error al guardar");
+    
     setEstado("success", idVal ? "Registro actualizado" : "Registro creado");
     limpiarFormulario();
     await cargarRegistros();
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error guardando:", err);
     setEstado("error", "Error al guardar: " + (err.message || err));
   }
 }
 
 // --- Eliminar registro ---
 async function eliminarRegistro(id) {
+  console.log("🗑️ Eliminando registro:", id);
   if (!confirm("¿Eliminar este registro?")) return;
   try {
     const promise = fetchJson(GAS_URL, {
@@ -121,13 +149,14 @@ async function eliminarRegistro(id) {
     setEstado("success", "Registro eliminado");
     await cargarRegistros();
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error eliminando:", err);
     setEstado("error", "Error al eliminar: " + (err.message || err));
   }
 }
 
 // --- Editar registro ---
 function editarRegistro(r) {
+  console.log("✏️ Editando registro:", r);
   document.getElementById('id').value = r.id || '';
   document.getElementById('folio').value = r.folio || '';
   document.getElementById('nombre').value = r.nombre || '';
@@ -144,12 +173,14 @@ function editarRegistro(r) {
 
 // --- Limpiar formulario ---
 function limpiarFormulario() {
+  console.log("🧹 Limpiando formulario");
   document.getElementById('crud-form').reset();
   document.getElementById('id').value = '';
 }
 
 // --- Inicialización ---
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("🏁 DOM cargado, inicializando...");
   document.getElementById('crud-form').addEventListener('submit', guardarRegistro);
   document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
   cargarRegistros();

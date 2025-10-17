@@ -1,10 +1,5 @@
 // Configuración
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxjWyho305Dg-qGGk7dC_HT_le_GxPbtit2zU6KHkHeVD0v0WITz7UHjQcsm7HpQvYO/exec";
-
-/* const GAS_URL = "https://script.google.com/macros/s/AKfycbzTd3NQZuEKXIrIjI9qTRBolbeB9RlJ0d0RETuPunYQqE2Xz4860uiwAqGKiXXg3mfK/exec"; */
-
-
-/* const GAS_URL = "https://script.google.com/macros/s/AKfycbzyG6EA3TI5dRJsntwk_ExnoctJJ4PKGGMiW6x0L8LKoKaDqcz7g7hVnJFKqgCy_Kk/exec"; */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzTd3NQZuEKXIrIjI9qTRBolbeB9RlJ0d0RETuPunYQqE2Xz4860uiwAqGKiXXg3mfK/exec";
 
 // Función para cargar datos
 async function cargarRegistros() {

@@ -218,3 +218,49 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
   cargarRegistros();
 });
+// --- Función de test temporal ---
+async function testConexion() {
+  console.log("🧪 Probando conexión...");
+  
+  // Test 1: URL directa
+  const testUrl = `${GAS_URL}?action=test&timestamp=${Date.now()}`;
+  console.log("🔗 Test URL:", testUrl);
+  
+  try {
+    const response = await fetch(testUrl, {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-cache'
+    });
+    
+    console.log("📤 Test Response:", response);
+    const text = await response.text();
+    console.log("📄 Test Response Text:", text);
+    
+    const json = JSON.parse(text);
+    console.log("📊 Test JSON:", json);
+    
+    return json;
+  } catch (err) {
+    console.error("❌ Test Error:", err);
+    throw err;
+  }
+}
+
+// Llamar al test en la inicialización
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🏁 DOM cargado, inicializando...");
+  
+  // Primero probar conexión
+  testConexion().then(result => {
+    console.log("✅ Test completado:", result);
+    
+    // Si el test funciona, inicializar la app
+    document.getElementById('crud-form').addEventListener('submit', guardarRegistro);
+    document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
+    cargarRegistros();
+  }).catch(err => {
+    console.error("❌ Test falló:", err);
+    setEstado("error", "Error de conexión: " + err.message);
+  });
+});

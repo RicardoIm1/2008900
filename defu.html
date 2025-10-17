@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Defunciones</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="estilos.css" rel="stylesheet">
+  <style>
+    /* Contenedor principal: 30-70 */
+    .contenedor-flex {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      height: calc(100vh - 150px);
+      overflow: hidden;
+      flex-wrap: nowrap;
+    }
+
+    /* Formulario ocupa 30% de ancho */
+    .formulario {
+      flex: 0 0 30%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1rem;
+      box-sizing: border-box;
+      height: 100%;
+      overflow: hidden;
+      transition: background-color 0.3s;
+    }
+
+    /* Inputs y textarea */
+    .formulario input,
+    .formulario select,
+    .formulario textarea {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .formulario textarea { resize: vertical; min-height: 60px; }
+
+    /* Botones */
+    .botones {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .botones button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Tabla ocupa 70% con scroll */
+    .tabla-wrapper {
+      flex: 0 0 70%;
+      max-height: 100%;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tabla-wrapper table {
+      max-width: 100%;
+      border-collapse: collapse;
+    }
+
+    .tabla-wrapper th,
+    .tabla-wrapper td {
+      padding: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: left;
+      color: white;
+    }
+
+    .tabla-wrapper thead {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(5px);
+      z-index: 1;
+    }
+
+    /* Notificaciones elegantes */
+    .notificacion {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 300px;
+    }
+
+    .notificacion.mostrar {
+      transform: translateX(0);
+    }
+
+    .notificacion.success {
+      background: rgba(40, 167, 69, 0.9);
+    }
+
+    .notificacion.error {
+      background: rgba(220, 53, 69, 0.9);
+    }
+
+    .notificacion.info {
+      background: rgba(23, 162, 184, 0.9);
+    }
+
+    /* Botones de acción en tabla */
+    .acciones-tabla {
+      display: flex;
+      gap: 5px;
+    }
+
+    .acciones-tabla button {
+      padding: 5px 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .btn-editar {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
+    .btn-eliminar {
+      background: rgba(220, 53, 69, 0.2);
+      color: #dc3545;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .contenedor-flex { flex-direction: column; height: auto; }
+      .formulario, .tabla-wrapper { flex: 1 1 100%; height: auto; }
+    }
+  </style>
+</head>
+<body>
+<div class="glass">
+  <div class="header"><h1>Registro de Defunciones</h1></div>
+  <div id="estadoTexto" style="text-align:center; margin-bottom:10px; color:white; font-weight:bold;"></div>
+
+  <div class="contenedor-flex">
+    <form id="crud-form" class="formulario">
+      <input type="hidden" id="id">
+      <div class="bloque"><label>Folio</label><input id="folio"></div>
+      <div class="bloque"><label>Nombre</label><input id="nombre" required></div>
+      <div class="bloque"><label>Fecha de Defunción</label><input id="fechaDefuncion" type="date"></div>
+
+      <div class="bloque-horizontal" style="display:flex; gap:10px;">
+        <div><label>Área</label><input id="area"></div>
+        <div><label>Edad</label><input id="edad" type="number"></div>
+        <div><label>Sexo</label>
+          <select id="sexo">
+            <option value="">Seleccione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Intersexual">Intersexual</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="bloque"><label>Diagnóstico</label><textarea id="diagnostico"></textarea></div>
+      <div class="bloque"><label>Observaciones</label><textarea id="observaciones"></textarea></div>
+
+      <div class="bloque-horizontal" style="display:flex; gap:10px;">
+        <div><label>Expediente</label><input id="expediente"></div>
+        <div><label>Médico</label><input id="medico"></div>
+      </div>
+
+      <div class="botones">
+        <button type="submit" id="btn-guardar"><i class="fas fa-save"></i> Guardar</button>
+        <button type="button" id="btn-limpiar"><i class="fas fa-broom"></i> Limpiar</button>
+        <button type="button" id="btn-cancelar" style="display:none;"><i class="fas fa-times"></i> Cancelar</button>
+      </div>
+    </form>
+
+    <div class="tabla-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Folio</th>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Área</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-registros">
+          <tr><td colspan="6">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="notificacion" class="notificacion"></div>
+
+<script>
+// Configuración
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzTd3NQZuEKXIrIjI9qTRBolbeB9RlJ0d0RETuPunYQqE2Xz4860uiwAqGKiXXg3mfK/exec";
+
+// Sistema de notificaciones elegantes
+function mostrarNotificacion(mensaje, tipo = 'info', duracion = 4000) {
+  const notificacion = document.getElementById('notificacion');
+  notificacion.textContent = mensaje;
+  notificacion.className = 'notificacion ' + tipo;
+  notificacion.classList.add('mostrar');
+  
+  setTimeout(() => {
+    notificacion.classList.remove('mostrar');
+  }, duracion);
+}
+
+// Función para cargar datos
+async function cargarRegistros() {
+  try {
+    mostrarNotificacion('🔄 Cargando registros...', 'info');
+    
+    const response = await fetch(GAS_URL);
+    const text = await response.text();
+    const data = JSON.parse(text);
+    
+    if (data.success) {
+      mostrarTabla(data.rows);
+      mostrarNotificacion(`✅ ${data.rows.length} registros cargados`, 'success');
+    } else {
+      throw new Error(data.error || 'Error del servidor');
+    }
+  } catch (error) {
+    console.error('❌ Error:', error);
+    mostrarNotificacion('❌ Error cargando datos: ' + error.message, 'error');
+    document.getElementById('tabla-registros').innerHTML = '<tr><td colspan="6">Error cargando datos</td></tr>';
+  }
+}
+
+// Guardar registro - MÉTODO MEJORADO
+async function guardar(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById('id').value;
+  const datos = {
+    folio: document.getElementById('folio').value,
+    nombre: document.getElementById('nombre').value,
+    fechaDefuncion: document.getElementById('fechaDefuncion').value,
+    area: document.getElementById('area').value,
+    edad: document.getElementById('edad').value,
+    sexo: document.getElementById('sexo').value,
+    diagnostico: document.getElementById('diagnostico').value,
+    expediente: document.getElementById('expediente').value,
+    medico: document.getElementById('medico').value,
+    observaciones: document.getElementById('observaciones').value
+  };
+
+  if (!datos.nombre) {
+    mostrarNotificacion('❌ El nombre es obligatorio', 'error');
+    return;
+  }
+
+  mostrarNotificacion('💾 Guardando registro...', 'info');
+
+  try {
+    // Usar fetch en lugar de formulario para evitar nueva pestaña
+    const formData = new FormData();
+    formData.append('action', id ? 'updateData' : 'createData');
+    
+    if (id) formData.append('id', id);
+    
+    Object.keys(datos).forEach(key => {
+      formData.append(key, datos[key] || '');
+    });
+
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    const htmlResponse = await response.text();
+    
+    // Verificar si fue exitoso buscando en el HTML
+    if (htmlResponse.includes('✅') || htmlResponse.includes('EXITOSAMENTE')) {
+      mostrarNotificacion('✅ Registro guardado correctamente', 'success');
+      limpiarForm();
+      cargarRegistros();
+    } else {
+      throw new Error('Error en la respuesta del servidor');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error:', error);
+    mostrarNotificacion('❌ Error guardando registro: ' + error.message, 'error');
+  }
+}
+
+// Eliminar registro - MÉTODO MEJORADO
+async function eliminar(id) {
+  if (!confirm('¿Está seguro de eliminar este registro?')) return;
+
+  try {
+    mostrarNotificacion('🗑️ Eliminando registro...', 'info');
+    
+    const formData = new FormData();
+    formData.append('action', 'deleteData');
+    formData.append('id', id);
+
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    const htmlResponse = await response.text();
+    
+    if (htmlResponse.includes('✅') || htmlResponse.includes('ELIMINADO')) {
+      mostrarNotificacion('✅ Registro eliminado', 'success');
+      cargarRegistros();
+    } else {
+      throw new Error('Error al eliminar');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error eliminando:', error);
+    mostrarNotificacion('❌ Error eliminando registro: ' + error.message, 'error');
+  }
+}
+
+// Mostrar tabla
+function mostrarTabla(registros) {
+  const tbody = document.getElementById('tabla-registros');
+  tbody.innerHTML = '';
+
+  if (!registros || registros.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6">No hay registros</td></tr>';
+    return;
+  }
+
+  registros.forEach((registro, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${registro.folio || ''}</td>
+      <td>${registro.nombre || ''}</td>
+      <td>${registro.fechaDefuncion || ''}</td>
+      <td>${registro.area || ''}</td>
+      <td>
+        <div class="acciones-tabla">
+          <button class="btn-editar" onclick="editar('${registro.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn-eliminar" onclick="eliminar('${registro.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Editar registro
+async function editar(id) {
+  try {
+    mostrarNotificacion('📝 Cargando datos para editar...', 'info');
+    
+    const response = await fetch(GAS_URL);
+    const data = await response.json();
+    
+    if (data.success) {
+      const registro = data.rows.find(r => r.id === id);
+      if (registro) {
+        document.getElementById('id').value = registro.id;
+        document.getElementById('folio').value = registro.folio || '';
+        document.getElementById('nombre').value = registro.nombre || '';
+        document.getElementById('fechaDefuncion').value = registro.fechaDefuncion || '';
+        document.getElementById('area').value = registro.area || '';
+        document.getElementById('edad').value = registro.edad || '';
+        document.getElementById('sexo').value = registro.sexo || '';
+        document.getElementById('diagnostico').value = registro.diagnostico || '';
+        document.getElementById('expediente').value = registro.expediente || '';
+        document.getElementById('medico').value = registro.medico || '';
+        document.getElementById('observaciones').value = registro.observaciones || '';
+        
+        // Cambiar texto del botón
+        document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar';
+        document.getElementById('btn-cancelar').style.display = 'block';
+        
+        mostrarNotificacion('✏️ Modo edición activado', 'info');
+        window.scrollTo(0, 0);
+      }
+    }
+  } catch (error) {
+    mostrarNotificacion('❌ Error cargando registro para editar', 'error');
+  }
+}
+
+// Cancelar edición
+function cancelarEdicion() {
+  limpiarForm();
+  mostrarNotificacion('❌ Edición cancelada', 'info');
+}
+
+// Limpiar formulario
+function limpiarForm() {
+  document.getElementById('crud-form').reset();
+  document.getElementById('id').value = '';
+  document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-save"></i> Guardar';
+  document.getElementById('btn-cancelar').style.display = 'none';
+  mostrarNotificacion('🧹 Formulario limpiado', 'info');
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚀 Iniciando aplicación...');
+  
+  document.getElementById('crud-form').addEventListener('submit', guardar);
+  document.getElementById('btn-limpiar').addEventListener('click', limpiarForm);
+  document.getElementById('btn-cancelar').addEventListener('click', cancelarEdicion);
+  
+  // Cargar datos
+  cargarRegistros();
+});
+
+// Funciones globales para los botones
+window.editar = editar;
+window.eliminar = eliminar;
+</script>
+
+</body>
+</html>

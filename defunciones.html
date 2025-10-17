@@ -226,78 +226,106 @@
   }
 </script>
 
-
 <script type="module">
   import { setEstado, ejecutarConEstado } from './estadoSistema.js';
 
+  // --- Pega aquí la URL del deploy que obtuviste en Apps Script ---
   const GAS_URL = "https://script.google.com/macros/s/AKfycbxNCzBhD5DxR1SXNAVvcRN6NHzyJVJnhSnuPJTk-yORkqzJjT3_j1CkU5BwisAupT3e/exec";
 
+  // UTIL: fetch con manejo de JSON y error estandarizado
+  async function fetchJson(url, opts = {}) {
+    const res = await fetch(url, opts);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  }
+
+  // Cargar registros (R)
   async function cargarRegistros() {
     try {
-      await ejecutarConEstado(fetch(GAS_URL + "?action=readData"), "Cargando registros...");
-      const res = await fetch(GAS_URL + "?action=readData");
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || "Error desconocido");
-      renderTable(json.rows || []);
+      // ejecutarConEstado recibe una promesa: envolvemos el fetch en una promesa
+      const promise = (async () => {
+        const url = `${GAS_URL}?action=readData`;
+        const json = await fetchJson(url);
+        if (!json.success) throw new Error(json.error || "Respuesta sin success");
+        return json.rows || [];
+      })();
+
+      const rows = await ejecutarConEstado(promise, "Cargando registros...");
+      renderTable(rows);
       setEstado("success", "Registros cargados correctamente");
     } catch (err) {
-      setEstado("error", "Error al cargar registros: " + err.message);
+      console.error("Error cargarRegistros:", err);
+      setEstado("error", "Error al cargar registros: " + (err.message || err));
+      // muestra algo en la tabla
+      const tbody = document.getElementById("tabla-registros");
+      if (tbody) tbody.innerHTML = `<tr><td colspan="6">Error al cargar registros</td></tr>`;
     }
   }
 
+  // Guardar registro (C o U)
   async function guardarRegistro(e) {
     e.preventDefault();
-    setEstado("loading", "Guardando registro...");
-
-    const data = {
-      action: document.getElementById('id').value ? "updateData" : "createData",
-      id: document.getElementById('id').value,
-      folio: document.getElementById('folio').value,
-      nombre: document.getElementById('nombre').value,
-      fechaDefuncion: document.getElementById('fechaDefuncion').value,
-      area: document.getElementById('area').value,
-      edad: document.getElementById('edad').value,
-      sexo: document.getElementById('sexo').value,
-      diagnostico: document.getElementById('diagnostico').value,
-      expediente: document.getElementById('expediente').value,
-      medico: document.getElementById('medico').value,
-      observaciones: document.getElementById('observaciones').value
-    };
-
     try {
-      const res = await fetch(GAS_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || "Error desconocido");
-      setEstado("success", "Registro guardado correctamente");
+      setEstado("loading", "Guardando registro...");
+      const idVal = document.getElementById('id').value;
+      const payload = {
+        action: idVal ? "updateData" : "createData",
+        id: idVal || undefined,
+        folio: document.getElementById('folio').value,
+        nombre: document.getElementById('nombre').value,
+        fechaDefuncion: document.getElementById('fechaDefuncion').value,
+        area: document.getElementById('area').value,
+        edad: document.getElementById('edad').value,
+        sexo: document.getElementById('sexo').value,
+        diagnostico: document.getElementById('diagnostico').value,
+        expediente: document.getElementById('expediente').value,
+        medico: document.getElementById('medico').value,
+        observaciones: document.getElementById('observaciones').value
+      };
+
+      const json = await ejecutarConEstado(
+        fetchJson(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }),
+        "Guardando registro..."
+      );
+
+      if (!json.success) throw new Error(json.error || "No success");
+      setEstado("success", idVal ? "Registro actualizado" : "Registro creado");
       limpiarFormulario();
-      cargarRegistros();
+      await cargarRegistros();
     } catch (err) {
-      setEstado("error", "Error al guardar: " + err.message);
+      console.error("Error guardarRegistro:", err);
+      setEstado("error", "Error al guardar: " + (err.message || err));
     }
   }
 
+  // Eliminar registro (D)
   async function eliminarRegistro(id) {
     if (!confirm("¿Eliminar este registro?")) return;
-    setEstado("loading", "Eliminando registro...");
-
     try {
-      const res = await fetch(GAS_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "deleteData", id })
-      });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || "Error desconocido");
+      setEstado("loading", "Eliminando registro...");
+      const json = await ejecutarConEstado(
+        fetchJson(GAS_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "deleteData", id })
+        }),
+        "Eliminando registro..."
+      );
+
+      if (!json.success) throw new Error(json.error || "No success");
       setEstado("success", "Registro eliminado");
-      cargarRegistros();
+      await cargarRegistros();
     } catch (err) {
-      setEstado("error", "Error al eliminar: " + err.message);
+      console.error("Error eliminarRegistro:", err);
+      setEstado("error", "Error al eliminar: " + (err.message || err));
     }
   }
+
+  // Rellenar formulario para editar
   function editarRegistro(r) {
     document.getElementById('id').value = r.id || '';
     document.getElementById('folio').value = r.folio || '';
@@ -313,43 +341,69 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // Limpiar formulario
   function limpiarFormulario() {
     document.getElementById('crud-form').reset();
     document.getElementById('id').value = '';
   }
 
+  // Renderizar tabla con listeners (sin onclick inline)
   function renderTable(registros) {
     const tbody = document.getElementById("tabla-registros");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
-    if (registros.length === 0) {
+    if (!registros || registros.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6">Sin registros</td></tr>`;
       return;
     }
 
     registros.forEach((r, i) => {
       const fila = document.createElement("tr");
+
+      const accionesTd = document.createElement("td");
+
+      const btnEditar = document.createElement("button");
+      btnEditar.type = "button";
+      btnEditar.title = "Editar";
+      btnEditar.innerHTML = "✏️";
+      btnEditar.addEventListener("click", () => editarRegistro(r));
+
+      const btnEliminar = document.createElement("button");
+      btnEliminar.type = "button";
+      btnEliminar.title = "Eliminar";
+      btnEliminar.innerHTML = "🗑️";
+      btnEliminar.addEventListener("click", () => eliminarRegistro(r.id));
+
+      accionesTd.appendChild(btnEditar);
+      accionesTd.appendChild(btnEliminar);
+
       fila.innerHTML = `
         <td>${i + 1}</td>
         <td>${r.folio || ""}</td>
         <td>${r.nombre || ""}</td>
         <td>${r.fechaDefuncion || ""}</td>
         <td>${r.area || ""}</td>
-        <td>
-          <button onclick='editarRegistro(${JSON.stringify(r)})'>✏️</button>
-          <button onclick='eliminarRegistro("${r.id}")'>🗑️</button>
-        </td>
       `;
+      fila.appendChild(accionesTd);
       tbody.appendChild(fila);
     });
   }
 
+  // Inicialización DOMContentLoaded
   document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById('crud-form').addEventListener('submit', guardarRegistro);
-    document.getElementById('btn-limpiar').addEventListener('click', limpiarFormulario);
-    cargarRegistros();
+    // Evita errores por elementos que no existan: comprobamos antes
+    const form = document.getElementById('crud-form');
+    if (form) form.addEventListener('submit', guardarRegistro);
+
+    const btnLimpiar = document.getElementById('btn-limpiar');
+    if (btnLimpiar) btnLimpiar.addEventListener('click', limpiarFormulario);
+
+    // Cargar registros al inicio
+    cargarRegistros().catch(err => console.error(err));
   });
 </script>
+
 
 </body>
 </html>

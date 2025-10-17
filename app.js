@@ -74,10 +74,24 @@ function renderTable(registros) {
 // --- Cargar registros con estado ---
 async function cargarRegistros() {
   console.log("🔄 Cargando registros...");
+  
   try {
-    const promise = fetchJson(`${GAS_URL}?action=readData`, { method: "GET" });
+    // Usar URLSearchParams para asegurar que los parámetros se envíen correctamente
+    const params = new URLSearchParams({
+      action: "readData",
+      timestamp: Date.now() // evitar cache
+    });
+    
+    const url = `${GAS_URL}?${params.toString()}`;
+    console.log("🔗 URL completa:", url);
+    
+    const promise = fetchJson(url, { 
+      method: "GET",
+      cache: 'no-cache'
+    });
+    
     const json = await ejecutarConEstado(promise, "Cargando registros...");
-    console.log("📊 Resultado de carga:", json);
+    console.log("📊 JSON recibido:", json);
     
     if (!json.success) throw new Error(json.error || "Error al cargar");
     renderTable(json.rows);

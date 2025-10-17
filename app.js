@@ -75,51 +75,57 @@ async function guardar(e) {
   }
 }
 
-// Función para enviar datos evitando CORS
+// Función mejorada para enviar datos evitando CORS
 function enviarDatosGAS(payload) {
   return new Promise((resolve, reject) => {
-    // Crear un formulario invisible
+    // Crear un iframe invisible para enviar la solicitud
+    const iframe = document.createElement('iframe');
+    iframe.name = 'gasPostFrame';
+    iframe.style.display = 'none';
+    
+    // Crear formulario
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = GAS_URL;
+    form.target = 'gasPostFrame';
     form.style.display = 'none';
     
-    // Agregar los datos como campo oculto
+    // Agregar los datos como campo oculto en formato JSON
     const input = document.createElement('input');
     input.name = 'data';
     input.value = JSON.stringify(payload);
     form.appendChild(input);
     
-    // Agregar al documento y enviar
+    // Agregar al documento
+    document.body.appendChild(iframe);
     document.body.appendChild(form);
     
-    // Manejar la redirección (GAS devuelve HTML)
-    const originalTitle = document.title;
-    let checkCount = 0;
-    const maxChecks = 30; // 30 intentos = 15 segundos
-    
-    const checkForSuccess = () => {
-      checkCount++;
-      
-      // Si el título cambió o pasó mucho tiempo, asumir éxito
-      if (document.title !== originalTitle || checkCount >= maxChecks) {
-        document.body.removeChild(form);
-        document.title = originalTitle; // Restaurar título
-        resolve();
-      } else {
-        setTimeout(checkForSuccess, 500);
-      }
+    // Manejar la carga del iframe
+    iframe.onload = function() {
+      console.log('✅ Solicitud POST completada');
+      document.body.removeChild(iframe);
+      document.body.removeChild(form);
+      resolve();
     };
     
-    // Enviar formulario y empezar a verificar
+    iframe.onerror = function() {
+      console.error('❌ Error en solicitud POST');
+      document.body.removeChild(iframe);
+      document.body.removeChild(form);
+      reject(new Error('Error en la solicitud POST'));
+    };
+    
+    // Enviar formulario
     form.submit();
-    setTimeout(checkForSuccess, 1000);
     
     // Timeout de seguridad
     setTimeout(() => {
-      document.body.removeChild(form);
-      resolve(); // Asumir éxito después de timeout
-    }, 15000);
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+        document.body.removeChild(form);
+        resolve(); // Asumir éxito después de timeout
+      }
+    }, 10000);
   });
 }
 

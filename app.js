@@ -61,19 +61,21 @@ async function guardar(e) {
     // SOLUCIÓN CORS: Usar Google Apps Script como redirección
     await enviarDatosGAS(payload);
     
+    // En la función guardar, cambia esta parte:
     mostrarMensaje('success', id ? '✅ Registro actualizado' : '✅ Registro creado');
     limpiarForm();
     
-    // Esperar un poco y recargar los datos
+    // Esperar más tiempo para que Google Sheets procese
     setTimeout(() => {
       cargarRegistros();
-    }, 2000);
-    
-  } catch (error) {
-    console.error('❌ Error guardando:', error);
-    mostrarMensaje('error', '❌ Error guardando: ' + error.message);
-  }
-}
+      mostrarMensaje('success', '📊 Datos recargados');
+    }, 3000); // 3 segundos en lugar de 2
+        
+      } catch (error) {
+        console.error('❌ Error guardando:', error);
+        mostrarMensaje('error', '❌ Error guardando: ' + error.message);
+      }
+    }
 
 // Función mejorada para enviar datos evitando CORS
 function enviarDatosGAS(payload) {

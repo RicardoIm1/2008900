@@ -1,6 +1,20 @@
 // 📁 estadoSistema.js
-// Módulo universal para manejar estados visuales (loading, success, error)
-// con transiciones suaves y compatibilidad total con tus estilos base.
+let intensidadUso = 0;
+let respiracionInterval;
+
+function iniciarRespiracion() {
+  const dashboard = document.querySelector('.glass');
+  if (!dashboard) return;
+
+  clearInterval(respiracionInterval);
+  let fase = 0;
+  respiracionInterval = setInterval(() => {
+    fase += 0.04 + Math.random() * 0.02; // añade “arritmia”
+    const intensidad = Math.min(0.2 + intensidadUso / 50, 0.7);
+    const escala = 1 + Math.sin(fase) * intensidad * 0.05;
+    dashboard.style.transform = `scale(${escala})`;
+  }, 100);
+}
 
 export function setEstado(estado, mensaje = null) {
   const dashboard = document.querySelector('.glass');
@@ -11,43 +25,49 @@ export function setEstado(estado, mensaje = null) {
     return;
   }
 
-  // Activar animación de transición suave
-  dashboard.style.transition = 'background 0.8s ease, box-shadow 0.8s ease, border 0.8s ease, opacity 0.4s ease';
-  dashboard.style.opacity = '0.7';
+  intensidadUso = Math.min(intensidadUso + 1, 20); // sube la energía del sistema
+  iniciarRespiracion();
+  setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 10000); // decae lentamente
 
-  // Pequeño retardo para aplicar el nuevo estado tras desvanecer
-  setTimeout(() => {
-    dashboard.classList.remove('loading', 'success', 'error');
-    dashboard.classList.add(estado);
+  dashboard.style.transition =
+    'background 0.5s ease, box-shadow 0.8s ease, transform 1s ease';
+  dashboard.classList.remove('loading', 'success', 'error');
 
-    // Restaurar opacidad con efecto “fade-in”
-    dashboard.style.opacity = '1';
-  }, 200);
-
-  // Actualizar mensaje de estado
-  if (estadoTexto) {
-    switch (estado) {
-      case 'loading':
-        estadoTexto.innerHTML = mensaje || '<i class="fas fa-sync fa-spin"></i> Cargando...';
-        break;
-      case 'success':
-        estadoTexto.innerHTML = mensaje || '<i class="fas fa-check-circle"></i> Operación exitosa ✅';
-        break;
-      case 'error':
-        estadoTexto.innerHTML = mensaje || '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
-        break;
-      default:
-        estadoTexto.innerHTML = mensaje || 'Estado desconocido';
-    }
-
-    // Animar el texto también
-    estadoTexto.style.transition = 'opacity 0.5s ease';
-    estadoTexto.style.opacity = '0';
-    setTimeout(() => (estadoTexto.style.opacity = '1'), 100);
+  let bgColor;
+  switch (estado) {
+    case 'loading':
+      bgColor = 'rgba(255, 255, 0, 0.15)';
+      break;
+    case 'success':
+      bgColor = 'rgba(0, 255, 100, 0.25)';
+      break;
+    case 'error':
+      bgColor = 'rgba(255, 50, 50, 0.25)';
+      break;
+    default:
+      bgColor = 'rgba(255,255,255,0.1)';
   }
+
+  dashboard.style.background = bgColor;
+
+  if (estadoTexto) {
+    const iconos = {
+      loading: '<i class="fas fa-sync fa-spin"></i> Procesando...',
+      success: '<i class="fas fa-check-circle"></i> Éxito ✅',
+      error: '<i class="fas fa-exclamation-circle"></i> Error ❌'
+    };
+    estadoTexto.innerHTML = mensaje || iconos[estado] || 'Listo';
+    estadoTexto.style.opacity = '1';
+  }
+
+  // 🔄 Restaurar a cristalino en 5 s
+  setTimeout(() => {
+    dashboard.style.transition = 'background 5s ease';
+    dashboard.style.background = 'rgba(255, 255, 255, 0.1)';
+  }, 5000);
 }
 
-// Función auxiliar: ejecuta una promesa mostrando estados automáticos
+// Ejecuta una promesa mostrando estados automáticos
 export async function ejecutarConEstado(promise, mensajeCarga = 'Procesando...') {
   setEstado('loading', mensajeCarga);
   try {

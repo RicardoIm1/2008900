@@ -12,11 +12,12 @@
       display: flex;
       gap: 1rem;
       align-items: flex-start;
-      height: calc(100vh - 180px);
-      overflow: hidden;
       flex-wrap: nowrap;
-      margin: 2rem auto;
-    } 
+      height: auto;              /* deja que respire */
+      margin: 3rem auto;         /* aire externo */
+      padding: 1.5rem 0;         /* aire interno */
+      overflow-y: auto;          /* evita que se corte */
+    }
 
     /* Formulario ocupa 30% de ancho */
     .formulario {

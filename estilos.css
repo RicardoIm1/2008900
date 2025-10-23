@@ -23,8 +23,8 @@ body, html {
   position: relative;
 
   min-height: 100vh;        /* crece según el contenido */
-  overflow-y: auto;         /* scroll vertical global */
-  overflow-x: hidden;       /* sin scroll horizontal */
+  /* overflow-y: auto; */         /* scroll vertical global */
+  /* overflow-x: hidden; */       /* sin scroll horizontal */
 }
 
 

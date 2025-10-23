@@ -10,14 +10,29 @@
     /* Contenedor principal: 30-70 */
     .contenedor-flex {
       display: flex;
+      flex-direction: row;        /* o column, según tu diseño */
       gap: 1rem;
       align-items: flex-start;
       flex-wrap: nowrap;
-      min-height: 60vh;
-      max-height: 85vh;
-      padding-block: 4vh;  /* aire superior e inferior según pantalla */
-      overflow-y: auto;
+    
+      /* Manténlo dentro del viewport */
+      height: calc(100vh - 180px);  /* ajusta 180px según lo que mida tu header+footer */
+    
+      /* Espaciado visual */
+      padding-block: 1.5rem;     /* aire superior e inferior */
+      padding-inline: 1rem;      /* opcional: aire lateral */
+      box-sizing: border-box;
+    
+      /* Control de desbordamiento */
+      overflow-y: auto;          /* scroll solo dentro del contenedor */
+      overflow-x: hidden;
+    
+      /* Estética */
+      scroll-behavior: smooth;   /* desplazamiento suave */
+      background: var(--fondo-suave, #fafafa);
+      border-radius: 12px;
     }
+
 
     /* Formulario ocupa 30% de ancho */
     .formulario {

@@ -1,55 +1,54 @@
-// 📁 estadoSistema.js
+// ========== estadoSistema.js (versión optimizada) ==========
+
+// Nivel de intensidad simbólica de la “respiración”
 let intensidadUso = 0;
 let respiracionInterval;
 
-/* function iniciarRespiracion() {
+// Inicia la respiración con animación optimizada (sin forzar repaints)
+function iniciarRespiracion() {
   const dashboard = document.querySelector('.glass');
   if (!dashboard) return;
 
+  // Limpia animación previa
   clearInterval(respiracionInterval);
+
   let fase = 0;
   respiracionInterval = setInterval(() => {
-    fase += 0.04 + Math.random() * 0.02; // añade “arritmia”
-    const intensidad = Math.min(0.2 + intensidadUso / 50, 0.7);
-    const escala = 1 + Math.sin(fase) * intensidad * 0.05;
+    fase += 0.02; // antes era 0.04, más suave y menos CPU
+    const intensidad = Math.min(0.15 + intensidadUso / 80, 0.4);
+    const escala = 1 + Math.sin(fase) * intensidad * 0.02;
     dashboard.style.transform = `scale(${escala})`;
-  }, 100);
+  }, 500); // cada medio segundo, no cada 100ms
 }
- */
-export function setEstado(estado, mensaje = null) {
+
+// Cambia el estado visual del panel con transiciones suaves
+function setEstado(estado, mensaje = null) {
   const dashboard = document.querySelector('.glass');
   const estadoTexto = document.querySelector('#estadoTexto');
+  if (!dashboard) return;
 
-  if (!dashboard) {
-    console.warn('⚠️ No se encontró el contenedor .glass');
-    return;
-  }
-
-  intensidadUso = Math.min(intensidadUso + 1, 20); // sube la energía del sistema
+  // Incrementa brevemente la “intensidad” para reflejar actividad
+  intensidadUso = Math.min(intensidadUso + 1, 10);
   iniciarRespiracion();
-  setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 10000); // decae lentamente
+  setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
 
-  dashboard.style.transition =
-    'background 0.5s ease, box-shadow 0.8s ease, transform 1s ease';
+  // Transiciones más ligeras
+  dashboard.style.transition = 'background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease';
   dashboard.classList.remove('loading', 'success', 'error');
 
-  let bgColor;
   switch (estado) {
     case 'loading':
-      bgColor = 'rgba(255, 255, 0, 0.15)';
+      dashboard.classList.add('loading');
       break;
     case 'success':
-      bgColor = 'rgba(0, 255, 100, 0.25)';
+      dashboard.classList.add('success');
       break;
     case 'error':
-      bgColor = 'rgba(255, 50, 50, 0.25)';
+      dashboard.classList.add('error');
       break;
-    default:
-      bgColor = 'rgba(255,255,255,0.1)';
   }
 
-  dashboard.style.background = bgColor;
-
+  // Texto de estado con iconos suaves
   if (estadoTexto) {
     const iconos = {
       loading: '<i class="fas fa-sync fa-spin"></i> Procesando...',
@@ -60,23 +59,9 @@ export function setEstado(estado, mensaje = null) {
     estadoTexto.style.opacity = '1';
   }
 
-  // 🔄 Restaurar a cristalino en 5 s
+  // Restaurar a cristalino después de unos segundos
   setTimeout(() => {
-    dashboard.style.transition = 'background 5s ease';
-    dashboard.style.background = 'rgba(255, 255, 255, 0.1)';
+    dashboard.classList.remove('loading', 'success', 'error');
+    dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease';
   }, 5000);
-}
-
-// Ejecuta una promesa mostrando estados automáticos
-export async function ejecutarConEstado(promise, mensajeCarga = 'Procesando...') {
-  setEstado('loading', mensajeCarga);
-  try {
-    const resultado = await promise;
-    setEstado('success', 'Operación completada con éxito ✅');
-    return resultado;
-  } catch (err) {
-    console.error(err);
-    setEstado('error', 'Error durante la operación ❌');
-    throw err;
-  }
 }

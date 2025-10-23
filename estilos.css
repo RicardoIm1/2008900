@@ -21,12 +21,12 @@ body, html {
   padding: 0;
   font-family: 'Poppins', sans-serif;
   position: relative;
- 
-  min-height: 100vh;
-  overflow: hidden;
-  overflow-y: auto;       /* permitir scroll vertical global */
-  overflow-x: hidden;
+
+  min-height: 100vh;        /* crece según el contenido */
+  overflow-y: auto;         /* scroll vertical global */
+  overflow-x: hidden;       /* sin scroll horizontal */
 }
+
 
 #dashboard {
   padding: 1.3rem;  /* más compacto */

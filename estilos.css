@@ -71,10 +71,10 @@ body, html {
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
-  /* animation: breathe 4s infinite ease-in-out;
-  border: 1px solid rgba(255, 255, 255, 0.18);
   color: white;
-  margin: 2rem auto; */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  margin: 2rem auto;
+  /*animation: breathe 4s infinite ease-in-out;*/
 }
 
 

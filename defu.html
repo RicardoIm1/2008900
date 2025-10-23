@@ -13,10 +13,12 @@
       gap: 1rem;
       align-items: flex-start;
       flex-wrap: nowrap;
-      height: auto;              /* deja que respire */
-      margin: 3rem auto;         /* aire externo */
-      padding: 1.5rem 0;         /* aire interno */
-      overflow-y: auto;          /* evita que se corte */
+      height: calc(100vh - 180px); /* límite vertical */
+      margin: 2rem auto;           /* aire externo */
+      padding-block: 1rem;         /* aire interno arriba/abajo */
+      overflow-y: auto;            /* scroll interno */
+      overflow-x: hidden;
+      box-sizing: border-box;      /* importante para que padding no sume altura */
     }
 
     /* Formulario ocupa 30% de ancho */

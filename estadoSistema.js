@@ -2,7 +2,7 @@
 let intensidadUso = 0;
 let respiracionInterval;
 
-function iniciarRespiracion() {
+/* function iniciarRespiracion() {
   const dashboard = document.querySelector('.glass');
   if (!dashboard) return;
 
@@ -15,7 +15,7 @@ function iniciarRespiracion() {
     dashboard.style.transform = `scale(${escala})`;
   }, 100);
 }
-
+ */
 export function setEstado(estado, mensaje = null) {
   const dashboard = document.querySelector('.glass');
   const estadoTexto = document.querySelector('#estadoTexto');

@@ -132,53 +132,56 @@
     }
 
     /* Estados del container con respiración */
-    /* .glass {
-      position: relative;
-      width: 95%;
-      max-width: 1200px;
-      padding: 2rem;
-      border-radius: 20px;
-      backdrop-filter: blur(15px);
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      transition: background 5s ease, box-shadow 5s ease, border 5s ease;
-      animation: breathe 4s infinite ease-in-out;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: white;
-      margin: 2rem auto;
-     }
+    /* Contenedor visual principal */
+.glass {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  padding: 1.5rem;
+  border-radius: 20px;
 
-    @keyframes breathe {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      }
-      50% {
-        transform: scale(1.005);
-        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
-      }
-    }
+  /* Efecto glass */
+  backdrop-filter: blur(10px);            /* antes 15px — menos costoso */
+  background: rgba(255, 255, 255, 0.12);  /* más liviano */
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: white;
 
-    .glass.loading {
-      background: rgba(0, 123, 255, 0.2);
-      box-shadow: 0 8px 32px rgba(0, 123, 255, 0.4);
-      border: 1px solid rgba(0, 123, 255, 0.4);
-      transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
-    }
+  margin: 2rem auto;
+  transition: background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease, transform 0.4s ease;
+  will-change: transform, background, box-shadow;
 
-    .glass.success {
-      background: rgba(70, 227, 99, 0.35);
-      box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
-      border: 1px solid rgba(40, 167, 69, 0.4);
-      transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
-    }
+  /* ❌ Sin animación CSS (la maneja JS) */
+  /* animation: breathe 4s infinite ease-in-out; */
+}
 
-    .glass.error {
-      background: rgba(240, 50, 60, 0.45);
-      box-shadow: 0 8px 32px rgba(220, 53, 69, 0.4);
-      border: 1px solid rgba(220, 53, 69, 0.4);
-      transition: background 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
-    } */
+/* Estados del sistema */
+.glass.loading {
+  background: rgba(0, 123, 255, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 123, 255, 0.4);
+  border-color: rgba(0, 123, 255, 0.4);
+}
+
+.glass.success {
+  background: rgba(70, 227, 99, 0.25);
+  box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
+  border-color: rgba(40, 167, 69, 0.4);
+}
+
+.glass.error {
+  background: rgba(240, 50, 60, 0.3);
+  box-shadow: 0 8px 32px rgba(220, 53, 69, 0.4);
+  border-color: rgba(220, 53, 69, 0.4);
+}
+
+/* Texto de estado */
+#estadoTexto {
+  text-align: center;
+  margin-bottom: 10px;
+  color: white;
+  font-weight: bold;
+  transition: opacity 0.3s ease;
+}
 
     /* Ventana modal elegante para confirmaciones */
     .modal-backdrop {

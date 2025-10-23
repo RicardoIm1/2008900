@@ -19,10 +19,13 @@ body {
 body, html {
   margin: 0;
   padding: 0;
-  height: 100%;
   font-family: 'Poppins', sans-serif;
-  overflow: hidden;
   position: relative;
+ 
+  min-height: 100vh;
+  overflow: hidden;
+  overflow-y: auto;       /* permitir scroll vertical global */
+  overflow-x: hidden;
 }
 
 #dashboard {

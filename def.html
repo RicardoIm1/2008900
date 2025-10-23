@@ -742,7 +742,17 @@ function mostrarTabla(registros) {
     return;
   }
 
-  registros.forEach((registro, index) => {
+  // Ordenar registros por fecha más reciente primero
+  const registrosOrdenados = [...registros].sort((a, b) => {
+    // Si tienes campo de fecha de creación/modificación, úsalo aquí
+    // Por ejemplo, si tienes un campo 'fechaCreacion':
+    // return new Date(b.fechaCreacion) - new Date(a.fechaCreacion);
+    
+    // O usar fechaDefuncion si es la más relevante
+    return new Date(b.fechaDefuncion) - new Date(a.fechaDefuncion);
+  });
+
+  registrosOrdenados.forEach((registro, index) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${index + 1}</td>

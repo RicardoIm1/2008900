@@ -7,6 +7,31 @@
       --glow: 0 0 10px;
     }
 
+
+/*Esto acabo de agregar*/
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      
+      min-height: 100vh;        /* Cambié 10vh por 100vh para que ocupe toda la pantalla */
+      overflow-y: auto;         /* Scroll vertical */
+      overflow-x: hidden;       /* Sin scroll horizontal */
+      
+      /* Ocultar scrollbars pero mantener funcionalidad */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;     /* Firefox */
+    }
+    
+    /* Para Webkit (Chrome, Safari, Edge) */
+    html::-webkit-scrollbar, 
+    body::-webkit-scrollbar {
+        display: none;
+    }
+/*Esto acabo de agregar*/
+
+
 /* Estilos básicos para la tabla */
     body {
       font-family: 'Courier New', monospace;

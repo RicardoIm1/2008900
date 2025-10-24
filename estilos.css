@@ -23,8 +23,8 @@ body, html {
   position: relative;
 
   min-height: 100vh;        /* crece según el contenido */
-  /* overflow-y: auto; */         /* scroll vertical global */
-  /* overflow-x: hidden; */       /* sin scroll horizontal */
+  overflow-y: auto;          /* scroll vertical global */
+  overflow-x: hidden;        /* sin scroll horizontal */
 }
 
 
@@ -72,7 +72,7 @@ body, html {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   color: white;
-  margin: 2rem auto;
+  margin: 4rem auto;
   /*
   animation: breathe 4s infinite ease-in-out;
   border: 1px solid rgba(255, 255, 255, 0.18);

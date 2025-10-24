@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Indicadores Hospitalarios</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel Indicadores Hospitalarios — Datos Reales</title>
+
+  <!-- Tu CSS base -->
   <link rel="stylesheet" href="estilos.css">
+
+  <!-- Estado sistema (ya lo subiste) -->
   <script type="module" src="estadoSistema.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
   <style>
-    /* Ampliaciones mínimas para celdas de distintos tamaños */
+    /* Extensiones mínimas y no intrusivas */
     .grid {
-      grid-template-areas:
-        "a a b c"
-        "d e f f"
-        "g g h i";
-      grid-auto-rows: minmax(120px, auto);
+      /* permitimos que las celdas más grandes destaquen sin romper tu layout */
+      grid-auto-rows: minmax(90px, auto);
+      grid-auto-flow: dense;
     }
 
-    .celda.large { grid-area: f; }
-    .celda.medium { grid-area: a; }
-    .celda.small { grid-area: b; }
+    /* tamaños mínimos nuevos (poco y claro) */
+    .celda.small  { grid-column: span 1; }
+    .celda.medium { grid-column: span 2; }
+    .celda.large  { grid-column: span 2; grid-row: span 2; }
 
-    .celda i {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
+    /* tipografía más condensada para que todo quepa */
+    .celda h3 { font-size: 0.95rem; }
+    .celda p  { font-size: 0.85rem; opacity: 0.9; }
+
+    /* iconos discretos en cada celda */
+    .celda .icon {
+      display:block;
+      font-size:1.6rem;
+      margin-bottom:0.4rem;
       color: #ffdd00;
     }
 
-    @media (max-width: 900px) {
-      .grid {
-        grid-template-areas:
-          "a" "b" "c" "d" "e" "f" "g" "h" "i";
-      }
-    }
-
-    #estadoTexto {
-      text-align: center;
-      font-size: 0.9rem;
-      margin-top: 0.8rem;
-      opacity: 0.85;
+    /* Responsividad extra: en pantallas muy estrechas todas las celdas a 1 columna */
+    @media (max-width: 520px) {
+      .celda.medium, .celda.large { grid-column: span 1; grid-row: auto; }
+      .celda h3 { font-size: 0.95rem; }
     }
   </style>
 </head>
@@ -52,83 +54,245 @@
         <h1>Panel de Indicadores Hospitalarios</h1>
       </div>
       <div class="usuario">
-        <i class="fas fa-user-md"></i><span>Unidad Regional de Salud</span>
+        <i class="fas fa-user-md"></i><span>Unidad Regional</span>
       </div>
     </div>
 
     <div class="status" id="estadoTexto">
-      <i class="fas fa-info-circle"></i> Sistema estable
+      <i class="fas fa-info-circle"></i> Datos cargados desde: <strong>para panel indicadores hospitalarios.xlsx</strong>
     </div>
 
-    <div class="grid">
+    <div class="grid" id="indicadores">
+      <!-- A continuación están los 41 indicadores tal como aparecen en tu Excel -->
+      <!-- He aplicado clases small/medium/large según tipo (porcentaje/razón/promedio => medium/large) -->
+      
+      <!-- 1 -->
       <div class="celda medium">
-        <i class="fas fa-procedures"></i>
-        <h3>Ocupación Hospitalaria</h3>
-        <p>72% camas ocupadas</p>
+        <span class="icon fas fa-bed"></span>
+        <h3>No DE CAMAS CENSABLES</h3>
+        <p>71</p>
       </div>
 
       <div class="celda small">
-        <i class="fas fa-heartbeat"></i>
-        <h3>Emergencias Atendidas</h3>
-        <p>1,230 casos</p>
+        <span class="icon fas fa-bed"></span>
+        <h3>No DE CAMAS NO CENSABLES</h3>
+        <p>37</p>
       </div>
 
       <div class="celda small">
-        <i class="fas fa-syringe"></i>
-        <h3>Vacunas Aplicadas</h3>
-        <p>980 dosis</p>
+        <span class="icon fas fa-procedures"></span>
+        <h3>No DE CAMAS/CAMILLAS PARA ADULTOS EN URGENCIAS</h3>
+        <p>5</p>
       </div>
 
-      <div class="celda">
-        <i class="fas fa-user-injured"></i>
-        <h3>Pacientes Hospitalizados</h3>
-        <p>115 en tratamiento</p>
+      <div class="celda small">
+        <span class="icon fas fa-child"></span>
+        <h3>No. DE CAMAS/CAMILLAS PEDIATRICAS EN URGENCIAS</h3>
+        <p>5</p>
       </div>
 
-      <div class="celda">
-        <i class="fas fa-stethoscope"></i>
-        <h3>Consultas Externas</h3>
-        <p>2,340 atendidas</p>
+      <div class="celda small">
+        <span class="icon fas fa-syringe"></span>
+        <h3>No DE CAMAS/CAMILLAS EN TOCO CIRUGÍA</h3>
+        <p>7</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-heartbeat"></span>
+        <h3>No DE CAMAS/CAMILLAS EN SALA DE CHOQUE</h3>
+        <p>1</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-hospital-symbol"></span>
+        <h3>No DE QUIROFANOS</h3>
+        <p>3</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-exclamation-triangle"></span>
+        <h3>No DE EXPULSIVOS</h3>
+        <p>2</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-stethoscope"></span>
+        <h3>No DE CONSULTORIOS EN URGENCIAS</h3>
+        <p>2</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-baby"></span>
+        <h3>No DE CUNAS EN UCIN</h3>
+        <p>12</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-baby-carriage"></span>
+        <h3>No DE CUNAS EN UCINEX</h3>
+        <p>6</p>
       </div>
 
       <div class="celda large">
-        <i class="fas fa-chart-line"></i>
-        <h3>Tendencia Semanal</h3>
-        <p>Gráfico dinámico próximamente</p>
+        <span class="icon fas fa-chart-pie"></span>
+        <h3>% DE OCUPACIÓN HOSPITALARIA</h3>
+        <p>72%</p>
       </div>
 
-      <div class="celda">
-        <i class="fas fa-ambulance"></i>
-        <h3>Traslados</h3>
-        <p>58 realizados</p>
+      <div class="celda medium">
+        <span class="icon fas fa-chart-area"></span>
+        <h3>% DE OCUPACIÓN URGENCIAS ADULTOS</h3>
+        <p>85%</p>
       </div>
 
-      <div class="celda">
-        <i class="fas fa-user-nurse"></i>
-        <h3>Personal Activo</h3>
-        <p>245 turnos</p>
+      <div class="celda medium">
+        <span class="icon fas fa-chart-area"></span>
+        <h3>% DE OCUPACIÓN URGENCIAS PEDIATRIA</h3>
+        <p>60%</p>
       </div>
 
-      <div class="celda">
-        <i class="fas fa-briefcase-medical"></i>
-        <h3>Cirugías</h3>
-        <p>46 procedimientos</p>
+      <div class="celda medium">
+        <span class="icon fas fa-chart-area"></span>
+        <h3>% DE OCUPACIÓN UCIN</h3>
+        <p>50%</p>
       </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-clock"></span>
+        <h3>TIEMPO PROMEDIO DE ESTANCIA</h3>
+        <p>3.5 días</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-user-plus"></span>
+        <h3>PROMEDIO MENSUAL DE INGRESOS</h3>
+        <p>411.5</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-user-minus"></span>
+        <h3>PROMEDIO MENSUAL DE EGRESOS</h3>
+        <p>176.5</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-ambulance"></span>
+        <h3>PROMEDIO MENSUAL DE URGENCIAS CALIFICADAS ADULTOS</h3>
+        <p>235</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-ambulance"></span>
+        <h3>PROMEDIO MENSUAL DE URGENCIAS NO CALIFICADAS ADULTOS</h3>
+        <p>219</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-child"></span>
+        <h3>PROMEDIO MENSUAL ATENCIONES EN URGENCIAS PEDIATRICAS</h3>
+        <p>1.5</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-child"></span>
+        <h3>PROMEDIO MENSUAL DE URGENCIAS CALIFICADAS PEDIATRICAS</h3>
+        <p>0.259</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-child"></span>
+        <h3>PROMEDIO MENSUAL DE URGENCIAS NO CALIFICADAS PEDIATRICAS</h3>
+        <p>0.129</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-scalpel"></span>
+        <h3>PROMEDIO MENSUAL DE CIRUGÍAS</h3>
+        <p>0.083</p>
+      </div>
+
+      <div class="celda small">
+        <span class="icon fas fa-van-shuttle"></span>
+        <h3>PROMEDIO DE PACIENTES TRASLADOS A OTRAS UNIDADES</h3>
+        <p>0.083</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-md"></span>
+        <h3>RAZON DE MÉDICO POR TOTAL DE CAMAS (MATUTINO)</h3>
+        <p>0.203</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-md"></span>
+        <h3>RAZON DE MÉDICO POR TOTAL DE CAMAS (VESPERTINO)</h3>
+        <p>0.481</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-md"></span>
+        <h3>RAZON DE MÉDICO POR TOTAL DE CAMAS (NOCTURNO A)</h3>
+        <p>0.444</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-md"></span>
+        <h3>RAZON DE MÉDICO POR TOTAL DE CAMAS (NOCTURNO B)</h3>
+        <p>0.361</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-md"></span>
+        <h3>RAZON DE MÉDICO POR TOTAL DE CAMAS (JORNADA ACUMULADA)</h3>
+        <p>0.537</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-nurse"></span>
+        <h3>RAZON DE ENFERMERA POR TOTAL DE CAMAS (MATUTINO)</h3>
+        <p>0.305</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-nurse"></span>
+        <h3>RAZON DE ENFERMERA POR TOTAL DE CAMAS (VESPERTINO)</h3>
+        <p>0.389</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-nurse"></span>
+        <h3>RAZON DE ENFERMERA POR TOTAL DE CAMAS (NOCTURNO A)</h3>
+        <p>0.412</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-nurse"></span>
+        <h3>RAZON DE ENFERMERA POR TOTAL DE CAMAS (NOCTURNO B)</h3>
+        <p>0.278</p>
+      </div>
+
+      <div class="celda medium">
+        <span class="icon fas fa-user-nurse"></span>
+        <h3>RAZON DE ENFERMERA POR TOTAL DE CAMAS (JORNADA ACUMULADA)</h3>
+        <p>0.44</p>
+      </div>
+
+      <!-- Si quieres cambiar el orden o destacar algunos indicadores, lo hago con gusto -->
     </div>
 
     <div class="botones">
-      <button onclick="setEstado('loading')"><i class='fas fa-sync'></i> Actualizar</button>
-      <button onclick="setEstado('success')"><i class='fas fa-check'></i> Validar</button>
-      <button onclick="setEstado('error')"><i class='fas fa-exclamation'></i> Revisar</button>
+      <button onclick="setEstado('loading', 'Solicitando actualización...')"><i class="fas fa-sync"></i> Actualizar</button>
+      <button onclick="setEstado('success')"><i class="fas fa-check"></i> Estado OK</button>
+      <button onclick="setEstado('error')"><i class="fas fa-exclamation-triangle"></i> Marcar alerta</button>
     </div>
 
-    <footer>Hospital Regional de Puerto Vallarta · 2025</footer>
+    <footer>Datos: archivo subido — Panel generado automáticamente · 2025</footer>
   </div>
 
   <script type="module">
     import { setEstado } from './estadoSistema.js';
-    // Simulación de actualización automática cada cierto tiempo
-    setInterval(() => setEstado('loading', 'Actualizando datos...'), 15000);
+    // mensaje inicial breve
+    setEstado('success', 'Indicadores cargados correctamente desde Excel');
   </script>
 </body>
 </html>

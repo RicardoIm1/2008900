@@ -206,8 +206,8 @@ footer {
 /* Pantallas grandes */
 @media (min-width: 1200px) {
   .glass {
-    max-width: 1400px; /* más amplitud en pantallas grandes */
-    padding: 2rem;      /* respiración visual extra */
+    max-width: 1800px; /* más amplitud en pantallas grandes */
+    padding: 3rem;      /* respiración visual extra */
   }
 }
 

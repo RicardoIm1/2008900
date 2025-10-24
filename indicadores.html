@@ -286,8 +286,36 @@
       <button onclick="setEstado('error')"><i class="fas fa-exclamation-triangle"></i> Marcar alerta</button>
     </div>
 
-    <footer>Datos: archivo subido — Panel generado automáticamente · 2025</footer>
+    <footer>
+      <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
+    </footer>
   </div>
+</div>
+
+  <script>
+    function setEstado(estado) {
+      const dashboard = document.getElementById('dashboard');
+      const estadoTexto = document.getElementById('estadoTexto');
+      dashboard.classList.remove('loading', 'success', 'error');
+      dashboard.classList.add(estado);
+
+      switch (estado) {
+        case 'loading':
+          estadoTexto.innerHTML = '<i class="fas fa-sync fa-spin"></i> Cargando sistema...';
+          break;
+        case 'success':
+          estadoTexto.innerHTML = '<i class="fas fa-check-circle"></i> Sistema operativo con éxito ✅';
+          break;
+        case 'error':
+          estadoTexto.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error detectado ❌';
+          break;
+      }
+    }
+
+    // Footer dinámico
+    document.getElementById('footerText').innerHTML =
+      `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+</script>
 
   <script type="module">
     import { setEstado } from './estadoSistema.js';

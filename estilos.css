@@ -23,7 +23,7 @@ body, html {
   font-family: 'Poppins', sans-serif;
   position: relative;
 
-  min-height: 100vh;        /* crece según el contenido */
+  min-height: 10vh;        /* crece según el contenido */
   overflow-y: auto;          /* scroll vertical global */
   overflow-x: hidden;        /* sin scroll horizontal */
 }

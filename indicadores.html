@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Indicadores Hospitalarios</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script type="module" src="estadoSistema.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    /* Ampliaciones mínimas para celdas de distintos tamaños */
+    .grid {
+      grid-template-areas:
+        "a a b c"
+        "d e f f"
+        "g g h i";
+      grid-auto-rows: minmax(120px, auto);
+    }
+
+    .celda.large { grid-area: f; }
+    .celda.medium { grid-area: a; }
+    .celda.small { grid-area: b; }
+
+    .celda i {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #ffdd00;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-areas:
+          "a" "b" "c" "d" "e" "f" "g" "h" "i";
+      }
+    }
+
+    #estadoTexto {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 0.8rem;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particlesCanvas"></canvas>
+
+  <div class="glass" id="dashboard">
+    <div class="header">
+      <div class="logo">
+        <i class="logo-icon fas fa-hospital"></i>
+        <h1>Panel de Indicadores Hospitalarios</h1>
+      </div>
+      <div class="usuario">
+        <i class="fas fa-user-md"></i><span>Unidad Regional de Salud</span>
+      </div>
+    </div>
+
+    <div class="status" id="estadoTexto">
+      <i class="fas fa-info-circle"></i> Sistema estable
+    </div>
+
+    <div class="grid">
+      <div class="celda medium">
+        <i class="fas fa-procedures"></i>
+        <h3>Ocupación Hospitalaria</h3>
+        <p>72% camas ocupadas</p>
+      </div>
+
+      <div class="celda small">
+        <i class="fas fa-heartbeat"></i>
+        <h3>Emergencias Atendidas</h3>
+        <p>1,230 casos</p>
+      </div>
+
+      <div class="celda small">
+        <i class="fas fa-syringe"></i>
+        <h3>Vacunas Aplicadas</h3>
+        <p>980 dosis</p>
+      </div>
+
+      <div class="celda">
+        <i class="fas fa-user-injured"></i>
+        <h3>Pacientes Hospitalizados</h3>
+        <p>115 en tratamiento</p>
+      </div>
+
+      <div class="celda">
+        <i class="fas fa-stethoscope"></i>
+        <h3>Consultas Externas</h3>
+        <p>2,340 atendidas</p>
+      </div>
+
+      <div class="celda large">
+        <i class="fas fa-chart-line"></i>
+        <h3>Tendencia Semanal</h3>
+        <p>Gráfico dinámico próximamente</p>
+      </div>
+
+      <div class="celda">
+        <i class="fas fa-ambulance"></i>
+        <h3>Traslados</h3>
+        <p>58 realizados</p>
+      </div>
+
+      <div class="celda">
+        <i class="fas fa-user-nurse"></i>
+        <h3>Personal Activo</h3>
+        <p>245 turnos</p>
+      </div>
+
+      <div class="celda">
+        <i class="fas fa-briefcase-medical"></i>
+        <h3>Cirugías</h3>
+        <p>46 procedimientos</p>
+      </div>
+    </div>
+
+    <div class="botones">
+      <button onclick="setEstado('loading')"><i class='fas fa-sync'></i> Actualizar</button>
+      <button onclick="setEstado('success')"><i class='fas fa-check'></i> Validar</button>
+      <button onclick="setEstado('error')"><i class='fas fa-exclamation'></i> Revisar</button>
+    </div>
+
+    <footer>Hospital Regional de Puerto Vallarta · 2025</footer>
+  </div>
+
+  <script type="module">
+    import { setEstado } from './estadoSistema.js';
+    // Simulación de actualización automática cada cierto tiempo
+    setInterval(() => setEstado('loading', 'Actualizando datos...'), 15000);
+  </script>
+</body>
+</html>

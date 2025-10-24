@@ -51,56 +51,60 @@
   <canvas id="particlesCanvas"></canvas>
 
     <div class="glass" id="dashboard">
-    <div class="header">
-      <div class="logo">
-        <img src="img/logo-hrpv.png" alt="Logo" width="200">
-        <h1>Estadísticas y Archivo Clínico</h1>
-    </div>
+      <div class="header">
+        <div class="logo">
+          <img src="img/logo-hrpv.png" alt="Logo" width="200">
+          <h1>Estadísticas y Archivo Clínico</h1>
+      </div>
       <div class="usuario">
         <i class="fas fa-user-circle"></i>
         <span>Hola, Ricardo</span>
       </div>
     </div>
   
-  <div class="sidebar">
-    <h2>Panel Estadísticas y Archivo Clínico</h2>
-    <button onclick="mostrar('caja.html')">Caja</button>
-    <button onclick="mostrar('curp.html')">Curp</button>
-    <button onclick="mostrar('canva.html')">Canva</button>
-    <button onclick="mostrar('def_gen.html')">Defunciones Generales</button>
-    <button onclick="mostrar('indicadores.html')">Indicadores</button>
-    <button onclick="mostrar('instruc_depurar.html')">Depurar</button>
+    <div class="sidebar">
+      <h2>Panel Estadísticas y Archivo Clínico</h2>
+      <button onclick="mostrar('caja.html')">Caja</button>
+      <button onclick="mostrar('canva.html')">Canva</button>
+      <button onclick="mostrar('curp.html')">Curp</button>
+      <button onclick="mostrar('def_gen.html')">Defunciones Generales</button>
+      <button onclick="mostrar('indicadores.html')">Indicadores</button>
+      <button onclick="mostrar('instruc_depurar.html')">Lineamientos para Depurar</button>
+    </div>
+    
+    <div class="main-content">
+      <iframe id="contenido" src="instruc_depurar.html" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+  
+    <div id="dashboard" class="glass">
+      <div class="filters">
+        <select id="mesSelect">
+          <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+        </select>
+        <select id="unidadSelect">
+          <option value="all">Todas Unidades</option>
+          <option value="U1">Unidad 1</option>
+          <option value="U2">Unidad 2</option>
+        </select>
+      </div>
+    
+      <div class="grid">
+        <div class="celda" id="kpiPacientes"><h3>Pacientes Mes</h3><p>1,254</p></div>
+        <div class="celda" id="kpiCumplimiento"><h3>Cumplimiento</h3><p>89%</p></div>
+        <div class="celda" id="kpiAlertas"><h3>Alertas Críticas</h3><p>12</p></div>
+        <div class="celda" id="kpiErrores"><h3>Errores Registros</h3><p>3</p></div>
+      </div>
+    
+      <div class="grid">
+        <div class="celda"><canvas id="pacientesChart"></canvas></div>
+        <div class="celda"><canvas id="cumplimientoChart"></canvas></div>
+        <div class="celda"><canvas id="alertasChart"></canvas></div>
+      </div>
+      <footer>
+        <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
+      </footer>
+    </div>
   </div>
-  
-  <div id="dashboard" class="glass">
-    <div class="filters">
-      <select id="mesSelect">
-        <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
-      </select>
-      <select id="unidadSelect">
-        <option value="all">Todas Unidades</option>
-        <option value="U1">Unidad 1</option>
-        <option value="U2">Unidad 2</option>
-      </select>
-    </div>
-  
-    <div class="grid">
-      <div class="celda" id="kpiPacientes"><h3>Pacientes Mes</h3><p>1,254</p></div>
-      <div class="celda" id="kpiCumplimiento"><h3>Cumplimiento</h3><p>89%</p></div>
-      <div class="celda" id="kpiAlertas"><h3>Alertas Críticas</h3><p>12</p></div>
-      <div class="celda" id="kpiErrores"><h3>Errores Registros</h3><p>3</p></div>
-    </div>
-  
-    <div class="grid">
-      <div class="celda"><canvas id="pacientesChart"></canvas></div>
-      <div class="celda"><canvas id="cumplimientoChart"></canvas></div>
-      <div class="celda"><canvas id="alertasChart"></canvas></div>
-    </div>
-    <footer>
-      <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
-    </footer>
-  </div>
-</div>
 
   <script>
     function setEstado(estado) {
@@ -125,6 +129,11 @@
     // Footer dinámico
     document.getElementById('footerText').innerHTML =
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+ 
+    // Mostrar iframe
+    function mostrar(archivo) {
+    document.getElementById('contenido').src = archivo;
+}
 </script>
 
 <script>

@@ -28,7 +28,6 @@ body, html {
   overflow-x: hidden;        /* sin scroll horizontal */
 }
 
-
 #dashboard {
   padding: 1.3rem;  /* más compacto */
   margin: 1.3rem; /* menos aire */
@@ -88,7 +87,6 @@ body, html {
   min-height: calc(100vh - 200px);
   height: auto;
 }
-
 
 @keyframes breathe {
   /* si decides dejarla, que sea más ligera */

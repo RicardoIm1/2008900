@@ -4,58 +4,168 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lineamientos de Archivo Clínico</title>
-    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="estilo.css">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-
-  <!-- Encabezado -->
-  <header class="header">
-    <div class="header-contenido">
-      <h1>📂 Archivo Clínico</h1>
-      <span>Lineamientos para depuración</span>
-    </div>
-  </header>
+  <!-- Canvas de partículas -->
+  <canvas id="particlesCanvas"></canvas>
 
   <!-- Contenido principal -->
-  <main class="main-contenido">
+  <div id="dashboard">
+    <div class="glass">
+      <!-- Encabezado -->
+      <header class="header">
+        <div class="logo">
+          <span class="logo-icon">📂</span>
+          <h1>Archivo Clínico</h1>
+        </div>
+        <div class="usuario">
+          <span>Lineamientos para depuración</span>
+        </div>
+      </header>
 
-    <!-- Clasificación -->
-    <section class="seccion clasificacion">
-      <h2>Clasificación de archivo</h2>
-      <ul>
-        <li><b>Archivo activo:</b> los últimos 5 años.</li>
-        <li><b>Archivo pasivo:</b> resguardo por 5 años.</li>
-        <li><b>Archivo para depurar:</b> expedientes con más de 10 años desde la última atención.</li>
-      </ul>
-    </section>
+      <!-- Contenido principal -->
+      <main class="main-contenido">
+        <!-- Clasificación -->
+        <section class="seccion clasificacion">
+          <h2>Clasificación de archivo</h2>
+          <div class="grid">
+            <div class="celda">
+              <h3>Archivo activo</h3>
+              <p>Los últimos 5 años</p>
+            </div>
+            <div class="celda">
+              <h3>Archivo pasivo</h3>
+              <p>Resguardo por 5 años</p>
+            </div>
+            <div class="celda">
+              <h3>Archivo para depurar</h3>
+              <p>Expedientes con más de 10 años desde la última atención</p>
+            </div>
+          </div>
+        </section>
 
-    <!-- Depuración -->
-    <section class="seccion depuracion">
-      <h2>Depuración (Traspaso Ordinario)</h2>
-      <ol>
-        <li>Seleccionar expedientes con más de 10 años para su destrucción definitiva.</li>
-        <li>Expedientes de interés clínico, epidemiológico o legal deben marcarse con sello “<b>INDEPURABLE</b>”.</li>
-        <li>Identificar cada expediente con nombre completo del paciente en un lugar visible.</li>
-        <li>Retirar grapas, sujetadores metálicos y excluir radiografías o ultrasonidos.</li>
-        <li>Agrupar expedientes por año en cajas (solo expedientes del mismo año).</li>
-        <li>Numerar expedientes en cada caja, junto con nombre visible del paciente.</li>
-        <li>Elaborar listado de expedientes con peso y medidas de cada caja.</li>
-        <li>Documentos del 2018 en adelante deben digitalizarse.</li>
-        <li>Foliar con tinta roja cada cara de hoja con información.</li>
-        <li>Coser con hilaza cada expediente para mantener su contenido.</li>
-        <li>Asignar un número consecutivo a cada expediente.</li>
-        <li>Llenar cajas totalmente y reforzarlas con cinta adhesiva.</li>
-        <li>Cada caja debe identificarse con formato de portada.</li>
-      </ol>
-    </section>
-  </main>
+        <!-- Depuración -->
+        <section class="seccion depuracion">
+          <h2>Depuración (Traspaso Ordinario)</h2>
+          <div class="grid">
+            <div class="celda">
+              <h3>1. Selección</h3>
+              <p>Expedientes con más de 10 años para destrucción definitiva</p>
+            </div>
+            <div class="celda">
+              <h3>2. Expedientes especiales</h3>
+              <p>Marcar con sello "INDEPURABLE" los de interés clínico, epidemiológico o legal</p>
+            </div>
+            <div class="celda">
+              <h3>3. Identificación</h3>
+              <p>Nombre completo del paciente en lugar visible</p>
+            </div>
+            <div class="celda">
+              <h3>4. Preparación</h3>
+              <p>Retirar grapas, sujetadores metálicos y excluir radiografías o ultrasonidos</p>
+            </div>
+            <div class="celda">
+              <h3>5. Agrupación</h3>
+              <p>Agrupar expedientes por año en cajas (solo expedientes del mismo año)</p>
+            </div>
+            <div class="celda">
+              <h3>6. Numeración</h3>
+              <p>Numerar expedientes en cada caja, junto con nombre visible del paciente</p>
+            </div>
+            <div class="celda">
+              <h3>7. Documentación</h3>
+              <p>Elaborar listado de expedientes con peso y medidas de cada caja</p>
+            </div>
+            <div class="celda">
+              <h3>8. Digitalización</h3>
+              <p>Documentos del 2018 en adelante deben digitalizarse</p>
+            </div>
+            <div class="celda">
+              <h3>9. Foliado</h3>
+              <p>Foliar con tinta roja cada cara de hoja con información</p>
+            </div>
+            <div class="celda">
+              <h3>10. Costura</h3>
+              <p>Coser con hilaza cada expediente para mantener su contenido</p>
+            </div>
+            <div class="celda">
+              <h3>11. Numeración consecutiva</h3>
+              <p>Asignar un número consecutivo a cada expediente</p>
+            </div>
+            <div class="celda">
+              <h3>12. Empaquetado</h3>
+              <p>Llenar cajas totalmente y reforzarlas con cinta adhesiva</p>
+            </div>
+            <div class="celda">
+              <h3>13. Identificación de cajas</h3>
+              <p>Cada caja debe identificarse con formato de portada</p>
+            </div>
+          </div>
+        </section>
+      </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    © 2025 | Hospital Regional de Puerto Vallarta
-  </footer>
+      <!-- Footer -->
+      <footer class="footer">
+        © 2025 | Hospital Regional de Puerto Vallarta
+      </footer>
+    </div>
+  </div>
 
+  <script>
+    // Script para el efecto de partículas
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Ajustar tamaño del canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Crear partículas
+    const particles = [];
+    const particleCount = 50;
+    
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 3 + 1,
+        speedX: Math.random() * 0.5 - 0.25,
+        speedY: Math.random() * 0.5 - 0.25,
+        opacity: Math.random() * 0.5 + 0.2
+      });
+    }
+    
+    // Dibujar partículas
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      particles.forEach(particle => {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+        ctx.fill();
+        
+        // Mover partículas
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+        
+        // Rebotar en los bordes
+        if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
+      });
+      
+      requestAnimationFrame(drawParticles);
+    }
+    
+    drawParticles();
+  </script>
 </body>
 </html>

@@ -47,21 +47,10 @@
 </style>
 </head>
 <body>
-
   <canvas id="particlesCanvas"></canvas>
 
-    <div class="glass" id="dashboard">
-      <div class="header">
-        <div class="logo">
-          <img src="img/logo-hrpv.png" alt="Logo" width="200">
-          <h1>Estadísticas y Archivo Clínico</h1>
-      </div>
-      <div class="usuario">
-        <i class="fas fa-user-circle"></i>
-        <span>Hola, Ricardo</span>
-      </div>
-    </div>
-  
+  <div class="container">
+    <!-- Sidebar -->
     <div class="sidebar">
       <h2>Panel Estadísticas y Archivo Clínico</h2>
       <button onclick="mostrar('caja.html')">Caja</button>
@@ -71,16 +60,37 @@
       <button onclick="mostrar('indicadores.html')">Indicadores</button>
       <button onclick="mostrar('instruc_depurar.html')">Lineamientos para Depurar</button>
     </div>
-  
-    <div id="dashboard" class="glass">
-      <iframe id="contenido" src="instruc_depurar.html" style="width: 100%; height: 100%; border: none;"></iframe>
-      <footer>
-        <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
-      </footer>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+      <div class="glass" id="dashboard">
+        <div class="header">
+          <div class="logo">
+            <img src="img/logo-hrpv.png" alt="Logo" width="200">
+            <h1>Estadísticas y Archivo Clínico</h1>
+          </div>
+          <div class="usuario">
+            <i class="fas fa-user-circle"></i>
+            <span>Hola, Ricardo</span>
+          </div>
+        </div>
+
+        <!-- Aquí va el contenido dinámico -->
+        <iframe id="contenido" src="caja.html" style="width: 100%; height: 500px; border: none;"></iframe>
+
+        <footer>
+          <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
+        </footer>
+      </div>
     </div>
   </div>
 
   <script>
+    // Función para mostrar contenido en el iframe
+    function mostrar(archivo) {
+      document.getElementById('contenido').src = archivo;
+    }
+
     function setEstado(estado) {
       const dashboard = document.getElementById('dashboard');
       const estadoTexto = document.getElementById('estadoTexto');
@@ -103,38 +113,57 @@
     // Footer dinámico
     document.getElementById('footerText').innerHTML =
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
- 
-    // Mostrar iframe
-    function mostrar(archivo) {
-    document.getElementById('contenido').src = archivo;
-}
-</script>
+  </script>
 
-<script>
-  // Mock datos para gráficos
-  const pacientesCtx = document.getElementById('pacientesChart').getContext('2d');
-  const pacientesChart = new Chart(pacientesCtx,{
-    type:'line',
-    data:{labels:['Ene','Feb','Mar','Abr'], datasets:[{label:'Pacientes', data:[100,120,150,130], borderColor:'#ffdd00', backgroundColor:'rgba(255,221,0,0.2)', fill:true, tension:0.3, pointRadius:4}]},
-    options:{responsive:true, plugins:{legend:{display:false}}}
-  });
+  <style>
+    /* Estilos para el layout sidebar + contenido */
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
 
-  const cumplimientoCtx = document.getElementById('cumplimientoChart').getContext('2d');
-  new Chart(cumplimientoCtx,{
-    type:'doughnut',
-    data:{labels:['Cumplimiento','Faltante'], datasets:[{data:[89,11], backgroundColor:['#28a745','#ffffff33'], borderWidth:0}]},
-    options:{responsive:true, plugins:{legend:{position:'bottom', labels:{color:'white'}}}}
-  });
+    .sidebar {
+      width: 250px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      backdrop-filter: blur(15px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-  const alertasCtx = document.getElementById('alertasChart').getContext('2d');
-  new Chart(alertasCtx,{
-    type:'bar',
-    data:{labels:['Errores','Alertas'], datasets:[{label:'Eventos', data:[3,12], backgroundColor:['#dc3545','#fd7e14'], borderRadius:5}]},
-    options:{indexAxis:'y', responsive:true, plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}, y:{grid:{display:false}}}}
-  });
+    .sidebar h2 {
+      color: white;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      text-align: center;
+    }
 
-  function mostrar(seccion){alert('Mostrar: '+seccion);}
-</script>
+    .sidebar button {
+      display: block;
+      width: 100%;
+      margin-bottom: 0.5rem;
+      padding: 0.8rem;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
 
+    .sidebar button:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateX(5px);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .glass {
+      height: 100%;
+    }
+  </style>
 </body>
 </html>

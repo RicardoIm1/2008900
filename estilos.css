@@ -203,6 +203,14 @@ footer {
   color: rgba(255,255,255,0.8);
 }
 
+/* Pantallas grandes */
+@media (min-width: 1200px) {
+  .glass {
+    max-width: 1400px; /* más amplitud en pantallas grandes */
+    padding: 2rem;      /* respiración visual extra */
+  }
+}
+
 /* Móviles */
 @media (max-width: 768px) {
   .glass {

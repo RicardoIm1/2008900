@@ -204,12 +204,18 @@ footer {
 }
 
 /* Pantallas grandes */
-@media (min-width: 1200px) {
-  .glass {
-    max-width: 1800px; /* más amplitud en pantallas grandes */
-    padding: 3rem;      /* respiración visual extra */
+  @media (min-width: 1200px) {
+    .glass {
+      max-width: 1800px; /* más amplitud en pantallas grandes */
+      padding: 3rem;      /* respiración visual extra */
+    }
   }
-}
+  
+  @media (min-width: 1600px) {
+    .glass {
+      max-width: 1800px;
+    }
+  }
 
 /* Móviles */
 @media (max-width: 768px) {

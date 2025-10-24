@@ -63,8 +63,8 @@ body, html {
 
 .glass {
   position: relative;
-  width: 90%;
-  max-width: 1000px;
+  width: 100%;
+  max-width: 1500px; /*esta decia 1000*/
   padding: 1.5rem;
   border-radius: 20px;
   backdrop-filter: blur(10px);

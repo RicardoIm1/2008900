@@ -121,6 +121,7 @@ body, html {
     margin-bottom: 0.8rem;
     color: #ffdd00;
   padding:0rem;
+  align-items:center;
 }
 
 .grid {

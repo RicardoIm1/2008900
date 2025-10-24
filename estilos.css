@@ -5,6 +5,7 @@
 }
 
 body {
+  padding-block: 2rem; /* agrega un colchón general arriba y abajo */
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
   display: flex;
@@ -61,11 +62,11 @@ body, html {
   z-index: -1;
 }
 
-.glass {
+/* .glass {
   position: relative;
   width: 90%;
   max-width: 1000px;
-  padding: 1.5rem; /* más pequeño */
+  padding: 1.5rem;
   border-radius: 20px;
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.15);
@@ -73,10 +74,34 @@ body, html {
   transition: all 0.3s ease;
   color: white;
   margin: 4rem auto;
-  /*
   animation: breathe 4s infinite ease-in-out;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  */
+} */
+.glass {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  margin: 4rem auto;             /* más aire arriba y abajo */
+  padding: 2rem;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease;
+  animation: breathe 4s infinite ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: white;
+
+  /* 👇 NUEVOS AJUSTES CLAVE 👇 */
+  height: auto !important;       /* evita que se estire verticalmente */
+  min-height: fit-content;       /* adapta su alto al contenido */
+  max-height: 80vh;              /* opcional: limita el alto en pantallas grandes */
+  overflow-y: auto;              /* permite scroll interno si el contenido crece */
+}
+
+.contenedor-flex {
+  min-height: calc(100vh - 200px);
+  height: auto;
 }
 
 

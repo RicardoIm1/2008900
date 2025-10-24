@@ -24,8 +24,18 @@ body, html {
   position: relative;
 
   min-height: 10vh;        /* crece según el contenido */
-  overflow-y: auto;          /* scroll vertical global */
-  overflow-x: hidden;        /* sin scroll horizontal */
+  /*overflow-y: auto;         scroll vertical global 
+  overflow-x: hidden;         sin scroll horizontal */
+  
+/* Ocultar scrollbars globalmente pero mantener funcionalidad */
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar {
+    display: none;
 }
 
 #dashboard {

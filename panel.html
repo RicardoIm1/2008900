@@ -50,6 +50,16 @@
   <canvas id="particlesCanvas"></canvas>
 
   <div class="container">
+    <div class="header">
+      <div class="logo">
+        <img src="img/logo-hrpv.png" alt="Logo" width="200">
+<!--         <h1>Estadísticas y Archivo Clínico</h1>-->
+      </div>
+      <div class="usuario">
+        <i class="fas fa-user-circle"></i>
+        <span>Hola, Ricardo</span>
+      </div>
+    </div> 
     <!-- Sidebar -->
     <div class="sidebar">
       <h2>Panel Estadísticas y Archivo Clínico</h2>
@@ -59,21 +69,15 @@
       <button onclick="mostrar('def_gen.html')">Defunciones Generales</button>
       <button onclick="mostrar('indicadores.html')">Indicadores</button>
       <button onclick="mostrar('instruc_depurar.html')">Lineamientos para Depurar</button>
+      <button onclick="mostrar('login.html')">Login</button>
+      <button onclick="mostrar('validacion_egresos.html')">Validación Egresos</button>
+      <button onclick="mostrar('validacion_lesiones.html')">Validación Lesiones</button>
+      <button onclick="mostrar('validacion_urgencias.html')">Validación Urgencias</button>
     </div>
 
     <!-- Contenido principal -->
     <div class="main-content">
       <div class="glass" id="dashboard">
-        <!-- <div class="header">
-          <div class="logo">
-            <img src="img/logo-hrpv.png" alt="Logo" width="200">
-            <h1>Estadísticas y Archivo Clínico</h1>
-          </div>
-          <div class="usuario">
-            <i class="fas fa-user-circle"></i>
-            <span>Hola, Ricardo</span>
-          </div>
-        </div> --> 
       
         <!-- Aquí va el contenido dinámico -->
         <iframe id="contenido" src="caja.html" style="width: 100%; height: 80%; border: none;"></iframe>

@@ -5,7 +5,6 @@
 }
 
 body {
-  /*padding-block: 4rem;  agrega un colchón general arriba y abajo */
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
   display: flex;
@@ -15,32 +14,42 @@ body {
   padding: 1.5rem;
   box-sizing: border-box;
   font-size: 0.9rem; /* texto más compacto */
+
 }
 
 body, html {
   margin: 0;
   padding: 0;
+  height: 100%;
   font-family: 'Poppins', sans-serif;
+  overflow: hidden;
   position: relative;
-  
-  min-height: 100vh;        /* Cambié 10vh por 100vh para que ocupe toda la pantalla */
-  overflow-y: auto;         /* Scroll vertical */
-  overflow-x: hidden;       /* Sin scroll horizontal */
-  
-  /* Ocultar scrollbars pero mantener funcionalidad */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  text-align: justify;
 }
 
-/* Para Webkit (Chrome, Safari, Edge) */
-html::-webkit-scrollbar, 
-body::-webkit-scrollbar {
-    display: none;
+span{
+  color: rgb(0, 255, 89);
+}
+
+.frecuencia{
+  color: rgb(0, 255, 89);
+  font-size: 1.6rem;
+  text-transform: uppercase;        
+  font-weight: 700;
+}
+
+.senalado{
+  color: rgb(0, 255, 89);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  font-style: bold;
 }
 
 #dashboard {
   padding: 1.3rem;  /* más compacto */
   margin: 1.3rem; /* menos aire */
+  min-height: calc(100vh - 60px); /* si el footer mide 60px */
+  overflow-y: auto;
 }
 
 .glass.loading {
@@ -62,46 +71,72 @@ body::-webkit-scrollbar {
 }
 
 /* Canvas de partículas */
-#particlesCanvas {
+/* #particlesCanvas {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   z-index: -1;
+} */
+
+ul, ol{
+  padding:1.2rem;
+}
+
+li{
+  padding:.75rem;
+  font-size: 1rem;
+  
 }
 
 .glass {
   position: relative;
-  width: 100%;
-  max-width: 1500px; /*esta decia 1000*/
-  padding: 1.5rem;
+  width: 90%;
+  max-width: 1000px;
+  padding: 1.5rem; /* más pequeño */
   border-radius: 20px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(15px);
   background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  color: white;
-  margin: 4rem auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease;
   animation: breathe 4s infinite ease-in-out;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  
-/* 👇 NUEVOS AJUSTES CLAVE 👇 */
-   height: auto !important;         /*evita que se estire verticalmente */
-   min-height: fit-content;       /* adapta su alto al contenido */
-   max-height: 80vh;              /* opcional: limita el alto en pantallas grandes */
-   overflow-y: auto;              /* permite scroll interno si el contenido crece */
+  color: white;
 }
 
-.contenedor-flex {
-  min-height: calc(100vh - 200px);
-  height: auto;
+.glass2 {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  height: 80%;
+  padding: 1.5rem;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: white;
+  overflow-y: scroll; /* ✅ scroll funcional */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
 }
+
+.glass2::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
 
 @keyframes breathe {
-  /* si decides dejarla, que sea más ligera */
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.005); }
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.01);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .header {
@@ -128,10 +163,8 @@ body::-webkit-scrollbar {
 .logo-icon {
     font-size: 2.8rem;
     display: block;
-    margin: 0 auto 0.8rem auto;
+    margin-bottom: 0.8rem;
     color: #ffdd00;
-    padding: 0;
-    text-align: center;
 }
 
 .grid {
@@ -139,6 +172,14 @@ body::-webkit-scrollbar {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* más adaptable */
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+.title{
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: rem;
+  color:rgb(238, 223, 223); 
 }
 
 .celda {
@@ -216,26 +257,17 @@ button:hover {
 }
 
 footer {
+  position: sticky;
+  bottom: 0;
   text-align: center;
-  padding-top: 1rem;
+  padding: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,1.0);
+  z-index: 10;
+  border-radius: 15px;
 }
 
-/* Pantallas grandes */
-  @media (min-width: 1200px) {
-    .glass {
-      max-width: 1800px; /* más amplitud en pantallas grandes */
-      padding: 3rem;      /* respiración visual extra */
-    }
-  }
-  
-  @media (min-width: 1600px) {
-    .glass {
-      max-width: 1800px;
-    }
-  }
 
 /* Móviles */
 @media (max-width: 768px) {

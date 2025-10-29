@@ -10,16 +10,17 @@ html, body {
   height: 100%;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
-  overflow-y: auto;             /* ✅ scroll vertical permitido */
+  overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;      /* ✅ evita recorte vertical */
-  padding: 3rem 1rem;           /* aire arriba y abajo */
+  justify-content: center;    /* ✅ centrado horizontal */
+  align-items: flex-start;    /* ✅ deja el panel arriba */
+  min-height: 100vh;
+  padding: 3rem 1rem;
   color: white;
   font-size: 0.9rem;
 }
@@ -27,9 +28,11 @@ body {
 /* === PANEL PRINCIPAL === */
 .glass {
   position: relative;
+  left: 50%;
+  transform: translateX(-50%);
   width: 95%;
-  max-width: 1400px;            /* ✅ ancho amplio */
-  min-height: 90vh;             /* ocupa casi toda la vista */
+  max-width: 1400px;
+  min-height: 90vh;
   margin: 2rem auto;
   padding: 2rem 3rem;
   border-radius: 22px;
@@ -37,13 +40,13 @@ body {
   background: rgba(255, 255, 255, 0.12);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  overflow-y: scroll;           /* ✅ scroll interno */
-  scrollbar-width: none;        /* oculta scroll Firefox */
-  -ms-overflow-style: none;     /* oculta scroll IE/Edge */
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .glass::-webkit-scrollbar {
-  display: none;                /* ✅ oculta scroll Chrome/Safari */
+  display: none;
 }
 
 /* === ESTADOS DEL PANEL === */
@@ -52,20 +55,18 @@ body {
   box-shadow: 0 8px 32px rgba(0, 123, 255, 0.4);
   border: 1px solid rgba(0, 123, 255, 0.4);
 }
-
 .glass.success {
   background: rgba(70, 227, 99, 0.35);
   box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
   border: 1px solid rgba(40, 167, 69, 0.4);
 }
-
 .glass.error {
   background: rgba(240, 50, 60, 0.45);
   box-shadow: 0 8px 32px rgba(220, 53, 69, 0.4);
   border: 1px solid rgba(220, 53, 69, 0.4);
 }
 
-/* === GRID DE INDICADORES === */
+/* === GRID === */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -82,27 +83,23 @@ body {
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 .logo, .usuario {
   display: flex;
   align-items: center;
   gap: 0.6rem;
 }
-
 .logo h1 {
   font-weight: 600;
   font-size: 1.4rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-
 .logo-icon {
   font-size: 2.8rem;
-  display: block;
-  margin-bottom: 0.8rem;
   color: #ffdd00;
+  display: block;
 }
 
-/* === CELDAS DE INDICADORES === */
+/* === CELDAS === */
 .celda {
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 12px;
@@ -113,56 +110,35 @@ body {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .celda:hover {
   background-color: rgba(255, 255, 255, 0.25);
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
-.celda:active {
-  transform: translateY(0);
-}
-
 .celda h3 {
   font-size: 1.1rem;
   margin-bottom: 0.4rem;
 }
-
 .celda p {
   opacity: 0.8;
   font-size: 0.85rem;
 }
-
 @keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  }
-  50% {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  }
+  0%, 100% { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  50% { box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
 }
 
-/* === TEXTO, LISTAS Y OTROS === */
+/* === TEXTOS Y LISTAS === */
 span { color: rgb(0, 255, 89); }
-
-.frecuencia {
+.frecuencia, .senalado {
   color: rgb(0, 255, 89);
-  font-size: 1.6rem;
   text-transform: uppercase;
-  font-weight: 700;
 }
-
-.senalado {
-  color: rgb(0, 255, 89);
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  font-style: bold;
-}
+.frecuencia { font-size: 1.6rem; font-weight: 700; }
+.senalado { font-size: 1.1rem; font-weight: bold; }
 
 ul, ol { padding: 1.2rem; }
 li { padding: .75rem; font-size: 1rem; }
-
 .title {
   text-align: center;
   font-size: 1.8rem;
@@ -171,7 +147,7 @@ li { padding: .75rem; font-size: 1rem; }
   margin-bottom: 1rem;
 }
 
-/* === SECCIÓN DE ESTADO Y BOTONES === */
+/* === STATUS Y BOTONES === */
 .status {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -179,14 +155,12 @@ li { padding: .75rem; font-size: 1rem; }
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
 }
-
 .botones {
   display: flex;
   justify-content: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
-
 button {
   padding: 0.6rem 1.2rem;
   border: none;
@@ -198,13 +172,12 @@ button {
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255,255,255,0.1);
 }
-
 button:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255,255,255,0.3);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
 /* === FOOTER === */
@@ -213,7 +186,7 @@ footer {
   bottom: 0;
   text-align: center;
   padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255,255,255,0.2);
   font-size: 0.8rem;
   color: rgba(255,255,255,1.0);
   background: rgba(0,0,0,0.1);
@@ -228,114 +201,29 @@ footer {
     width: 95%;
     margin: 1rem auto;
   }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .header {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.8rem;
-  }
-
+  .grid { grid-template-columns: 1fr; }
+  .header { flex-direction: column; text-align: center; gap: 0.8rem; }
   button { width: 80%; }
 }
-
 @media (max-width: 480px) {
   .logo h1 { font-size: 1.1rem; }
   .usuario span { font-size: 0.8rem; }
 }
 
-/* === ANCHO AMPLIADO DEL PANEL GLASS === */
-
-/* Pantallas medianas (>= 768px) */
+/* === ESCALADO DE ANCHO Y COLUMNAS === */
 @media (min-width: 768px) {
-  .glass {
-    width: 90%;
-    max-width: 1600px;  /* antes 1400px */
-  }
+  .glass { width: 90%; max-width: 1600px; }
+  .grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 }
-
-/* Pantallas grandes (>= 1280px) */
 @media (min-width: 1280px) {
-  .glass {
-    width: 92%;
-    max-width: 1800px;  /* antes 1400px */
-  }
+  .glass { width: 92%; max-width: 1800px; }
+  .grid { grid-template-columns: repeat(6, 1fr); }
 }
-
-/* Ultra grandes (>= 1600px, monitores o TV) */
 @media (min-width: 1600px) {
-  .glass {
-    width: 94%;
-    max-width: 2000px;  /* se extiende sin romper el layout */
-  }
+  .glass { width: 94%; max-width: 2000px; }
+  .grid { grid-template-columns: repeat(8, 1fr); }
 }
-
-/* === AMPLIACIÓN ELEGANTE PARA PANTALLAS GRANDES === */
-
-/* Pantallas medianas (>= 768px) */
-@media (min-width: 768px) {
-  .glass {
-    width: 90%;
-    max-width: 1600px;
-  }
-
-  .grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
-}
-
-/* Pantallas grandes (>= 1280px) */
-@media (min-width: 1280px) {
-  .glass {
-    width: 92%;
-    max-width: 1800px;
-  }
-
-  .grid {
-    grid-template-columns: repeat(6, 1fr); /* hasta 6 columnas cómodas */
-  }
-}
-
-/* Pantallas muy grandes (>= 1600px) */
-@media (min-width: 1600px) {
-  .glass {
-    width: 94%;
-    max-width: 2000px;
-  }
-
-  .grid {
-    grid-template-columns: repeat(8, 1fr); /* hasta 8 columnas */
-  }
-}
-
-/* Ultra ultra grandes (>= 2000px, tipo TV o paneles de control) */
 @media (min-width: 2000px) {
-  .glass {
-    width: 96%;
-    max-width: 2400px;
-  }
-
-  .grid {
-    grid-template-columns: repeat(10, 1fr); /* 10 columnas para pantallas masivas */
-  }
-}
-/* === CENTRADO PERFECTO DEL PANEL GLASS === */
-
-body {
-  display: flex;
-  justify-content: center;   /* centra horizontalmente */
-  align-items: flex-start;   /* deja el panel arriba */
-  min-height: 100vh;
-  overflow-x: hidden;        /* evita desbordes laterales */
-}
-
-.glass {
-  margin: 2rem auto;         /* centra el contenedor */
-  align-self: center;        /* asegura posición equilibrada en flexbox */
-  left: 50%;
-  transform: translateX(-50%);
-  position: relative;
+  .glass { width: 96%; max-width: 2400px; }
+  .grid { grid-template-columns: repeat(10, 1fr); }
 }

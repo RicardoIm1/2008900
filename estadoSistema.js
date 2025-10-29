@@ -23,45 +23,56 @@ function iniciarRespiracion() {
 
 // Cambia el estado visual del panel con transiciones suaves
 function setEstado(estado, mensaje = null) {
-  const dashboard = document.querySelector('.glass');
-  const estadoTexto = document.querySelector('#estadoTexto');
-  if (!dashboard) return;
+    const dashboard = document.querySelector('.glass');
+    const messageDiv = document.getElementById('message');
+    if (!dashboard) return;
 
-  // Incrementa brevemente la “intensidad” para reflejar actividad
-  intensidadUso = Math.min(intensidadUso + 1, 10);
-  iniciarRespiracion();
-  setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
+    // Incrementa brevemente la "intensidad" para reflejar actividad
+    intensidadUso = Math.min(intensidadUso + 1, 10);
+    iniciarRespiracion();
+    setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
 
-  // Transiciones más ligeras
-  dashboard.style.transition = 'background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease';
-  dashboard.classList.remove('loading', 'success', 'error');
-
-  switch (estado) {
-    case 'loading':
-      dashboard.classList.add('loading');
-      break;
-    case 'success':
-      dashboard.classList.add('success');
-      break;
-    case 'error':
-      dashboard.classList.add('error');
-      break;
-  }
-
-  // Texto de estado con iconos suaves
-  if (estadoTexto) {
-    const iconos = {
-      loading: '<i class="fas fa-sync fa-spin"></i> Procesando...',
-      success: '<i class="fas fa-check-circle"></i> Éxito ✅',
-      error: '<i class="fas fa-exclamation-circle"></i> Error ❌'
-    };
-    estadoTexto.innerHTML = mensaje || iconos[estado] || 'Listo';
-    estadoTexto.style.opacity = '1';
-  }
-
-  // Restaurar a cristalino después de unos segundos
-  setTimeout(() => {
+    // Transiciones más ligeras
+    dashboard.style.transition = 'background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease, transform 0.5s ease';
     dashboard.classList.remove('loading', 'success', 'error');
-    dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease';
-  }, 5000);
+
+    switch (estado) {
+        case 'loading':
+            dashboard.classList.add('loading');
+            break;
+        case 'success':
+            dashboard.classList.add('success');
+            break;
+        case 'error':
+            dashboard.classList.add('error');
+            break;
+    }
+
+    // Texto de estado con iconos suaves
+    if (messageDiv) {
+        const iconos = {
+            loading: '<i class="fas fa-sync fa-spin"></i> Procesando...',
+            success: '<i class="fas fa-check-circle"></i> Éxito ✅',
+            error: '<i class="fas fa-exclamation-circle"></i> Error ❌'
+        };
+        messageDiv.innerHTML = mensaje || iconos[estado] || 'Listo';
+        messageDiv.style.color = estado === 'error' ? '#ff4757' : 'white';
+        messageDiv.style.opacity = '1';
+        messageDiv.style.transition = 'opacity 0.5s ease'; // Agregar transición para el fade out
+    }
+
+    // Restaurar a cristalino y ocultar mensaje después de 5 segundos
+    setTimeout(() => {
+        dashboard.classList.remove('loading', 'success', 'error');
+        dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease';
+        
+        // Ocultar el mensaje con fade out
+        if (messageDiv) {
+            messageDiv.style.opacity = '0';
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+                messageDiv.style.opacity = '1';
+            }, 500);
+        }
+    }, 5000);
 }

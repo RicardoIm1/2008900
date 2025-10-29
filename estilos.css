@@ -5,13 +5,11 @@
   box-sizing: border-box;
 }
 
-/* === BASE GENERAL === */
 html, body {
   height: 100%;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
   overflow-x: hidden;
-  scroll-behavior: auto; /* más eficiente */
 }
 
 body {
@@ -24,7 +22,7 @@ body {
   min-height: 100vh;
 }
 
-/* === PANEL PRINCIPAL === */
+/* === PANEL PRINCIPAL ULTRA LIGHT === */
 .glass {
   width: 95%;
   max-width: 1600px;
@@ -32,44 +30,38 @@ body {
   margin: 2rem auto;
   padding: 2rem 3rem;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(10px); /* 🔹 menos pesado */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  overflow-y: auto; /* scroll interno */
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.12));
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   position: relative;
 }
 
-.glass::-webkit-scrollbar {
-  display: none;
-}
+.glass::-webkit-scrollbar { display: none; }
 
 /* === ESTADOS DEL PANEL === */
 .glass.loading {
-  background: rgba(0, 123, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 123, 255, 0.4);
-  border: 1px solid rgba(0, 123, 255, 0.4);
+  background: linear-gradient(135deg, rgba(0,123,255,0.1), rgba(0,123,255,0.2));
+  box-shadow: 0 4px 20px rgba(0,123,255,0.25);
 }
 
 .glass.success {
-  background: rgba(70, 227, 99, 0.35);
-  box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
-  border: 1px solid rgba(40, 167, 69, 0.4);
+  background: linear-gradient(135deg, rgba(70,227,99,0.15), rgba(70,227,99,0.3));
+  box-shadow: 0 4px 20px rgba(40,167,69,0.25);
 }
 
 .glass.error {
-  background: rgba(240, 50, 60, 0.45);
-  box-shadow: 0 8px 32px rgba(220, 53, 69, 0.4);
-  border: 1px solid rgba(220, 53, 69, 0.4);
+  background: linear-gradient(135deg, rgba(240,50,60,0.2), rgba(240,50,60,0.35));
+  box-shadow: 0 4px 20px rgba(220,53,69,0.25);
 }
 
 /* === GRID DE INDICADORES === */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.2rem;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -80,7 +72,7 @@ body {
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
 .logo, .usuario {
@@ -92,127 +84,94 @@ body {
 .logo h1 {
   font-weight: 600;
   font-size: 1.4rem;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 
 .logo-icon {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   color: #ffdd00;
 }
 
-/* === CELDAS DE INDICADORES === */
+/* === CELDAS DE INDICADORES ULTRA LIGHT === */
 .celda {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255,255,255,0.08);
   border-radius: 12px;
   padding: 1rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255,255,255,0.08);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  will-change: transform; /* 🔹 ayuda a la GPU */
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  will-change: transform, box-shadow;
 }
 
 .celda:hover {
-  background-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.12);
 }
 
 .celda h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+  margin-bottom: 0.3rem;
 }
 
 .celda p {
-  opacity: 0.8;
+  opacity: 0.85;
   font-size: 0.85rem;
 }
 
-/* pulse suave solo en hover para ahorrar CPU */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
+/* === TEXTO Y LISTAS === */
+span, .frecuencia, .senalado { color: rgb(0,255,89); }
 
-/* === TEXTO, LISTAS Y OTROS === */
-span, .frecuencia, .senalado { color: rgb(0, 255, 89); }
+.frecuencia { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; }
+.senalado { font-size: 1.05rem; font-weight: 700; text-transform: uppercase; }
 
-.frecuencia {
-  font-size: 1.6rem;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.senalado {
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-ul, ol { padding: 1.2rem; }
-li { padding: .75rem; font-size: 1rem; }
+ul, ol { padding: 1rem; }
+li { padding: 0.6rem; font-size: 0.95rem; }
 
 .title {
   text-align: center;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: rgb(238, 223, 223);
+  color: rgba(238,223,223,0.9);
   margin-bottom: 1rem;
 }
 
-/* === SECCIÓN DE ESTADO Y BOTONES === */
-.status {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.botones {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
+/* === BOTONES === */
 button {
-  padding: 0.6rem 1.2rem;
-  border: none;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
   color: white;
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
 }
 
 button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* === FOOTER === */
 footer {
   text-align: center;
   padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(255,255,255,0.1);
   font-size: 0.8rem;
-  color: rgba(255,255,255,1.0);
-  background: rgba(0,0,0,0.1);
+  color: rgba(255,255,255,0.9);
+  background: rgba(0,0,0,0.08);
   border-radius: 12px;
-  z-index: 10;
 }
 
 /* === RESPONSIVIDAD === */
-@media (max-width: 768px) {
+@media (max-width: 768px) { 
   .glass { padding: 1rem; width: 95%; margin: 1rem auto; }
   .grid { grid-template-columns: 1fr; }
-  .header { flex-direction: column; text-align: center; gap: 0.8rem; }
+  .header { flex-direction: column; text-align: center; gap: 0.5rem; }
   button { width: 80%; }
 }
 
@@ -221,7 +180,7 @@ footer {
   .usuario span { font-size: 0.8rem; }
 }
 
-/* === ANCHOS OPTIMIZADOS PARA PANTALLAS GRANDES === */
+/* === PANTALLAS GRANDES === */
 @media (min-width: 1280px) { .glass { width: 92%; max-width: 1800px; } .grid { grid-template-columns: repeat(6,1fr); } }
 @media (min-width: 1600px) { .glass { width: 94%; max-width: 2000px; } .grid { grid-template-columns: repeat(8,1fr); } }
 @media (min-width: 2000px) { .glass { width: 96%; max-width: 2400px; } .grid { grid-template-columns: repeat(10,1fr); } }

@@ -322,3 +322,20 @@ footer {
     grid-template-columns: repeat(10, 1fr); /* 10 columnas para pantallas masivas */
   }
 }
+/* === CENTRADO PERFECTO DEL PANEL GLASS === */
+
+body {
+  display: flex;
+  justify-content: center;   /* centra horizontalmente */
+  align-items: flex-start;   /* deja el panel arriba */
+  min-height: 100vh;
+  overflow-x: hidden;        /* evita desbordes laterales */
+}
+
+.glass {
+  margin: 2rem auto;         /* centra el contenedor */
+  align-self: center;        /* asegura posición equilibrada en flexbox */
+  left: 50%;
+  transform: translateX(-50%);
+  position: relative;
+}

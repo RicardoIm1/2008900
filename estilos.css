@@ -22,7 +22,7 @@ body {
   min-height: 100vh;
 }
 
-/* === PANEL PRINCIPAL ULTRA LIGHT === */
+/* === PANEL PRINCIPAL HÍBRIDO === */
 .glass {
   width: 95%;
   max-width: 1600px;
@@ -30,9 +30,10 @@ body {
   margin: 2rem auto;
   padding: 2rem 3rem;
   border-radius: 22px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.12));
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(6px); /* ligero, eficiente */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -43,18 +44,18 @@ body {
 
 /* === ESTADOS DEL PANEL === */
 .glass.loading {
-  background: linear-gradient(135deg, rgba(0,123,255,0.1), rgba(0,123,255,0.2));
-  box-shadow: 0 4px 20px rgba(0,123,255,0.25);
+  background: rgba(0,123,255,0.15);
+  box-shadow: 0 6px 20px rgba(0,123,255,0.25);
 }
 
 .glass.success {
-  background: linear-gradient(135deg, rgba(70,227,99,0.15), rgba(70,227,99,0.3));
-  box-shadow: 0 4px 20px rgba(40,167,69,0.25);
+  background: rgba(70,227,99,0.2);
+  box-shadow: 0 6px 20px rgba(40,167,69,0.25);
 }
 
 .glass.error {
-  background: linear-gradient(135deg, rgba(240,50,60,0.2), rgba(240,50,60,0.35));
-  box-shadow: 0 4px 20px rgba(220,53,69,0.25);
+  background: rgba(240,50,60,0.25);
+  box-shadow: 0 6px 20px rgba(220,53,69,0.25);
 }
 
 /* === GRID DE INDICADORES === */
@@ -72,7 +73,7 @@ body {
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
 }
 
 .logo, .usuario {
@@ -92,22 +93,23 @@ body {
   color: #ffdd00;
 }
 
-/* === CELDAS DE INDICADORES ULTRA LIGHT === */
+/* === CELDAS DE INDICADORES HÍBRIDAS === */
 .celda {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
   border-radius: 12px;
   padding: 1rem;
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   will-change: transform, box-shadow;
 }
 
+/* PULSE solo en hover */
 .celda:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-  background: rgba(255,255,255,0.12);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.15);
 }
 
 .celda h3 {
@@ -141,7 +143,7 @@ li { padding: 0.6rem; font-size: 0.95rem; }
 button {
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
   background: rgba(255,255,255,0.1);
   color: white;
   font-weight: 600;
@@ -153,14 +155,14 @@ button {
 button:hover {
   background: rgba(255,255,255,0.15);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 /* === FOOTER === */
 footer {
   text-align: center;
   padding: 1.5rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255,255,255,0.12);
   font-size: 0.8rem;
   color: rgba(255,255,255,0.9);
   background: rgba(0,0,0,0.08);

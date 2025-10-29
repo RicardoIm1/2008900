@@ -17,10 +17,10 @@
   <style>
     /* Extensiones mínimas y no intrusivas */
       /* permitimos que las celdas más grandes destaquen sin romper tu layout */
-    /* .grid {
+    .grid {
       grid-auto-rows: minmax(90px, auto);
       grid-auto-flow: dense;
-    } */
+    }
 
     /* tamaños mínimos nuevos (poco y claro) */
     .celda.small  { grid-column: span 1; }
@@ -46,69 +46,62 @@
     }
 
     /*MUY INTRUSIVOS*/
-    /* === Ajustes generales de layout === */
-
+/* === Estructura general refinada === */
 body {
-  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* antes estaba centrado verticalmente */
+  align-items: flex-start;
   min-height: 100vh;
-  padding: 3rem 1.5rem; /* más espacio arriba y abajo */
+  padding: 4rem 1rem; /* aire arriba y abajo */
   overflow-x: hidden;
 }
 
-/* === Ajuste principal del contenedor glass === */
+/* === El panel principal glass === */
 .glass {
-  position: relative;
-  width: 100%;
-  max-width: 1300px; /* más ancho, se verá horizontal en pantallas grandes */
-  padding: 2rem 3rem;
-  margin: 2rem auto; /* centrado y con aire */
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
+  width: 95%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2.5rem 3rem;
+  border-radius: 22px;
   background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.25);
   transition: all 0.5s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
 }
 
-/* === Grid optimizado para pantallas grandes === */
+/* === Grid: más elegante y fluido === */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
-/* === Mejoras en pantallas grandes === */
+/* === Pantallas grandes === */
 @media (min-width: 1024px) {
   body {
     align-items: center; /* centrado vertical */
   }
-
   .glass {
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 3rem;
-    min-height: 80vh;
   }
 }
 
-/* === Móviles: layout vertical fluido === */
+/* === Móviles === */
 @media (max-width: 768px) {
   .glass {
     padding: 1.2rem;
-    margin: 1rem auto;
+    margin: 2rem auto;
   }
   .grid {
     grid-template-columns: 1fr;
   }
 }
-
   </style>
 </head>
 <body>
@@ -357,8 +350,7 @@ body {
       <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
     </footer>
   </div>
-</div>
-
+  
   <script>
     function setEstado(estado) {
       const dashboard = document.getElementById('dashboard');

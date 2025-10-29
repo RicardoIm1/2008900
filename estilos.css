@@ -227,3 +227,19 @@ footer {
   .glass { width: 96%; max-width: 2400px; }
   .grid { grid-template-columns: repeat(10, 1fr); }
 }
+/* === MODO OPCIONAL: CENTRADO TOTAL EN PANTALLA === */
+/* Aplica sólo cuando agregues la clase .centrado-total al <body> o al contenedor .glass */
+
+body.centrado-total {
+  align-items: center;         /* centra verticalmente */
+  justify-content: center;     /* centra horizontalmente */
+  padding: 0;                  /* elimina márgenes innecesarios */
+}
+
+body.centrado-total .glass {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+}

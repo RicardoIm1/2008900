@@ -272,3 +272,53 @@ footer {
     max-width: 2000px;  /* se extiende sin romper el layout */
   }
 }
+
+/* === AMPLIACIÓN ELEGANTE PARA PANTALLAS GRANDES === */
+
+/* Pantallas medianas (>= 768px) */
+@media (min-width: 768px) {
+  .glass {
+    width: 90%;
+    max-width: 1600px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+/* Pantallas grandes (>= 1280px) */
+@media (min-width: 1280px) {
+  .glass {
+    width: 92%;
+    max-width: 1800px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(6, 1fr); /* hasta 6 columnas cómodas */
+  }
+}
+
+/* Pantallas muy grandes (>= 1600px) */
+@media (min-width: 1600px) {
+  .glass {
+    width: 94%;
+    max-width: 2000px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(8, 1fr); /* hasta 8 columnas */
+  }
+}
+
+/* Ultra ultra grandes (>= 2000px, tipo TV o paneles de control) */
+@media (min-width: 2000px) {
+  .glass {
+    width: 96%;
+    max-width: 2400px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(10, 1fr); /* 10 columnas para pantallas masivas */
+  }
+}

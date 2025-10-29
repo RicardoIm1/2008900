@@ -47,7 +47,7 @@ span{
 
 #dashboard {
   padding: 1.3rem;  /* más compacto */
-  margin: 1.3rem; /* menos aire */
+  margin: 4rem; /* menos aire */
   min-height: calc(100vh - 60px); /* si el footer mide 60px */
   overflow-y: auto;
 }

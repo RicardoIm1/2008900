@@ -44,6 +44,71 @@
       .celda.medium, .celda.large { grid-column: span 1; grid-row: auto; }
       .celda h3 { font-size: 0.95rem; }
     }
+
+    /*MUY INTRUSIVOS*/
+    /* === Ajustes generales de layout === */
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* antes estaba centrado verticalmente */
+  min-height: 100vh;
+  padding: 3rem 1.5rem; /* más espacio arriba y abajo */
+  overflow-x: hidden;
+}
+
+/* === Ajuste principal del contenedor glass === */
+.glass {
+  position: relative;
+  width: 100%;
+  max-width: 1300px; /* más ancho, se verá horizontal en pantallas grandes */
+  padding: 2rem 3rem;
+  margin: 2rem auto; /* centrado y con aire */
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* === Grid optimizado para pantallas grandes === */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+/* === Mejoras en pantallas grandes === */
+@media (min-width: 1024px) {
+  body {
+    align-items: center; /* centrado vertical */
+  }
+
+  .glass {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    min-height: 80vh;
+  }
+}
+
+/* === Móviles: layout vertical fluido === */
+@media (max-width: 768px) {
+  .glass {
+    padding: 1.2rem;
+    margin: 1rem auto;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
   </style>
 </head>
 <body>

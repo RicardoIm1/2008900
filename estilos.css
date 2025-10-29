@@ -246,3 +246,29 @@ footer {
   .logo h1 { font-size: 1.1rem; }
   .usuario span { font-size: 0.8rem; }
 }
+
+/* === ANCHO AMPLIADO DEL PANEL GLASS === */
+
+/* Pantallas medianas (>= 768px) */
+@media (min-width: 768px) {
+  .glass {
+    width: 90%;
+    max-width: 1600px;  /* antes 1400px */
+  }
+}
+
+/* Pantallas grandes (>= 1280px) */
+@media (min-width: 1280px) {
+  .glass {
+    width: 92%;
+    max-width: 1800px;  /* antes 1400px */
+  }
+}
+
+/* Ultra grandes (>= 1600px, monitores o TV) */
+@media (min-width: 1600px) {
+  .glass {
+    width: 94%;
+    max-width: 2000px;  /* se extiende sin romper el layout */
+  }
+}

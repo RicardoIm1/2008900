@@ -1,3 +1,5 @@
+//Esta API es para trabajar el archivo DEFUNCIONES-APP https://docs.google.com/spreadsheets/d/18XDS3V1atBpd2ifW0sz4Y7NRZJ4mW1_7JQH-yX8yfKI/edit?usp=sharing
+//En Apps Script es: defuncionesApp
 // Configuración
 const GAS_URL = "https://script.google.com/macros/s/AKfycbzTd3NQZuEKXIrIjI9qTRBolbeB9RlJ0d0RETuPunYQqE2Xz4860uiwAqGKiXXg3mfK/exec";
 

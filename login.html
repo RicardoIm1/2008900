@@ -312,11 +312,11 @@ window.manejarLogin = function(resultado) {
     setTimeout(() => {
       // Redirigir según el rol
       if (resultado.rol === 'admin') {
-        window.location.href = 'admin.html';
+        window.location.href = 'panel.html';
       } else if (resultado.rol === 'lector') {
-        window.location.href = 'lector.html';
+        window.location.href = 'indicadores.html';
       } else {
-        window.location.href = 'dashboard.html';
+        window.location.href = 'index.html';
       }
     }, 2000);
   } else {

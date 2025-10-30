@@ -8,7 +8,6 @@
   <link rel="icon" href="img/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* (Mantén todos tus estilos CSS igual) */
     * {
       margin: 0;
       padding: 0;
@@ -182,7 +181,7 @@
   <div class="glass">
     <div class="header">
       <div style="width: 120px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 8px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
-        <i class="fas fa-hospital" style="font-size: 2rem;"></i>
+      <img class="logo" src="img/logo-hrpv.png" alt="Logo" width="120">
       </div>
       <h3>Estadísticas y Archivo Clínico</h3>
     </div>
@@ -261,13 +260,13 @@
       }
     }
 
-    // ========== LÓGICA DEL LOGIN ==========
+    // ========== LÓGICA DEL LOGIN REAL ==========
     document.getElementById('footerText').innerHTML = 
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
 
     const form = document.getElementById('formularioLogin');
     
-    // REEMPLAZA CON TU URL REAL
+    // REEMPLAZA CON TU URL REAL DE GOOGLE APPS SCRIPT
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbxA0bUgXlOpKo-lFjPzifUKeAiqrUQiLeKDRhtwM_xsN1VEqdsXV3F7BCNYtpBNyhZo/exec';
 
     form.addEventListener('submit', async (e) => {
@@ -283,16 +282,13 @@
       }
 
       try {
-        console.log('Enviando credenciales...');
+        console.log('Enviando credenciales a Google Apps Script...');
         
-        // SOLUCIÓN 1: Usar Google Apps Script con parámetros URL
-        const urlConParametros = `${scriptUrl}?usuario=${encodeURIComponent(usuario)}&clave=${encodeURIComponent(clave)}`;
-        
-        const response = await fetch(urlConParametros, {
+        // SOLUCIÓN CORRECTA - SIN 'no-cors'
+        const response = await fetch(scriptUrl, {
           method: 'POST',
-          mode: 'no-cors', // Importante para evitar CORS
           headers: {
-            'Content-Type': 'text/plain;charset=utf-8',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             usuario: usuario,
@@ -300,54 +296,46 @@
           })
         });
 
-        // Como usamos 'no-cors', no podemos leer la respuesta directamente
-        // Pero podemos verificar si la petición se envió correctamente
-        console.log('Petición enviada, verificando estado...');
-        
-        // Esperar un momento y luego verificar el login de forma simulada
-        // EN PRODUCCIÓN, deberías usar un webhook o otra solución
-        setTimeout(() => {
-          // Esto es temporal - en un caso real necesitarías un callback
-          verificarLoginSimulado(usuario, clave);
-        }, 2000);
+        // Verificar si la respuesta es OK
+        if (!response.ok) {
+          throw new Error(`Error HTTP: ${response.status}`);
+        }
 
-      } catch (error) {
-        console.error('Error completo:', error);
-        setEstado('error', 'Error de conexión. Usando verificación local...');
-        // Fallback a verificación simulada
-        verificarLoginSimulado(usuario, clave);
-      }
-    });
+        // Leer la respuesta JSON
+        const result = await response.json();
+        console.log('Respuesta REAL de Google Sheets:', result);
 
-    // Función temporal para simular login mientras resolvemos CORS
-    function verificarLoginSimulado(usuario, clave) {
-      // Esta es una simulación - EN PRODUCCIÓN esto debe venir de tu GAS
-      console.log('Verificando credenciales de forma simulada...');
-      
-      // Simulamos una respuesta después de 1 segundo
-      setTimeout(() => {
-        // Aquí deberías tener lógica para verificar contra tu base de datos
-        // Por ahora simulamos un login exitoso para testing
-        const loginExitoso = usuario.length > 0 && clave.length > 0;
-        
-        if (loginExitoso) {
-          setEstado('success', `¡Bienvenido ${usuario}!`);
+        // Procesar la respuesta REAL de tu base de datos
+        if (result.success) {
+          setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${result.rol})`);
           
           setTimeout(() => {
-            // Redirigir según el usuario (simulado)
-            if (usuario.includes('admin')) {
-              window.location.href = 'panel.html';
-            } else if (usuario.includes('lector')) {
-              window.location.href = 'indicadores.html';
+            // Redirigir según el rol REAL de tu base de datos
+            if (result.rol === 'admin') {
+              window.location.href = 'admin.html';
+            } else if (result.rol === 'lector') {
+              window.location.href = 'lector.html';
             } else {
-              window.location.href = 'archivo.html';
+              window.location.href = 'dashboard.html';
             }
           }, 2000);
         } else {
-          setEstado('error', 'Credenciales incorrectas');
+          setEstado('error', result.error || 'Credenciales incorrectas');
         }
-      }, 1000);
-    }
+
+      } catch (error) {
+        console.error('Error completo:', error);
+        
+        // Mostrar error específico
+        if (error.message.includes('Failed to fetch')) {
+          setEstado('error', 'Error de conexión. Verifica tu internet.');
+        } else if (error.message.includes('CORS')) {
+          setEstado('error', 'Error de configuración CORS. Revisa tu Google Apps Script.');
+        } else {
+          setEstado('error', 'Error al conectar con el servidor.');
+        }
+      }
+    });
 
     form.addEventListener('reset', () => {
       const messageDiv = document.getElementById('message');
@@ -357,14 +345,14 @@
 
     window.addEventListener('load', iniciarRespiracion);
 
-    // Verificar si el script está activo
+    // Verificar si el servidor está activo
     async function verificarServidor() {
       try {
         const response = await fetch(scriptUrl);
         const data = await response.json();
-        console.log('Servidor activo:', data);
+        console.log('✅ Servidor activo:', data);
       } catch (error) {
-        console.log('No se pudo conectar al servidor, usando modo offline');
+        console.log('❌ No se pudo conectar al servidor:', error);
       }
     }
     

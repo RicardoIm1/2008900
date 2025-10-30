@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas y Archivo Clínico</title>
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* === RESET Y BASE === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
+    }
+
+    /* === CONTENEDOR PRINCIPAL === */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .glass {
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      transition: all 0.5s ease;
+      animation: breathe 4s infinite ease-in-out;
+    }
+    
+    @keyframes breathe {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.8;
+        }
+        50% {
+            transform: scale(1.02);
+            opacity: 1;
+        }
+    }
+
+    .glass.loading { 
+      background: rgba(0, 123, 255, 0.15); 
+      box-shadow: 0 8px 32px rgba(0, 123, 255, 0.25); 
+    }
+    .glass.success { 
+      background: rgba(40, 167, 69, 0.2); 
+      box-shadow: 0 8px 32px rgba(40, 167, 69, 0.25); 
+    }
+    .glass.error { 
+      background: rgba(240, 50, 60, 0.45);
+      box-shadow: 0 6px 20px rgba(240, 50, 60, 0.5);
+    }
+
+    /* === HEADER === */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 1rem;
+    }
+
+    .header h3 {
+      font-weight: 400;
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    /* === FORMULARIO === */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    input {
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* === BOTONES === */
+    .botones-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    button[type="submit"] {
+      background: #4a90e2;
+      color: white;
+    }
+
+    button[type="submit"]:hover {
+      background: #3a7bc8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    button[type="reset"] {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    button[type="reset"]:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* === MENSAJES === */
+    #message {
+    text-align: center;
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    transition: all 0.5s ease;
+    }
+
+    /* === FOOTER === */
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 480px) {
+      .glass {
+        padding: 2rem 1.5rem;
+      }
+      
+      .header h3 {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glass">
+    <div class="header">
+      <!-- Reemplaza con tu logo real -->
+      <div style="width: 120px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 8px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-hospital" style="font-size: 2rem;"></i>
+      </div>
+      <h3>Estadísticas y Archivo Clínico</h3>
+    </div>
+
+    <div id="message"></div>
+
+    <form id="formularioLogin">
+      <div class="form-group">
+        <label for="usuario"><i class="fas fa-user"></i> Usuario</label>
+        <input type="text" id="usuario" name="usuario" placeholder="ej. j.ramirez" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="clave"><i class="fas fa-key"></i> Contraseña</label>
+        <input type="password" id="clave" name="clave" placeholder="••••••••" required>
+      </div>
+
+      <div class="botones-vertical">
+        <button type="submit"><i class="fas fa-sign-in-alt"></i> Iniciar sesión</button>
+        <button type="reset"><i class="fas fa-broom"></i> Limpiar</button>
+      </div>
+    </form>
+
+    <footer>
+      <p id="footerText">Hecho con ❤️ por Ricardo · 2023</p>
+    </footer>
+  </div>
+
+  <script>
+    // ========== SISTEMA DE ESTADO Y "RESPIRACIÓN" ==========
+    
+    let intensidadUso = 0;
+    let respiracionInterval;
+
+    function iniciarRespiracion() {
+      const dashboard = document.querySelector('.glass');
+      if (!dashboard) return;
+
+      clearInterval(respiracionInterval);
+
+      let fase = 0;
+      respiracionInterval = setInterval(() => {
+        fase += 0.02;
+        const intensidad = Math.min(0.15 + intensidadUso / 80, 0.4);
+        const escala = 1 + Math.sin(fase) * intensidad * 0.02;
+        dashboard.style.transform = `scale(${escala})`;
+      }, 500);
+    }
+
+    function setEstado(estado, mensaje = null) {
+      const dashboard = document.querySelector('.glass');
+      const messageDiv = document.getElementById('message');
+      if (!dashboard) return;
+
+      intensidadUso = Math.min(intensidadUso + 1, 10);
+      iniciarRespiracion();
+      setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
+
+      dashboard.style.transition = 'background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease, transform 0.5s ease';
+      dashboard.classList.remove('loading', 'success', 'error');
+
+      switch (estado) {
+        case 'loading':
+          dashboard.classList.add('loading');
+          break;
+        case 'success':
+          dashboard.classList.add('success');
+          break;
+        case 'error':
+          dashboard.classList.add('error');
+          break;
+      }
+
+      if (messageDiv) {
+        const iconos = {
+          loading: '<i class="fas fa-sync fa-spin"></i> Validando credenciales...',
+          success: '<i class="fas fa-check-circle"></i> Acceso exitoso',
+          error: '<i class="fas fa-exclamation-circle"></i> Error en autenticación'
+        };
+        messageDiv.innerHTML = mensaje || iconos[estado] || 'Listo';
+        messageDiv.style.color = estado === 'error' ? '#f87171' : 'white';
+        messageDiv.style.opacity = '1';
+      }
+
+      setTimeout(() => {
+        if (estado !== 'success') {
+          dashboard.classList.remove('loading', 'success', 'error');
+          dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease, transform 0.5s ease';
+        }
+      }, 5000);
+    }
+
+    // ========== LÓGICA DEL LOGIN ==========
+    
+    document.getElementById('footerText').innerHTML = 
+      `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+
+    const form = document.getElementById('formularioLogin');
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxc3LpKSc4ww-zn8aqJ8Q9ciy0yVN9HChNXyXpdpygNyxFJBKAZcLSOSurQGc-wmnpK/exec';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setEstado('loading', 'Conectando con el servidor...');
+      
+      const usuario = document.getElementById('usuario').value;
+      const clave = document.getElementById('clave').value;
+
+      try {
+        // Enviamos los datos EXACTAMENTE como los espera tu Google Apps Script
+        const response = await fetch(scriptUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            usuario: usuario,
+            clave: clave
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${result.rol})`);
+          
+          setTimeout(() => {
+            // Redirigir según el rol
+            if (result.rol === 'admin') {
+              window.location.href = 'admin.html';
+            } else if (result.rol === 'lector') {
+              window.location.href = 'lector.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }, 2000);
+        } else {
+          setEstado('error', result.error || 'Credenciales incorrectas');
+        }
+
+      } catch (error) {
+        console.error('Error completo:', error);
+        setEstado('error', 'Error de conexión. Verifica tu internet.');
+      }
+    });
+
+    // Botón limpiar
+    form.addEventListener('reset', () => {
+      document.getElementById('message').innerHTML = '';
+      document.getElementById('message').style.opacity = '0';
+    });
+
+    // Iniciar respiración al cargar
+    window.addEventListener('load', iniciarRespiracion);
+  </script>
+</body>
+</html>

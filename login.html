@@ -304,8 +304,6 @@
         dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease, transform 0.5s ease';
       }, 5000);
     }
-
-    // ========== LÓGICA DEL LOGIN ==========
     
     // Footer dinámico
     document.getElementById('footerText').innerHTML = 
@@ -313,45 +311,80 @@
 
     // Lógica de login
     const form = document.getElementById('formularioLogin');
-    const messageDiv = document.getElementById('message');
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxc3LpKSc4ww-zn8aqJ8Q9ciy0yVN9HChNXyXpdpygNyxFJBKAZcLSOSurQGc-wmnpK/exec';
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      setEstado('loading', 'Validando credenciales...');
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbywX2f0VrdTz2UKXY9u_lX4DwMrVJj-_XHQtjFfT9kx6E_3NsBqhTCqwJ923SzpeRzu/exec';
+    
+    // ✅ Función global para manejar la respuesta
+    window.manejarLogin = function(resultado) {
+      console.log('🔍 Respuesta REAL de Google Sheets:', resultado);
       
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        const response = await fetch(scriptUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          setEstado('success', `¡Acceso exitoso como ${result.role}! Redirigiendo...`);
-          
-          setTimeout(() => {
-            if (result.role === 'admin') {
-              window.location.href = 'admin.html';
-            } else if (result.role === 'lector') {
-              window.location.href = 'lector.html';
-            } else {
-              window.location.href = 'dashboard.html';
-            }
-          }, 1500);
-        } else {
-          setEstado('error', 'Usuario o contraseña incorrectos.');
-        }
-
-      } catch (error) {
-        setEstado('error', 'Error al conectar. Verifica tu conexión.');
-        console.error('Error:', error);
+      // Remover el script después de usarlo
+      const oldScript = document.getElementById('jsonp-script');
+      if (oldScript) oldScript.remove();
+    
+      if (resultado.success) {
+        const usuario = document.getElementById('usuario').value;
+        setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${resultado.rol})`);
+        
+        // ✅ Guardar sesión en localStorage
+        localStorage.setItem('usuario', usuario);
+        localStorage.setItem('rol', resultado.rol);
+        localStorage.setItem('loginTime', new Date().getTime());
+        
+        setTimeout(() => {
+          // Redirigir según el rol
+          if (resultado.rol === 'admin') {
+            window.location.href = 'admin.html';
+          } else if (resultado.rol === 'lector') {
+            window.location.href = 'lector.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+        }, 2000);
+      } else {
+        setEstado('error', resultado.error || 'Credenciales incorrectas');
+        console.error('❌ Error de login:', resultado.error);
       }
+    };
+    
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      setEstado('loading');
+      
+      const usuario = document.getElementById('usuario').value.trim();
+      const clave = document.getElementById('clave').value;
+    
+      if (!usuario || !clave) {
+        setEstado('error', 'Usuario y contraseña son requeridos');
+        return;
+      }
+    
+      console.log('📤 Enviando credenciales:', { usuario, clave });
+      
+      // ✅ JSONP - Crear script dinámico (GET)
+      const script = document.createElement('script');
+      script.id = 'jsonp-script';
+      
+      // Parámetros por URL (GET)
+      const params = new URLSearchParams({
+        usuario: usuario,
+        clave: clave,
+        callback: 'manejarLogin',
+        ip: 'web' // Para logs
+      });
+      
+      script.src = `${scriptUrl}?${params.toString()}`;
+      console.log('🔗 URL llamada:', script.src);
+      
+      document.head.appendChild(script);
+      
+      // Timeout por si falla
+      setTimeout(() => {
+        const scriptElement = document.getElementById('jsonp-script');
+        if (scriptElement) {
+          scriptElement.remove();
+          setEstado('error', 'Timeout - No response from server');
+        }
+      }, 10000);
     });
 
     // Iniciar respiración sutil al cargar la página

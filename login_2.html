@@ -329,6 +329,24 @@
     });
 
     window.addEventListener('load', iniciarRespiracion);
+
+    // En tu HTML, agrega esta función
+function manejarLogin(respuesta) {
+  if (respuesta.success) {
+    setEstado('success', `¡Bienvenido! (Rol: ${respuesta.rol})`);
+    // Redirigir según el rol
+  } else {
+    setEstado('error', respuesta.error || 'Credenciales incorrectas');
+  }
+}
+
+// Y en el submit usar JSONP
+const usuario = document.getElementById('usuario').value;
+const clave = document.getElementById('clave').value;
+
+const script = document.createElement('script');
+script.src = `${scriptUrl}?usuario=${encodeURIComponent(usuario)}&clave=${encodeURIComponent(clave)}&callback=manejarLogin`;
+document.head.appendChild(script);
   </script>
 </body>
 </html>

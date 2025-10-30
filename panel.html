@@ -117,6 +117,31 @@
     document.getElementById('footerText').innerHTML =
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
   </script>
+  <script>
+// Verificar sesión al cargar
+function verificarSesion() {
+  const usuario = localStorage.getItem('usuario');
+  const rol = localStorage.getItem('rol');
+  
+  if (!usuario) {
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  console.log('Usuario logueado:', usuario, 'Rol:', rol);
+  // Mostrar info del usuario en la interfaz
+}
+
+// Cerrar sesión
+function cerrarSesion() {
+  localStorage.removeItem('usuario');
+  localStorage.removeItem('rol');
+  localStorage.removeItem('loginTime');
+  window.location.href = 'index.html';
+}
+
+window.addEventListener('load', verificarSesion);
+</script>
 
   <style>
     /* Estilos para el layout sidebar + contenido */

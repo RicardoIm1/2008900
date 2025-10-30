@@ -8,7 +8,7 @@
   <link rel="icon" href="img/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* === RESET Y BASE === */
+    /* (Mantén todos tus estilos CSS igual) */
     * {
       margin: 0;
       padding: 0;
@@ -22,7 +22,6 @@
       background: linear-gradient(135deg, #2c3e50, #4a6a85, #7dacbf);
     }
 
-    /* === CONTENEDOR PRINCIPAL === */
     body {
       display: flex;
       justify-content: center;
@@ -44,14 +43,8 @@
     }
     
     @keyframes breathe {
-        0%, 100% {
-            transform: scale(1);
-            opacity: 0.8;
-        }
-        50% {
-            transform: scale(1.02);
-            opacity: 1;
-        }
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.02); opacity: 1; }
     }
 
     .glass.loading { 
@@ -67,7 +60,6 @@
       box-shadow: 0 6px 20px rgba(240, 50, 60, 0.5);
     }
 
-    /* === HEADER === */
     .header {
       text-align: center;
       margin-bottom: 2rem;
@@ -84,7 +76,6 @@
       opacity: 0.9;
     }
 
-    /* === FORMULARIO === */
     form {
       display: flex;
       flex-direction: column;
@@ -125,7 +116,6 @@
       color: rgba(255, 255, 255, 0.5);
     }
 
-    /* === BOTONES === */
     .botones-vertical {
       display: flex;
       flex-direction: column;
@@ -167,17 +157,15 @@
       background: rgba(255, 255, 255, 0.2);
     }
 
-    /* === MENSAJES === */
     #message {
-    text-align: center;
-    padding: 0.8rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    transition: all 0.5s ease;
+      text-align: center;
+      padding: 0.8rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      transition: all 0.5s ease;
     }
 
-    /* === FOOTER === */
     footer {
       text-align: center;
       margin-top: 2rem;
@@ -188,20 +176,14 @@
     }
 
     @media (max-width: 480px) {
-      .glass {
-        padding: 2rem 1.5rem;
-      }
-      
-      .header h3 {
-        font-size: 1.1rem;
-      }
+      .glass { padding: 2rem 1.5rem; }
+      .header h3 { font-size: 1.1rem; }
     }
   </style>
 </head>
 <body>
   <div class="glass">
     <div class="header">
-      <!-- Reemplaza con tu logo real -->
       <div style="width: 120px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 8px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;">
         <i class="fas fa-hospital" style="font-size: 2rem;"></i>
       </div>
@@ -233,8 +215,7 @@
   </div>
 
   <script>
-    // ========== SISTEMA DE ESTADO Y "RESPIRACIÓN" ==========
-    
+    // ========== SISTEMA DE ESTADO ==========
     let intensidadUso = 0;
     let respiracionInterval;
 
@@ -262,19 +243,13 @@
       iniciarRespiracion();
       setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
 
-      dashboard.style.transition = 'background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease, transform 0.5s ease';
+      dashboard.style.transition = 'all 0.4s ease';
       dashboard.classList.remove('loading', 'success', 'error');
 
       switch (estado) {
-        case 'loading':
-          dashboard.classList.add('loading');
-          break;
-        case 'success':
-          dashboard.classList.add('success');
-          break;
-        case 'error':
-          dashboard.classList.add('error');
-          break;
+        case 'loading': dashboard.classList.add('loading'); break;
+        case 'success': dashboard.classList.add('success'); break;
+        case 'error': dashboard.classList.add('error'); break;
       }
 
       if (messageDiv) {
@@ -291,17 +266,17 @@
       setTimeout(() => {
         if (estado !== 'success') {
           dashboard.classList.remove('loading', 'success', 'error');
-          dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease, transform 0.5s ease';
         }
       }, 5000);
     }
 
     // ========== LÓGICA DEL LOGIN ==========
-    
     document.getElementById('footerText').innerHTML = 
       `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
 
     const form = document.getElementById('formularioLogin');
+    
+    // REEMPLAZA ESTA URL CON LA DE TU GOOGLE APPS SCRIPT DEPLOYADO
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbxc3LpKSc4ww-zn8aqJ8Q9ciy0yVN9HChNXyXpdpygNyxFJBKAZcLSOSurQGc-wmnpK/exec';
 
     form.addEventListener('submit', async (e) => {
@@ -312,7 +287,7 @@
       const clave = document.getElementById('clave').value;
 
       try {
-        // Enviamos los datos EXACTAMENTE como los espera tu Google Apps Script
+        // SOLUCIÓN PARA CORS - Usar fetch con credenciales
         const response = await fetch(scriptUrl, {
           method: 'POST',
           headers: {
@@ -324,23 +299,18 @@
           })
         });
 
-        if (!response.ok) {
-          throw new Error('Error en la respuesta del servidor');
-        }
-
         const result = await response.json();
 
         if (result.success) {
           setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${result.rol})`);
           
           setTimeout(() => {
-            // Redirigir según el rol
             if (result.rol === 'admin') {
-              window.location.href = 'panel.html';
+              window.location.href = 'admin.html';
             } else if (result.rol === 'lector') {
-              window.location.href = 'index.html';
+              window.location.href = 'lector.html';
             } else {
-              window.location.href = 'indicadores.html';
+              window.location.href = 'dashboard.html';
             }
           }, 2000);
         } else {
@@ -353,13 +323,11 @@
       }
     });
 
-    // Botón limpiar
     form.addEventListener('reset', () => {
       document.getElementById('message').innerHTML = '';
       document.getElementById('message').style.opacity = '0';
     });
 
-    // Iniciar respiración al cargar
     window.addEventListener('load', iniciarRespiracion);
   </script>
 </body>

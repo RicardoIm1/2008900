@@ -8,7 +8,6 @@
   <link rel="icon" href="img/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* (Mantén todos tus estilos CSS igual) */
     * {
       margin: 0;
       padding: 0;
@@ -63,11 +62,6 @@
     .header {
       text-align: center;
       margin-bottom: 2rem;
-    }
-
-    .logo {
-      display: block;
-      margin: 0 auto 1rem;
     }
 
     .header h3 {
@@ -145,7 +139,6 @@
     button[type="submit"]:hover {
       background: #3a7bc8;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     button[type="reset"] {
@@ -164,6 +157,10 @@
       margin-bottom: 1rem;
       font-size: 0.9rem;
       transition: all 0.5s ease;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     footer {
@@ -177,7 +174,6 @@
 
     @media (max-width: 480px) {
       .glass { padding: 2rem 1.5rem; }
-      .header h3 { font-size: 1.1rem; }
     }
   </style>
 </head>
@@ -243,31 +239,25 @@
       iniciarRespiracion();
       setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
 
-      dashboard.style.transition = 'all 0.4s ease';
       dashboard.classList.remove('loading', 'success', 'error');
-
-      switch (estado) {
-        case 'loading': dashboard.classList.add('loading'); break;
-        case 'success': dashboard.classList.add('success'); break;
-        case 'error': dashboard.classList.add('error'); break;
-      }
+      dashboard.classList.add(estado);
 
       if (messageDiv) {
         const iconos = {
           loading: '<i class="fas fa-sync fa-spin"></i> Validando credenciales...',
           success: '<i class="fas fa-check-circle"></i> Acceso exitoso',
-          error: '<i class="fas fa-exclamation-circle"></i> Error en autenticación'
+          error: '<i class="fas fa-exclamation-circle"></i> '
         };
-        messageDiv.innerHTML = mensaje || iconos[estado] || 'Listo';
+        messageDiv.innerHTML = mensaje ? iconos[estado] + mensaje : iconos[estado];
         messageDiv.style.color = estado === 'error' ? '#f87171' : 'white';
         messageDiv.style.opacity = '1';
       }
 
-      setTimeout(() => {
-        if (estado !== 'success') {
+      if (estado !== 'success') {
+        setTimeout(() => {
           dashboard.classList.remove('loading', 'success', 'error');
-        }
-      }, 5000);
+        }, 5000);
+      }
     }
 
     // ========== LÓGICA DEL LOGIN ==========
@@ -276,18 +266,25 @@
 
     const form = document.getElementById('formularioLogin');
     
-    // REEMPLAZA ESTA URL CON LA DE TU GOOGLE APPS SCRIPT DEPLOYADO
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxc3LpKSc4ww-zn8aqJ8Q9ciy0yVN9HChNXyXpdpygNyxFJBKAZcLSOSurQGc-wmnpK/exec';
+    // REEMPLAZA CON TU URL DE GOOGLE APPS SCRIPT
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbxA0bUgXlOpKo-lFjPzifUKeAiqrUQiLeKDRhtwM_xsN1VEqdsXV3F7BCNYtpBNyhZo/exec';
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      setEstado('loading', 'Conectando con el servidor...');
+      setEstado('loading');
       
-      const usuario = document.getElementById('usuario').value;
+      const usuario = document.getElementById('usuario').value.trim();
       const clave = document.getElementById('clave').value;
 
+      if (!usuario || !clave) {
+        setEstado('error', 'Usuario y contraseña son requeridos');
+        return;
+      }
+
       try {
-        // SOLUCIÓN PARA CORS - Usar fetch con credenciales
+        console.log('Enviando credenciales...');
+        
+        // SOLUCIÓN PARA CORS: Usar /exec en lugar de /dev
         const response = await fetch(scriptUrl, {
           method: 'POST',
           headers: {
@@ -300,17 +297,18 @@
         });
 
         const result = await response.json();
+        console.log('Respuesta recibida:', result);
 
         if (result.success) {
           setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${result.rol})`);
           
           setTimeout(() => {
             if (result.rol === 'admin') {
-              window.location.href = 'admin.html';
+              window.location.href = 'panel.html';
             } else if (result.rol === 'lector') {
-              window.location.href = 'lector.html';
+              window.location.href = 'indicadores.html';
             } else {
-              window.location.href = 'dashboard.html';
+              window.location.href = 'index.html';
             }
           }, 2000);
         } else {
@@ -319,34 +317,17 @@
 
       } catch (error) {
         console.error('Error completo:', error);
-        setEstado('error', 'Error de conexión. Verifica tu internet.');
+        setEstado('error', 'Error de conexión. Verifica tu internet o la URL del script.');
       }
     });
 
     form.addEventListener('reset', () => {
-      document.getElementById('message').innerHTML = '';
-      document.getElementById('message').style.opacity = '0';
+      const messageDiv = document.getElementById('message');
+      messageDiv.innerHTML = '';
+      messageDiv.style.opacity = '0';
     });
 
     window.addEventListener('load', iniciarRespiracion);
-
-    // En tu HTML, agrega esta función
-function manejarLogin(respuesta) {
-  if (respuesta.success) {
-    setEstado('success', `¡Bienvenido! (Rol: ${respuesta.rol})`);
-    // Redirigir según el rol
-  } else {
-    setEstado('error', respuesta.error || 'Credenciales incorrectas');
-  }
-}
-
-// Y en el submit usar JSONP
-const usuario = document.getElementById('usuario').value;
-const clave = document.getElementById('clave').value;
-
-const script = document.createElement('script');
-script.src = `${scriptUrl}?usuario=${encodeURIComponent(usuario)}&clave=${encodeURIComponent(clave)}&callback=manejarLogin`;
-document.head.appendChild(script);
   </script>
 </body>
 </html>

@@ -236,161 +236,200 @@
   </div>
 
   <script>
-    // ========== SISTEMA DE ESTADO Y "RESPIRACIÓN" ==========
-    
-    // Nivel de intensidad simbólica de la "respiración"
-    let intensidadUso = 0;
-    let respiracionInterval;
+// ========== SISTEMA DE ESTADO ==========
+let intensidadUso = 0;
+let respiracionInterval;
 
-    // Inicia la respiración con animación optimizada
-    function iniciarRespiracion() {
-      const dashboard = document.querySelector('.glass');
-      if (!dashboard) return;
+function iniciarRespiracion() {
+  const dashboard = document.querySelector('.glass');
+  if (!dashboard) return;
 
-      // Limpia animación previa
-      clearInterval(respiracionInterval);
+  clearInterval(respiracionInterval);
 
-      let fase = 0;
-      respiracionInterval = setInterval(() => {
-        fase += 0.02;
-        const intensidad = Math.min(0.15 + intensidadUso / 80, 0.4);
-        const escala = 1 + Math.sin(fase) * intensidad * 0.02;
-        dashboard.style.transform = `scale(${escala})`;
-      }, 500);
-    }
+  let fase = 0;
+  respiracionInterval = setInterval(() => {
+    fase += 0.02;
+    const intensidad = Math.min(0.15 + intensidadUso / 80, 0.4);
+    const escala = 1 + Math.sin(fase) * intensidad * 0.02;
+    dashboard.style.transform = `scale(${escala})`;
+  }, 500);
+}
 
-    // Cambia el estado visual del panel con transiciones suaves
-    function setEstado(estado, mensaje = null) {
-      const dashboard = document.querySelector('.glass');
-      const messageDiv = document.getElementById('message');
-      if (!dashboard) return;
+function setEstado(estado, mensaje = null) {
+  const dashboard = document.querySelector('.glass');
+  const messageDiv = document.getElementById('message');
+  if (!dashboard) return;
 
-      // Incrementa brevemente la "intensidad" para reflejar actividad
-      intensidadUso = Math.min(intensidadUso + 1, 10);
-      iniciarRespiracion();
-      setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
+  intensidadUso = Math.min(intensidadUso + 1, 10);
+  iniciarRespiracion();
+  setTimeout(() => (intensidadUso = Math.max(intensidadUso - 1, 0)), 8000);
 
-      // Transiciones más ligeras
-      dashboard.style.transition = 'background 0.4s ease, box-shadow 0.6s ease, border 0.4s ease, transform 0.5s ease';
-      dashboard.classList.remove('loading', 'success', 'error');
+  dashboard.classList.remove('loading', 'success', 'error');
+  dashboard.classList.add(estado);
 
-      switch (estado) {
-        case 'loading':
-          dashboard.classList.add('loading');
-          break;
-        case 'success':
-          dashboard.classList.add('success');
-          break;
-        case 'error':
-          dashboard.classList.add('error');
-          break;
-      }
-
-      // Texto de estado con iconos suaves
-      if (messageDiv) {
-        const iconos = {
-          loading: '<i class="fas fa-sync fa-spin"></i> Procesando...',
-          success: '<i class="fas fa-check-circle"></i> Éxito ✅',
-          error: '<i class="fas fa-exclamation-circle"></i> Error ❌'
-        };
-        messageDiv.innerHTML = mensaje || iconos[estado] || 'Listo';
-        messageDiv.style.color = estado === 'error' ? '#f87171' : 'white';
-        messageDiv.style.opacity = '1';
-      }
-
-      // Restaurar a cristalino después de unos segundos
-      setTimeout(() => {
-        dashboard.classList.remove('loading', 'success', 'error');
-        dashboard.style.transition = 'background 2s ease, box-shadow 2s ease, border 2s ease, transform 0.5s ease';
-      }, 5000);
-    }
-    
-    // Footer dinámico
-    document.getElementById('footerText').innerHTML = 
-      `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
-
-    // Lógica de login
-    const form = document.getElementById('formularioLogin');
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbywX2f0VrdTz2UKXY9u_lX4DwMrVJj-_XHQtjFfT9kx6E_3NsBqhTCqwJ923SzpeRzu/exec';
-    
-    // ✅ Función global para manejar la respuesta
-    window.manejarLogin = function(resultado) {
-      console.log('🔍 Respuesta REAL de Google Sheets:', resultado);
-      
-      // Remover el script después de usarlo
-      const oldScript = document.getElementById('jsonp-script');
-      if (oldScript) oldScript.remove();
-    
-      if (resultado.success) {
-        const usuario = document.getElementById('usuario').value;
-        setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${resultado.rol})`);
-        
-        // ✅ Guardar sesión en localStorage
-        localStorage.setItem('usuario', usuario);
-        localStorage.setItem('rol', resultado.rol);
-        localStorage.setItem('loginTime', new Date().getTime());
-        
-        setTimeout(() => {
-          // Redirigir según el rol
-          if (resultado.rol === 'admin') {
-            window.location.href = 'admin.html';
-          } else if (resultado.rol === 'lector') {
-            window.location.href = 'lector.html';
-          } else {
-            window.location.href = 'dashboard.html';
-          }
-        }, 2000);
-      } else {
-        setEstado('error', resultado.error || 'Credenciales incorrectas');
-        console.error('❌ Error de login:', resultado.error);
-      }
+  if (messageDiv) {
+    const iconos = {
+      loading: '<i class="fas fa-sync fa-spin"></i> Validando credenciales...',
+      success: '<i class="fas fa-check-circle"></i> Acceso exitoso',
+      error: '<i class="fas fa-exclamation-circle"></i> '
     };
-    
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      setEstado('loading');
-      
-      const usuario = document.getElementById('usuario').value.trim();
-      const clave = document.getElementById('clave').value;
-    
-      if (!usuario || !clave) {
-        setEstado('error', 'Usuario y contraseña son requeridos');
-        return;
-      }
-    
-      console.log('📤 Enviando credenciales:', { usuario, clave });
-      
-      // ✅ JSONP - Crear script dinámico (GET)
-      const script = document.createElement('script');
-      script.id = 'jsonp-script';
-      
-      // Parámetros por URL (GET)
-      const params = new URLSearchParams({
-        usuario: usuario,
-        clave: clave,
-        callback: 'manejarLogin',
-        ip: 'web' // Para logs
-      });
-      
-      script.src = `${scriptUrl}?${params.toString()}`;
-      console.log('🔗 URL llamada:', script.src);
-      
-      document.head.appendChild(script);
-      
-      // Timeout por si falla
-      setTimeout(() => {
-        const scriptElement = document.getElementById('jsonp-script');
-        if (scriptElement) {
-          scriptElement.remove();
-          setEstado('error', 'Timeout - No response from server');
-        }
-      }, 10000);
-    });
+    messageDiv.innerHTML = mensaje ? iconos[estado] + mensaje : iconos[estado];
+    messageDiv.style.color = estado === 'error' ? '#f87171' : 'white';
+    messageDiv.style.opacity = '1';
+  }
 
-    // Iniciar respiración sutil al cargar la página
-    window.addEventListener('load', () => {
-      iniciarRespiracion();
-    });
-  </script>
-</body>
+  if (estado !== 'success') {
+    setTimeout(() => {
+      dashboard.classList.remove('loading', 'success', 'error');
+    }, 5000);
+  }
+}
+
+// ========== LÓGICA DEL LOGIN CON JSONP ==========
+document.getElementById('footerText').innerHTML = 
+  `Hecho con ❤️ por Ricardo · ${new Date().getFullYear()}`;
+
+const form = document.getElementById('formularioLogin');
+const scriptUrl = 'https://script.google.com/macros/s/AKfycbywX2f0VrdTz2UKXY9u_lX4DwMrVJj-_XHQtjFfT9kx6E_3NsBqhTCqwJ923SzpeRzu/exec';
+
+// ✅ Función global para manejar la respuesta del LOGIN
+window.manejarLogin = function(resultado) {
+  console.log('🔍 Respuesta REAL de Google Sheets:', resultado);
+  
+  // Remover el script después de usarlo
+  const oldScript = document.getElementById('jsonp-script');
+  if (oldScript) oldScript.remove();
+
+  if (resultado.success) {
+    const usuario = document.getElementById('usuario').value;
+    setEstado('success', `¡Bienvenido ${usuario}! (Rol: ${resultado.rol})`);
+    
+    // ✅ Guardar sesión en localStorage
+    localStorage.setItem('usuario', usuario);
+    localStorage.setItem('rol', resultado.rol);
+    localStorage.setItem('loginTime', new Date().getTime());
+    
+    setTimeout(() => {
+      // Redirigir según el rol
+      if (resultado.rol === 'admin') {
+        window.location.href = 'admin.html';
+      } else if (resultado.rol === 'lector') {
+        window.location.href = 'lector.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }, 2000);
+  } else {
+    setEstado('error', resultado.error || 'Credenciales incorrectas');
+    console.error('❌ Error de login:', resultado.error);
+  }
+};
+
+// ✅ Función global para verificar el servidor
+window.verificarServidorCallback = function(res) {
+  console.log('✅ Servidor activo:', res);
+  // Remover el script después de usarlo
+  const script = document.getElementById('server-check-script');
+  if (script) script.remove();
+};
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  setEstado('loading');
+  
+  const usuario = document.getElementById('usuario').value.trim();
+  const clave = document.getElementById('clave').value;
+
+  if (!usuario || !clave) {
+    setEstado('error', 'Usuario y contraseña son requeridos');
+    return;
+  }
+
+  console.log('📤 Enviando credenciales:', { usuario, clave });
+  
+  // ✅ JSONP - Crear script dinámico (GET)
+  const script = document.createElement('script');
+  script.id = 'jsonp-script';
+  
+  // Parámetros por URL (GET)
+  const params = new URLSearchParams({
+    usuario: usuario,
+    clave: clave,
+    callback: 'manejarLogin', // ✅ Nombre de función global
+    ip: 'web' // Para logs
+  });
+  
+  script.src = `${scriptUrl}?${params.toString()}`;
+  console.log('🔗 URL llamada:', script.src);
+  
+  document.head.appendChild(script);
+  
+  // Timeout por si falla
+  setTimeout(() => {
+    const scriptElement = document.getElementById('jsonp-script');
+    if (scriptElement) {
+      scriptElement.remove();
+      setEstado('error', 'Timeout - No response from server');
+    }
+  }, 10000);
+});
+
+form.addEventListener('reset', () => {
+  const messageDiv = document.getElementById('message');
+  messageDiv.innerHTML = '';
+  messageDiv.style.opacity = '0';
+});
+
+// ✅ Verificar sesión existente
+function verificarSesion() {
+  const usuario = localStorage.getItem('usuario');
+  const loginTime = localStorage.getItem('loginTime');
+  const ahora = new Date().getTime();
+  
+  // Si hay sesión y no ha expirado (24 horas)
+  if (usuario && loginTime && (ahora - loginTime < 24 * 60 * 60 * 1000)) {
+    console.log('Sesión activa para:', usuario);
+    // Opcional: redirigir automáticamente
+    // window.location.href = 'dashboard.html';
+  } else {
+    // Limpiar sesión expirada
+    localStorage.removeItem('usuario');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('loginTime');
+  }
+}
+
+// ✅ Verificar servidor al cargar (CORREGIDO)
+function verificarServidor() {
+  try {
+    const script = document.createElement('script');
+    script.id = 'server-check-script';
+    // ✅ Usar nombre de función global, no función anónima
+    script.src = `${scriptUrl}?callback=verificarServidorCallback`;
+    document.head.appendChild(script);
+    
+    // Limpiar después de 3 segundos si no responde
+    setTimeout(() => {
+      const oldScript = document.getElementById('server-check-script');
+      if (oldScript) oldScript.remove();
+    }, 3000);
+  } catch (error) {
+    console.log('❌ No se pudo conectar al servidor:', error);
+  }
+}
+
+window.addEventListener('load', function() {
+  iniciarRespiracion();
+  verificarSesion();
+  verificarServidor();
+});
+
+// ✅ Función para cerrar sesión (usar en otras páginas)
+window.cerrarSesion = function() {
+  localStorage.removeItem('usuario');
+  localStorage.removeItem('rol');
+  localStorage.removeItem('loginTime');
+  window.location.href = 'index.html';
+};
+</script></body>
 </html>
